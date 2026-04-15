@@ -38,7 +38,7 @@
         <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-bottom:8px;">
           <div class="campo"><label class="lbl">Nome do Agente</label><input type="text" id="nome" placeholder="Nome completo"></div>
           <div class="campo"><label class="lbl">Classe</label>
-            <select id="classe" onchange="calcDeriv();triggerSalvar()">
+            <select id="classe" onchange="calcDeriv();triggerSalvar();buildProficiencias()">
               <option value="combatente">Combatente</option>
               <option value="especialista" selected>Especialista</option>
               <option value="ocultista">Ocultista</option>
@@ -75,6 +75,13 @@
         <input type="hidden" id="avatarUrl">
         <button class="btn-av" onclick="editarAvatar()">Alterar</button>
       </div>
+    </div>
+
+    <!-- PROFICIÊNCIAS -->
+    <div class="sec-div"><div class="sec-div-line"></div><span class="sec-div-label">Proficiências</span><div class="sec-div-line"></div></div>
+    <div class="panel panel-accent-ink mb12">
+      <div class="ptitle">🛡 Proficiências de Classe</div>
+      <div id="profCont" class="prof-grid"></div>
     </div>
 
     <div class="sec-div"><div class="sec-div-line"></div><span class="sec-div-label">NEX — Nível de Exposição Paranormal</span><div class="sec-div-line"></div></div>
@@ -258,7 +265,6 @@
   <!-- TAB 2: PERÍCIAS -->
   <div class="tab-panel" id="tab-pericias">
     <div class="panel panel-accent-ink">
-      <!-- MUDANÇA 3: fonte Crimson Pro para o hint de graus -->
       <div class="ptitle">◉ Perícias — <span class="per-tip-crimson"><span style="color:#1a5a72;">T</span> = +5 &nbsp;·&nbsp; <span style="color:var(--gold);">V</span> = +10 &nbsp;·&nbsp; <span style="color:var(--purple);">E</span> = +15</span></div>
       <div id="perGrid"></div>
     </div>

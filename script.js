@@ -118,10 +118,8 @@ window._profExtras=[];
 // ============================================================
 // NEX MODAL — PROGRESSÃO AUTOMÁTICA
 // ============================================================
-
-// Escolhas pendentes para o modal
 let _nexModalPending = [];
-let _nexModalChoices = {}; // {index: valor_escolhido}
+let _nexModalChoices = {};
 
 function abrirNexModal(nex, classe) {
   const gains = NEX_PROGRESSION[classe]?.[nex];
@@ -172,11 +170,22 @@ function abrirNexModal(nex, classe) {
       html += `<div class="nex-gain-header">✦ ${gain.label} <span style="font-size:0.75em;opacity:0.7;">(${gain.classe})</span></div>
         <div class="nex-gain-body">
           <div style="font-family:'Share Tech Mono';font-size:0.65em;color:var(--ink3);margin-bottom:8px;">Escolha um poder para adicionar à ficha:</div>
-          <div class="hab-choice-list">`;
+          <!-- BUSCA E FILTRO PARA HABILIDADES NO NEX MODAL -->
+          <div class="nex-hab-search-row">
+            <input type="text" class="nex-hab-search" id="nexHabSearch_${idx}" placeholder="Buscar habilidade..." oninput="filtrarNexHab(${idx})">
+          </div>
+          <div class="hab-choice-list" id="nexhablist_${idx}">`;
       habs.forEach((h, hi) => {
-        html += `<div class="hab-choice-item" id="habchk_${idx}_${hi}" onclick="nexChooseHab(${idx},${hi},'${escHtml(h.nome)}','${escHtml(h.custo)}','${escHtml(h.desc)}')">
-          <div class="hab-choice-name">${h.nome} <span style="opacity:0.5;font-size:0.8em;">[${h.classe}]</span></div>
-          <div class="hab-choice-desc">Custo: ${h.custo} · ${h.desc.substring(0,100)}${h.desc.length>100?'...':''}</div>
+        html += `<div class="hab-choice-item" id="habchk_${idx}_${hi}"
+          data-search="${h.nome.toLowerCase()} ${h.desc.toLowerCase()} ${h.classe.toLowerCase()}"
+          onclick="nexChooseHab(${idx},${hi},'${escHtml(h.nome)}','${escHtml(h.custo)}','${escHtml(h.desc)}')">
+          <div class="hab-choice-header">
+            <span class="hab-choice-name">${h.nome}</span>
+            <span class="hab-choice-tag">${h.classe}</span>
+            <span class="hab-choice-nex">NEX ${h.nex}</span>
+            ${h.custo && h.custo !== '—' ? `<span class="hab-choice-cost">⚡ ${h.custo}</span>` : ''}
+          </div>
+          <div class="hab-choice-desc">${h.desc}</div>
         </div>`;
       });
       html += `</div></div>`;
@@ -185,6 +194,9 @@ function abrirNexModal(nex, classe) {
       html += `<div class="nex-gain-header" style="color:var(--purple);">🌀 ${gain.label}</div>
         <div class="nex-gain-body">
           <div style="font-family:'Share Tech Mono';font-size:0.65em;color:var(--ink3);margin-bottom:8px;">Escolha um ritual para aprender:</div>
+          <div class="nex-rit-search-row">
+            <input type="text" class="nex-hab-search" id="nexRitSearch_${idx}" placeholder="Buscar ritual..." oninput="filtrarNexRitBusca(${idx})">
+          </div>
           <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;">
             ${['Conhecimento','Energia','Morte','Sangue','Medo'].map(e=>`<button onclick="filtrarNexRit(${idx},'${e}')" id="nexritfilt_${idx}_${e}" style="background:transparent;border:1px solid var(--border2);color:var(--ink3);font-family:'Share Tech Mono';font-size:0.55em;padding:3px 8px;cursor:pointer;" class="nrfb">${e}</button>`).join('')}
             <button onclick="filtrarNexRit(${idx},'Todos')" style="background:transparent;border:1px solid var(--border2);color:var(--ink3);font-family:'Share Tech Mono';font-size:0.55em;padding:3px 8px;cursor:pointer;">Todos</button>
@@ -193,9 +205,10 @@ function abrirNexModal(nex, classe) {
       rits.forEach((r, ri) => {
         html += `<div class="rit-choice-item" id="ritchk_${idx}_${ri}"
           data-elem="${r.elem}"
+          data-search="${r.nome.toLowerCase()} ${r.desc.toLowerCase()}"
           onclick="nexChooseRit(${idx},${ri},'${escHtml(r.nome)}','${r.elem}','${r.circ}')">
           <div class="rit-choice-name"><span style="opacity:0.6;font-size:0.8em;">[${r.elem} · ${r.circ}°]</span> ${r.nome}</div>
-          <div class="rit-choice-desc">${r.desc.substring(0,100)}${r.desc.length>100?'...':''}</div>
+          <div class="rit-choice-desc">${r.desc.substring(0,120)}${r.desc.length>120?'...':''}</div>
         </div>`;
       });
       html += `</div></div>`;
@@ -217,6 +230,23 @@ function escHtml(str) {
   return (str||'').replace(/'/g,"&#39;").replace(/"/g,"&quot;").replace(/\n/g,' ');
 }
 
+function filtrarNexHab(idx) {
+  const q = (document.getElementById(`nexHabSearch_${idx}`)?.value||'').toLowerCase().trim();
+  document.getElementById(`nexhablist_${idx}`)?.querySelectorAll('.hab-choice-item').forEach(el => {
+    el.style.display = (!q || el.dataset.search.includes(q)) ? '' : 'none';
+  });
+}
+
+function filtrarNexRitBusca(idx) {
+  const q = (document.getElementById(`nexRitSearch_${idx}`)?.value||'').toLowerCase().trim();
+  const elemFiltro = window[`_nexRitElem_${idx}`] || 'Todos';
+  document.getElementById(`nexritlist_${idx}`)?.querySelectorAll('.rit-choice-item').forEach(el => {
+    const elemOk = elemFiltro === 'Todos' || el.dataset.elem === elemFiltro;
+    const buscaOk = !q || el.dataset.search.includes(q);
+    el.style.display = (elemOk && buscaOk) ? '' : 'none';
+  });
+}
+
 function nexChooseAtr(idx, atrId) {
   _nexModalChoices[idx] = {type:'atr', atrId};
   document.querySelectorAll(`[id^="atrchk_${idx}_"]`).forEach(b => b.classList.remove('selected'));
@@ -236,17 +266,21 @@ function nexChooseRit(idx, ri, nome, elem, circ) {
   if (el) el.classList.add('selected');
 }
 function filtrarNexRit(idx, elem) {
+  window[`_nexRitElem_${idx}`] = elem;
+  const q = (document.getElementById(`nexRitSearch_${idx}`)?.value||'').toLowerCase().trim();
   const list = document.getElementById(`nexritlist_${idx}`);
   if (!list) return;
   list.querySelectorAll('.rit-choice-item').forEach(el => {
-    el.style.display = (elem === 'Todos' || el.dataset.elem === elem) ? '' : 'none';
+    const elemOk = (elem === 'Todos' || el.dataset.elem === elem);
+    const buscaOk = !q || el.dataset.search.includes(q);
+    el.style.display = (elemOk && buscaOk) ? '' : 'none';
   });
 }
 
 function confirmarNexModal() {
   _nexModalPending.forEach((gain, idx) => {
     const choice = _nexModalChoices[idx];
-    if (!choice) return; // não escolheu, ok
+    if (!choice) return;
     if (choice.type === 'atr') {
       const el = document.getElementById(choice.atrId);
       if (el) {
@@ -264,7 +298,6 @@ function confirmarNexModal() {
   });
   fecharNexModal();
   triggerSalvar();
-  // Muda aba para mostrar poderes se houve hab/rit
   const hasHabOrRit = _nexModalPending.some(g => g.type === 'hab' || g.type === 'rit');
   if (hasHabOrRit) {
     const btn = document.querySelector('.main-tab:nth-child(3)');
@@ -323,13 +356,64 @@ function atuDots(id){
 }
 function atuTodosDots(){['agilidade','forca','intelecto','presenca','vigor'].forEach(atuDots);}
 
-// STAT ADJUST (MUDANÇA 2)
+// STAT ADJUST
 function adjStat(id, delta) {
   const el = document.getElementById(id);
   if (!el) return;
   el.value = (parseInt(el.value)||0) + delta;
+  // Se ajustar máximo manualmente, marcar como manual
+  if (id === 'pvMax' || id === 'peMax' || id === 'sanMax') {
+    el.dataset.manual = '1';
+  }
   atuBarras();
   triggerSalvar();
+}
+
+// ============================================================
+// PROFICIÊNCIAS
+// ============================================================
+const PROFICIENCIAS = {
+  combatente: [
+    { id: 'prof_armas_simples', label: 'Armas Simples', always: true },
+    { id: 'prof_armas_taticas', label: 'Armas Táticas', always: true },
+    { id: 'prof_protecao_leve', label: 'Proteções Leves', always: true },
+    { id: 'prof_protecao_pesada', label: 'Proteção Pesada', always: false, req: 'Proteção Pesada' },
+  ],
+  especialista: [
+    { id: 'prof_armas_simples', label: 'Armas Simples', always: true },
+    { id: 'prof_protecao_leve', label: 'Proteções Leves', always: true },
+  ],
+  ocultista: [
+    { id: 'prof_armas_simples', label: 'Armas Simples', always: true },
+  ],
+};
+
+function buildProficiencias() {
+  const cont = document.getElementById('profCont');
+  if (!cont) return;
+  const cls = document.getElementById('classe')?.value || 'especialista';
+  const profs = PROFICIENCIAS[cls] || [];
+  cont.innerHTML = '';
+  if (profs.length === 0) { cont.innerHTML = '<span style="font-family:\'Share Tech Mono\';font-size:0.62em;color:var(--ink3);">Nenhuma proficiência disponível.</span>'; return; }
+
+  // Verificar se tem poder "Proteção Pesada"
+  const temProtPesada = checkHabExists('Proteção Pesada');
+
+  profs.forEach(p => {
+    const disabled = (!p.always && p.req === 'Proteção Pesada' && !temProtPesada);
+    const checked = document.getElementById(p.id)?.checked ?? p.always;
+    const item = document.createElement('label');
+    item.className = 'prof-item' + (disabled ? ' prof-disabled' : '');
+    item.innerHTML = `<input type="checkbox" id="${p.id}" ${p.always ? '' : ''} ${disabled ? 'disabled' : ''} ${checked && !disabled ? 'checked' : (p.always ? 'checked' : '')} onchange="triggerSalvar()">
+      <span class="prof-label">${p.label}</span>
+      ${p.req ? `<span class="prof-req">(requer: ${p.req})</span>` : ''}`;
+    cont.appendChild(item);
+  });
+}
+
+function checkHabExists(nome) {
+  return Array.from(document.getElementById('habCont')?.querySelectorAll('.hab-nome') || [])
+    .some(el => el.value.toLowerCase().includes(nome.toLowerCase()));
 }
 
 // PERÍCIAS
@@ -466,36 +550,68 @@ function atuBarras(){
   document.getElementById('sanFill').style.width=pct(san)+'%';
 }
 
+// ============================================================
+// CÁLCULO DE DERIVADOS — AJUSTE PROPORCIONAL DO MÁXIMO
+// Quando o usuário altera o máximo manualmente, o novo NEX/atributo
+// aplica a diferença (delta) ao valor atual do máximo.
+// ============================================================
+let _lastCalcStats = { pvMax: null, peMax: null, sanMax: null };
+
 function calcDeriv(){
   const agi=parseInt(document.getElementById('agilidade').value)||0;
   document.getElementById('defTotal').textContent=10+agi+(parseInt(document.getElementById('defBonus').value)||0);
   const cls=document.getElementById('classe').value||'especialista';
   const nex=parseInt(document.getElementById('nexN').value)||5;
   const s=CLASSES_STATS[cls];const niveis=Math.floor(nex/5);
-  const pvMax=s.pvBase+(parseInt(document.getElementById('vigor').value)||0)+(niveis-1)*(s.pvNex+(parseInt(document.getElementById('vigor').value)||0));
-  const peMax=s.peBase+(parseInt(document.getElementById('presenca').value)||0)+(niveis-1)*(s.peNex+(parseInt(document.getElementById('presenca').value)||0));
-  const sanMax=s.sanBase+(niveis-1)*s.sanNex;
-  // MUDANÇA 2: só recalcula máximo se não houve modificação manual
-  // Usamos data-auto para detectar se o usuário não editou manualmente
+  const vig=parseInt(document.getElementById('vigor').value)||0;
+  const pre=parseInt(document.getElementById('presenca').value)||0;
+
+  // Calcular valores "teóricos" baseados nos atributos e NEX
+  const pvTeor = s.pvBase + vig + (niveis-1)*(s.pvNex + vig);
+  const peTeor = s.peBase + pre + (niveis-1)*(s.peNex + pre);
+  const sanTeor = s.sanBase + (niveis-1)*s.sanNex;
+
   const pvEl = document.getElementById('pvMax');
   const peEl = document.getElementById('peMax');
   const sanEl = document.getElementById('sanMax');
-  if(!pvEl.dataset.manual) pvEl.value = pvMax;
-  if(!peEl.dataset.manual) peEl.value = peMax;
-  if(!sanEl.dataset.manual) sanEl.value = sanMax;
-  document.getElementById('pvFormula').textContent=`${s.pvBase}+Vig (${cls}), +${s.pvNex}+Vig/NEX`;
-  document.getElementById('peFormula').textContent=`${s.peBase}+Pre (${cls}), +${s.peNex}+Pre/NEX`;
-  document.getElementById('sanFormula').textContent=`${s.sanBase} (${cls}), +${s.sanNex}/NEX`;
+
+  if (!pvEl.dataset.manual) {
+    pvEl.value = pvTeor;
+  } else {
+    // Proporcional: se o teórico mudou, aplica o delta
+    const prevTeor = parseInt(pvEl.dataset.prevTeor)||pvTeor;
+    const delta = pvTeor - prevTeor;
+    if (delta !== 0) pvEl.value = (parseInt(pvEl.value)||0) + delta;
+  }
+  pvEl.dataset.prevTeor = pvTeor;
+
+  if (!peEl.dataset.manual) {
+    peEl.value = peTeor;
+  } else {
+    const prevTeor = parseInt(peEl.dataset.prevTeor)||peTeor;
+    const delta = peTeor - prevTeor;
+    if (delta !== 0) peEl.value = (parseInt(peEl.value)||0) + delta;
+  }
+  peEl.dataset.prevTeor = peTeor;
+
+  if (!sanEl.dataset.manual) {
+    sanEl.value = sanTeor;
+  } else {
+    const prevTeor = parseInt(sanEl.dataset.prevTeor)||sanTeor;
+    const delta = sanTeor - prevTeor;
+    if (delta !== 0) sanEl.value = (parseInt(sanEl.value)||0) + delta;
+  }
+  sanEl.dataset.prevTeor = sanTeor;
+
+  document.getElementById('pvFormula').textContent=`${s.pvBase}+Vig=${s.pvBase+vig} base, +${s.pvNex}+Vig=${s.pvNex+vig}/NEX`;
+  document.getElementById('peFormula').textContent=`${s.peBase}+Pre=${s.peBase+pre} base, +${s.peNex}+Pre=${s.peNex+pre}/NEX`;
+  document.getElementById('sanFormula').textContent=`${s.sanBase} base (${cls}), +${s.sanNex}/NEX`;
+
+  const lim=Math.ceil(nex/5);
+  document.getElementById('peLimite').textContent=lim;
+
   atuTodas();atuBarras();triggerSalvar();
 }
-
-// rastrear edição manual nos máximos
-['pvMax','peMax','sanMax'].forEach(id => {
-  document.addEventListener('DOMContentLoaded', () => {
-    const el = document.getElementById(id);
-    if(el) el.addEventListener('input', () => { el.dataset.manual = '1'; });
-  });
-});
 
 let _prevNex = 5;
 function ajustarNEX(d){
@@ -514,7 +630,6 @@ function atuNEX(fromButton){
   document.getElementById('peLimite').textContent=lim;
   document.getElementById('nexDesc').textContent='Limite de PE/turno: '+lim+' · Habilidades de NEX '+n+'% desbloqueadas';
 
-  // MUDANÇA 1: abrir modal de progressão quando NEX aumenta
   if(fromButton && n > _prevNex && n > 5) {
     const cls=document.getElementById('classe').value||'especialista';
     abrirNexModal(n, cls);
@@ -631,11 +746,11 @@ function mkHab(n='',d=''){
   <div class="coll-header" onclick="collToggle(this)">
     <span class="coll-arrow">▶</span>
     <span class="coll-title">${n||'Nova Habilidade'}</span>
-    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar()">🗑</button>
+    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar();buildProficiencias()">🗑</button>
   </div>
   <div class="coll-body">
     <div class="campo" style="margin-bottom:8px;"><label class="lbl">Nome</label>
-      <input type="text" class="hab-nome" value="${n}" placeholder="Nome da Habilidade" oninput="this.closest('.coll-item').querySelector('.coll-title').textContent=this.value||'Nova Habilidade'">
+      <input type="text" class="hab-nome" value="${n}" placeholder="Nome da Habilidade" oninput="this.closest('.coll-item').querySelector('.coll-title').textContent=this.value||'Nova Habilidade';buildProficiencias()">
     </div>
     <div class="campo"><label class="lbl">Custo / Efeito / Pré-requisito</label>
       <textarea class="hab-desc" style="min-height:50px;" placeholder="Ex: 2 PE — Recebe +5 no teste de ataque...">${d}</textarea>
@@ -700,7 +815,7 @@ function inserirHab(i){
   if(typeof HABS_LIVRO==='undefined')return;
   const h=HABS_LIVRO[i];
   const d=document.getElementById('habCont').appendChild(mkHab(h.nome,'Custo: '+h.custo+' · '+h.desc));
-  d.classList.add('open');document.getElementById('modalHab')?.remove();triggerSalvar();
+  d.classList.add('open');document.getElementById('modalHab')?.remove();triggerSalvar();buildProficiencias();
 }
 
 // ELEM CLASS MAP
@@ -757,7 +872,7 @@ function mkRit(data={}){
       </div>
     </div>
     <div style="margin-bottom:10px;">
-      <button class="btn-add" style="border-color:var(--purple);color:var(--purple);" onclick="conjurarRitual(this)">Conjurar Ritual</button>
+      <button class="btn-add" style="border-color:var(--purple);color:var(--purple);" onclick="conjurarRitual(this)">⚡ Conjurar Ritual</button>
     </div>
     <div class="rit-tabs">
       <button class="rit-tab ${activeTab==='normal'?'active':''}" onclick="switchRitTab(this,'normal')">Normal</button>
@@ -914,14 +1029,53 @@ function inserirRitual(i){
   d.classList.add('open');document.getElementById('modalRit')?.remove();triggerSalvar();
 }
 
-// INVENTÁRIO
+// ============================================================
+// INVENTÁRIO — COM DRAG & DROP
+// ============================================================
 function mkItem(n='',d='',exp=false){
-  const div=document.createElement('div');div.className='inv-it';
-  div.innerHTML=`<div class="inv-row"><button class="inv-exp" onclick="toggleInv(this)">▸</button><input type="text" class="inv-ni" placeholder="Item..."><button class="inv-del" onclick="this.closest('.inv-it').remove();triggerSalvar()">✕</button></div><textarea class="inv-dt" placeholder="Detalhes, propriedades..."${exp?' style="display:block;"':''}></textarea>`;
+  const div=document.createElement('div');div.className='inv-it';div.draggable=true;
+  div.innerHTML=`<div class="inv-row">
+    <span class="inv-drag" title="Arrastar para reordenar">⠿</span>
+    <button class="inv-exp" onclick="toggleInv(this)">▸</button>
+    <input type="text" class="inv-ni" placeholder="Item...">
+    <button class="inv-del" onclick="this.closest('.inv-it').remove();triggerSalvar()">✕</button>
+  </div>
+  <textarea class="inv-dt" placeholder="Detalhes, propriedades..."${exp?' style="display:block;"':''}></textarea>`;
   div.querySelector('.inv-ni').value=n;div.querySelector('.inv-dt').value=d;
   if(exp)div.querySelector('.inv-exp').textContent='▾';
-  div.addEventListener('input',()=>triggerSalvar());return div;
+  div.addEventListener('input',()=>triggerSalvar());
+  // Drag and drop events
+  div.addEventListener('dragstart', invDragStart);
+  div.addEventListener('dragover', invDragOver);
+  div.addEventListener('drop', invDrop);
+  div.addEventListener('dragend', invDragEnd);
+  return div;
 }
+
+let _dragSrc = null;
+function invDragStart(e) {
+  _dragSrc = this;
+  this.classList.add('inv-dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function invDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const cont = document.getElementById('invCont');
+  const items = [...cont.querySelectorAll('.inv-it:not(.inv-dragging)')];
+  const afterEl = items.find(el => {
+    const r = el.getBoundingClientRect();
+    return e.clientY < r.top + r.height / 2;
+  });
+  if (afterEl) cont.insertBefore(_dragSrc, afterEl);
+  else cont.appendChild(_dragSrc);
+}
+function invDrop(e) { e.preventDefault(); triggerSalvar(); }
+function invDragEnd(e) {
+  if (_dragSrc) _dragSrc.classList.remove('inv-dragging');
+  _dragSrc = null;
+}
+
 function addItem(){document.getElementById('invCont').appendChild(mkItem());}
 function toggleInv(btn){const d=btn.closest('.inv-it').querySelector('.inv-dt');const v=d.style.display==='block';d.style.display=v?'none':'block';btn.textContent=v?'▸':'▾';}
 function extI(){return Array.from(document.getElementById('invCont').children).map(d=>({n:d.querySelector('.inv-ni')?.value||'',d:d.querySelector('.inv-dt')?.value||'',exp:d.querySelector('.inv-dt')?.style.display==='block'}));}
@@ -933,7 +1087,7 @@ function editarAvatar(){
 function setAv(u){const i=document.getElementById('avatarImg'),p=document.getElementById('avatarPh');if(u&&u.trim()){i.src=u;i.style.display='block';p.style.display='none';}else{i.style.display='none';p.style.display='flex';}}
 
 // ============================================================
-// EXTRAÇÃO + SALVAR — CORRIGIDO (MUDANÇA 5)
+// EXTRAÇÃO + SALVAR
 // ============================================================
 function extA(){
   return Array.from(document.getElementById('atkCont')?.children||[]).map(d=>({
@@ -984,12 +1138,18 @@ function extP(){
     d:d.querySelector('.paranormal-desc')?.value||''
   }));
 }
+function extProfs() {
+  const result = {};
+  document.querySelectorAll('#profCont input[type=checkbox]').forEach(el => {
+    result[el.id] = el.checked;
+  });
+  return result;
+}
 
 const gv=id=>document.getElementById(id)?.value||'';
 const sv=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
 
 function coletarFicha(){
-  // Salvar atributos atuais de perícia dos selects
   const psAtrSave={};
   PERI.forEach(p=>{const s=document.getElementById('pa_'+p.id);if(s)psAtrSave[p.id]=s.value;});
   window._profExtras.forEach((_,i)=>{const s=document.getElementById('pa_profissao_extra_'+i);if(s)window._profExtras[i].atr=s.value;});
@@ -1004,16 +1164,20 @@ function coletarFicha(){
     vigor:parseInt(gv('vigor'))||0,
     pvAtual:parseInt(gv('pvAtual'))||0,pvMax:parseInt(gv('pvMax'))||0,
     pvMaxManual:document.getElementById('pvMax')?.dataset.manual||'',
+    pvMaxTeor:document.getElementById('pvMax')?.dataset.prevTeor||'',
     peAtual:parseInt(gv('peAtual'))||0,peMax:parseInt(gv('peMax'))||0,
     peMaxManual:document.getElementById('peMax')?.dataset.manual||'',
+    peMaxTeor:document.getElementById('peMax')?.dataset.prevTeor||'',
     sanAtual:parseInt(gv('sanAtual'))||0,sanMax:parseInt(gv('sanMax'))||0,
     sanMaxManual:document.getElementById('sanMax')?.dataset.manual||'',
+    sanMaxTeor:document.getElementById('sanMax')?.dataset.prevTeor||'',
     defBonus:parseInt(gv('defBonus'))||0,
     pericias:JSON.stringify(window._ps||{}),
     perBonus:JSON.stringify(window._psBon||{}),
     perAtr:JSON.stringify(psAtrSave),
     profNome:profNomeEl?.value||'',
     profExtras:JSON.stringify(window._profExtras||[]),
+    proficiencias:extProfs(),
     ataques:extA(),habilidades:extH(),rituais:extR(),
     poderesParanormais:extP(),inventario:extI()
   };
@@ -1024,7 +1188,6 @@ function preencher(f){
   sv('classe',f.classe||'especialista');sv('nexN',f.nex||5);
   ['agilidade','forca','intelecto','presenca','vigor'].forEach(id=>sv(id,f[id]||0));
 
-  // MUDANÇA 2+5: restaurar valores com flags manuais
   const pvMaxEl = document.getElementById('pvMax');
   const peMaxEl = document.getElementById('peMax');
   const sanMaxEl = document.getElementById('sanMax');
@@ -1032,8 +1195,11 @@ function preencher(f){
   sv('peAtual',f.peAtual||0); sv('peMax',f.peMax||0);
   sv('sanAtual',f.sanAtual||0); sv('sanMax',f.sanMax||0);
   if(f.pvMaxManual) pvMaxEl.dataset.manual='1';
+  if(f.pvMaxTeor) pvMaxEl.dataset.prevTeor=f.pvMaxTeor;
   if(f.peMaxManual) peMaxEl.dataset.manual='1';
+  if(f.peMaxTeor) peMaxEl.dataset.prevTeor=f.peMaxTeor;
   if(f.sanMaxManual) sanMaxEl.dataset.manual='1';
+  if(f.sanMaxTeor) sanMaxEl.dataset.prevTeor=f.sanMaxTeor;
 
   sv('defBonus',f.defBonus||0);
   sv('patente',f.patente||'recruta');sv('creditos',f.creditos||'baixo');
@@ -1055,6 +1221,14 @@ function preencher(f){
   (f.poderesParanormais||[]).forEach(p=>document.getElementById('paranormalCont').appendChild(mkParanormal(p.n,p.d)));
   document.getElementById('invCont').innerHTML='';
   (f.inventario||[]).forEach(i=>document.getElementById('invCont').appendChild(mkItem(i.n,i.d,i.exp)));
+  // Restaurar proficiências
+  buildProficiencias();
+  if(f.proficiencias) {
+    Object.entries(f.proficiencias).forEach(([id, checked]) => {
+      const el = document.getElementById(id);
+      if (el && !el.disabled) el.checked = checked;
+    });
+  }
   _prevNex = parseInt(f.nex)||5;
   atuTodosDots();calcDeriv();atuNEX(false);atuBarras();
 }
@@ -1066,9 +1240,9 @@ function limpar(){
   const pvMaxEl=document.getElementById('pvMax');
   const peMaxEl=document.getElementById('peMax');
   const sanMaxEl=document.getElementById('sanMax');
-  sv('pvAtual',0);sv('pvMax',0);delete pvMaxEl.dataset.manual;
-  sv('peAtual',0);sv('peMax',0);delete peMaxEl.dataset.manual;
-  sv('sanAtual',0);sv('sanMax',0);delete sanMaxEl.dataset.manual;
+  sv('pvAtual',0);sv('pvMax',0);delete pvMaxEl.dataset.manual; delete pvMaxEl.dataset.prevTeor;
+  sv('peAtual',0);sv('peMax',0);delete peMaxEl.dataset.manual; delete peMaxEl.dataset.prevTeor;
+  sv('sanAtual',0);sv('sanMax',0);delete sanMaxEl.dataset.manual; delete sanMaxEl.dataset.prevTeor;
   sv('defBonus',0);sv('patente','recruta');sv('creditos','baixo');
   document.getElementById('patenteDisplay').textContent='RECRUTA';
   setAv('');document.getElementById('avatarUrl').value='';
@@ -1076,10 +1250,9 @@ function limpar(){
   ['atkCont','habCont','ritCont','paranormalCont','invCont'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.innerHTML='';
   });
-  _prevNex=5;buildPeri();atuTodosDots();calcDeriv();atuNEX(false);atuBarras();
+  _prevNex=5;buildPeri();atuTodosDots();calcDeriv();atuNEX(false);atuBarras();buildProficiencias();
 }
 
-// MUDANÇA 5: salvar corrigido com try/catch robusto
 function salvarFicha(){
   setSave('saving');
   try {
@@ -1131,7 +1304,9 @@ function setSave(s){
   if(s==='saved')setTimeout(()=>e.className='save-ind idle',3000);
 }
 
-// Conjurar ritual
+// ============================================================
+// CONJURAR RITUAL — COM INDICAÇÃO DE RESULTADO
+// ============================================================
 function conjurarRitual(btn){
   const item=btn.closest('.coll-item');
   const nome=item.querySelector('.rit-nome')?.value||'Ritual';
@@ -1144,16 +1319,46 @@ function conjurarRitual(btn){
   peAtual-=custoPE;peAtualEl.value=peAtual;atuBarras();
   const ocultismo=window._ps['ocultismo']||'';
   const av=getAtr('Int')+(ocultismo?GB[ocultismo]:0)+parseInt(window._psBon['ocultismo']||0);
-  const dificuldade=20+custoPE;const res=d20s(av);const tot=res.best;
+  const dificuldade=20+custoPE;const res=d20s(av);const tot=res.best+(ocultismo?GB[ocultismo]:0)+parseInt(window._psBon['ocultismo']||0);
   const sucesso=tot>=dificuldade;const margemFalha=dificuldade-tot;
-  showDado('Conjuração: '+nome+' (Ocultismo)',res.best,0,tot,res.rolou,res.all);
+  const falhaGrave = margemFalha >= 5;
+
+  // Mostrar dado especial com resultado da conjuração
+  const ov=document.createElement('div');ov.className='dado-ov';
+  let resultClass = sucesso ? 'conj-sucesso' : falhaGrave ? 'conj-falha-grave' : 'conj-falha';
+  let resultLabel = sucesso ? '✓ CONJURAÇÃO BEM-SUCEDIDA' : falhaGrave ? '✗ FALHA GRAVE (≥5)' : '✗ FALHA';
+  let resultColor = sucesso ? 'var(--green)' : falhaGrave ? 'var(--red)' : 'var(--gold)';
+  let resultInfo = sucesso
+    ? 'O ritual foi conjurado com sucesso!'
+    : falhaGrave
+      ? `Falha por ${margemFalha} — Sanidade atual e máxima reduzidas!`
+      : `Falha por ${margemFalha} — Perde ${custoPE} de Sanidade atual.`;
+
+  ov.innerHTML=`<div class="dado-card ${sucesso?'cs':falhaGrave?'cf':''}">
+    <div class="dado-hd">${nome} · Ocultismo · DT ${dificuldade} (20+${custoPE}PE)</div>
+    <div class="dado-tot" style="color:${resultColor}">${tot}</div>
+    <div class="conj-result-badge" style="background:${resultColor}20;border:1px solid ${resultColor};color:${resultColor};font-family:'Special Elite',serif;font-size:0.78em;letter-spacing:2px;padding:6px 16px;margin:8px auto;display:inline-block;">${resultLabel}</div>
+    <div style="font-family:'Share Tech Mono';font-size:0.62em;color:var(--ink3);margin-top:6px;">${resultInfo}</div>
+    <div style="font-family:'Share Tech Mono';font-size:0.58em;color:var(--ink3);margin-top:4px;">d20=${res.best} · bônus ocultismo=${(ocultismo?GB[ocultismo]:0)+parseInt(window._psBon['ocultismo']||0)} · −${custoPE} PE</div>
+    <div class="dado-dis">clique para fechar</div>
+  </div>`;
+  document.body.appendChild(ov);ov.addEventListener('click',()=>ov.remove());setTimeout(()=>ov.remove(),10000);
+
   if(!sucesso){
     const sanAtualEl=document.getElementById('sanAtual');const sanMaxEl=document.getElementById('sanMax');
-    let sanAtual=parseInt(sanAtualEl.value)||0;let sanMax=parseInt(sanMaxEl.value)||0;
-    sanAtual-=custoPE;if(margemFalha>=5){sanMax-=1;sanMaxEl.dataset.manual='1';}
-    sanAtualEl.value=sanAtual;sanMaxEl.value=sanMax;
-    atuBarras();addLog('Falha em Conjuração: '+nome+' - Sanidade -'+custoPE+(margemFalha>=5?' (Máx -1)':''));
-  } else {addLog('Sucesso em Conjuração: '+nome);}
+    let sanAtual=parseInt(sanAtualEl.value)||0;
+    sanAtual-=custoPE;
+    sanAtualEl.value=sanAtual;
+    if(falhaGrave){
+      let sanMax=parseInt(sanMaxEl.value)||0;
+      sanMax-=1;sanMaxEl.value=sanMax;
+      sanMaxEl.dataset.manual='1';
+    }
+    atuBarras();
+    addLog('Falha em Conjuração: '+nome+' — SAN −'+custoPE+(falhaGrave?' (Máx −1)':''));
+  } else {
+    addLog('Sucesso em Conjuração: '+nome+' (tot='+tot+', DT='+dificuldade+')');
+  }
 }
 
 // INIT
@@ -1165,15 +1370,19 @@ window.addEventListener('load',()=>{
   // listener para marcar edição manual nos max
   ['pvMax','peMax','sanMax'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el)el.addEventListener('input',()=>{el.dataset.manual='1';atuBarras();});
+    if(el)el.addEventListener('input',()=>{el.dataset.manual='1';atuBarras();triggerSalvar();});
   });
-  // listener para pvAtual/peAtual/sanAtual
   ['pvAtual','peAtual','sanAtual'].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.addEventListener('input',()=>atuBarras());
   });
 
+  // listener para classe — rebuildar proficiências
+  const classeEl = document.getElementById('classe');
+  if(classeEl) classeEl.addEventListener('change', () => { buildProficiencias(); calcDeriv(); triggerSalvar(); });
+
   calcDeriv();atuNEX(false);atuBarras();atuTodosDots();
+  buildProficiencias();
   carregarFicha();
 
   document.addEventListener('change',e=>{
