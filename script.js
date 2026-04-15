@@ -1,0 +1,1182 @@
+// ============================================================
+// DADOS DE PROGRESSÃO POR CLASSE E NEX
+// ============================================================
+const NEX_PROGRESSION = {
+  combatente: {
+    5:  [{type:'info', text:'Ataque Especial desbloqueado (2 PE, +5 no ataque ou dano)'}],
+    10: [{type:'info', text:'Habilidade de Trilha — escolha sua trilha de combatente nas configurações.'}],
+    15: [{type:'hab', classe:'Combatente', label:'Poder de Combatente'}],
+    20: [{type:'atr', label:'Aumento de Atributo'}],
+    25: [{type:'info', text:'Ataque Especial: agora 3 PE, +10 no ataque ou dano.'}],
+    30: [{type:'hab', classe:'Combatente', label:'Poder de Combatente'}],
+    35: [{type:'info', text:'Grau de Treinamento: aumente 2+Int perícias de Treinado→Veterano ou Veterano→Expert.'}],
+    40: [{type:'info', text:'Habilidade de Trilha — próximo poder da sua trilha.'}],
+    45: [{type:'hab', classe:'Combatente', label:'Poder de Combatente'}],
+    50: [{type:'atr', label:'Aumento de Atributo'},{type:'info', text:'Versatilidade: escolha um poder extra ou primeiro poder de outra trilha.'}],
+    55: [{type:'info', text:'Ataque Especial: agora 4 PE, +15 no ataque ou dano.'}],
+    60: [{type:'hab', classe:'Combatente', label:'Poder de Combatente'}],
+    65: [{type:'info', text:'Habilidade de Trilha — próximo poder da sua trilha.'}],
+    70: [{type:'info', text:'Grau de Treinamento: aumente 2+Int perícias de Treinado→Veterano ou Veterano→Expert.'}],
+    75: [{type:'hab', classe:'Combatente', label:'Poder de Combatente'}],
+    80: [{type:'atr', label:'Aumento de Atributo'}],
+    85: [{type:'info', text:'Ataque Especial: agora 5 PE, +20 no ataque ou dano.'}],
+    90: [{type:'hab', classe:'Combatente', label:'Poder de Combatente'}],
+    95: [{type:'atr', label:'Aumento de Atributo'}],
+    99: [{type:'info', text:'Habilidade de Trilha — poder final da sua trilha.'}],
+  },
+  especialista: {
+    5:  [{type:'info', text:'Eclético desbloqueado (2 PE = tratado como treinado). Perito(2 PE, +1d6) desbloqueado.'}],
+    10: [{type:'info', text:'Habilidade de Trilha — escolha sua trilha de especialista.'}],
+    15: [{type:'hab', classe:'Especialista', label:'Poder de Especialista'}],
+    20: [{type:'atr', label:'Aumento de Atributo'}],
+    25: [{type:'info', text:'Perito atualizado: 3 PE, +1d8.'}],
+    30: [{type:'hab', classe:'Especialista', label:'Poder de Especialista'}],
+    35: [{type:'info', text:'Grau de Treinamento: aumente 5+Int perícias treinadas.'}],
+    40: [{type:'info', text:'Engenhosidade (Veterano) e Habilidade de Trilha — próximo poder.'}],
+    45: [{type:'hab', classe:'Especialista', label:'Poder de Especialista'}],
+    50: [{type:'atr', label:'Aumento de Atributo'},{type:'info', text:'Versatilidade: escolha poder ou primeiro poder de outra trilha.'}],
+    55: [{type:'info', text:'Perito atualizado: 4 PE, +1d10.'}],
+    60: [{type:'hab', classe:'Especialista', label:'Poder de Especialista'}],
+    65: [{type:'info', text:'Habilidade de Trilha — próximo poder.'}],
+    70: [{type:'info', text:'Grau de Treinamento: aumente 5+Int perícias treinadas.'}],
+    75: [{type:'info', text:'Engenhosidade (Expert).'},{type:'hab', classe:'Especialista', label:'Poder de Especialista'}],
+    80: [{type:'atr', label:'Aumento de Atributo'}],
+    85: [{type:'info', text:'Perito atualizado: 5 PE, +1d12.'}],
+    90: [{type:'hab', classe:'Especialista', label:'Poder de Especialista'}],
+    95: [{type:'atr', label:'Aumento de Atributo'}],
+    99: [{type:'info', text:'Habilidade de Trilha — poder final da sua trilha.'}],
+  },
+  ocultista: {
+    5:  [{type:'info', text:'Magia desbloqueada (1 PE). Aprende rituais ao avançar de NEX.'},{type:'rit', label:'Aprender Ritual (NEX 5%)'}],
+    10: [{type:'info', text:'Habilidade de Trilha — escolha sua trilha de ocultista.'},{type:'rit', label:'Aprender Ritual'}],
+    15: [{type:'hab', classe:'Ocultista', label:'Poder de Ocultista'},{type:'rit', label:'Aprender Ritual'}],
+    20: [{type:'atr', label:'Aumento de Atributo'},{type:'rit', label:'Aprender Ritual'}],
+    25: [{type:'info', text:'Magia: 2 PE.'},{type:'rit', label:'Aprender Ritual'}],
+    30: [{type:'hab', classe:'Ocultista', label:'Poder de Ocultista'},{type:'rit', label:'Aprender Ritual'}],
+    35: [{type:'info', text:'Grau de Treinamento: aumente 4+Int perícias.'},{type:'rit', label:'Aprender Ritual'}],
+    40: [{type:'info', text:'Habilidade de Trilha — próximo poder.'},{type:'rit', label:'Aprender Ritual'}],
+    45: [{type:'hab', classe:'Ocultista', label:'Poder de Ocultista'},{type:'rit', label:'Aprender Ritual'}],
+    50: [{type:'atr', label:'Aumento de Atributo'},{type:'rit', label:'Aprender Ritual'}],
+    55: [{type:'info', text:'Magia: 3 PE.'},{type:'rit', label:'Aprender Ritual'}],
+    60: [{type:'hab', classe:'Ocultista', label:'Poder de Ocultista'},{type:'rit', label:'Aprender Ritual'}],
+    65: [{type:'info', text:'Habilidade de Trilha — próximo poder.'},{type:'rit', label:'Aprender Ritual'}],
+    70: [{type:'info', text:'Grau de Treinamento: aumente 4+Int perícias.'},{type:'rit', label:'Aprender Ritual'}],
+    75: [{type:'hab', classe:'Ocultista', label:'Poder de Ocultista'},{type:'rit', label:'Aprender Ritual'}],
+    80: [{type:'atr', label:'Aumento de Atributo'},{type:'rit', label:'Aprender Ritual'}],
+    85: [{type:'info', text:'Magia: 4 PE.'},{type:'rit', label:'Aprender Ritual'}],
+    90: [{type:'hab', classe:'Ocultista', label:'Poder de Ocultista'},{type:'rit', label:'Aprender Ritual'}],
+    95: [{type:'atr', label:'Aumento de Atributo'},{type:'rit', label:'Aprender Ritual'}],
+    99: [{type:'info', text:'Habilidade de Trilha — poder final.'},{type:'rit', label:'Aprender Ritual'}],
+  }
+};
+
+const CLASSES_STATS={
+  combatente:{pvBase:20,pvNex:4,peBase:2,peNex:2,sanBase:12,sanNex:3},
+  especialista:{pvBase:16,pvNex:3,peBase:3,peNex:3,sanBase:16,sanNex:4},
+  ocultista:{pvBase:12,pvNex:2,peBase:4,peNex:4,sanBase:20,sanNex:5}
+};
+const PATENTES={recruta:{label:'Recruta',credito:'baixo'},operador:{label:'Operador',credito:'medio'},agente_especial:{label:'Agente Especial',credito:'medio'},oficial_operacoes:{label:'Oficial de Operações',credito:'alto'},agente_elite:{label:'Agente de Elite',credito:'ilimitado'}};
+const PERI=[
+  {id:'acrobacia',nome:'Acrobacia',atr:'Agi',grupo:'Agilidade'},
+  {id:'crime',nome:'Crime',atr:'Agi',grupo:'Agilidade'},
+  {id:'furtividade',nome:'Furtividade',atr:'Agi',grupo:'Agilidade'},
+  {id:'iniciativa',nome:'Iniciativa',atr:'Agi',grupo:'Agilidade'},
+  {id:'pilotagem',nome:'Pilotagem',atr:'Agi',grupo:'Agilidade'},
+  {id:'pontaria',nome:'Pontaria',atr:'Agi',grupo:'Agilidade'},
+  {id:'reflexos',nome:'Reflexos',atr:'Agi',grupo:'Agilidade'},
+  {id:'atletismo',nome:'Atletismo',atr:'For',grupo:'Força'},
+  {id:'luta',nome:'Luta',atr:'For',grupo:'Força'},
+  {id:'atualidades',nome:'Atualidades',atr:'Int',grupo:'Intelecto'},
+  {id:'ciencias',nome:'Ciências',atr:'Int',grupo:'Intelecto'},
+  {id:'investigacao',nome:'Investigação',atr:'Int',grupo:'Intelecto'},
+  {id:'medicina',nome:'Medicina',atr:'Int',grupo:'Intelecto'},
+  {id:'ocultismo',nome:'Ocultismo',atr:'Int',grupo:'Intelecto'},
+  {id:'profissao',nome:'Profissão',atr:'Int',grupo:'Intelecto',prof:true},
+  {id:'sobrevivencia',nome:'Sobrevivência',atr:'Int',grupo:'Intelecto'},
+  {id:'tatica',nome:'Tática',atr:'Int',grupo:'Intelecto'},
+  {id:'tecnologia',nome:'Tecnologia',atr:'Int',grupo:'Intelecto'},
+  {id:'adestramento',nome:'Adestramento',atr:'Pre',grupo:'Presença'},
+  {id:'artes',nome:'Artes',atr:'Pre',grupo:'Presença'},
+  {id:'diplomacia',nome:'Diplomacia',atr:'Pre',grupo:'Presença'},
+  {id:'enganacao',nome:'Enganação',atr:'Pre',grupo:'Presença'},
+  {id:'intimidacao',nome:'Intimidação',atr:'Pre',grupo:'Presença'},
+  {id:'intuicao',nome:'Intuição',atr:'Pre',grupo:'Presença'},
+  {id:'percepcao',nome:'Percepção',atr:'Pre',grupo:'Presença'},
+  {id:'religiao',nome:'Religião',atr:'Pre',grupo:'Presença'},
+  {id:'vontade',nome:'Vontade',atr:'Pre',grupo:'Presença'},
+  {id:'fortitude',nome:'Fortitude',atr:'Vig',grupo:'Vigor'},
+];
+const ATRS=['Agi','For','Int','Pre','Vig'];
+const GS=['','T','V','E'];
+const GB={'':0,'T':5,'V':10,'E':15};
+const GRUPO_CORES={'Agilidade':'#1a5a72','Força':'#8b2020','Intelecto':'#7a5c1e','Presença':'#4a2a72','Vigor':'#1e5a32'};
+window._ps={};
+window._psBon={};
+window._psAtr={};
+window._profExtras=[];
+
+// ============================================================
+// NEX MODAL — PROGRESSÃO AUTOMÁTICA
+// ============================================================
+
+// Escolhas pendentes para o modal
+let _nexModalPending = [];
+let _nexModalChoices = {}; // {index: valor_escolhido}
+
+function abrirNexModal(nex, classe) {
+  const gains = NEX_PROGRESSION[classe]?.[nex];
+  if (!gains || gains.length === 0) return;
+
+  _nexModalPending = gains;
+  _nexModalChoices = {};
+
+  const container = document.getElementById('nexModalContainer');
+  let html = `<div class="nex-modal-ov" id="nexModal">
+    <div class="nex-modal-box">
+      <div class="nex-modal-header">
+        <div>
+          <div class="nex-modal-title">📈 NEX ${nex}% Atingido!</div>
+          <div class="nex-modal-subtitle">SEUS NOVOS BENEFÍCIOS</div>
+        </div>
+      </div>
+      <div class="nex-modal-body">`;
+
+  gains.forEach((gain, idx) => {
+    html += `<div class="nex-gain-section">`;
+    if (gain.type === 'info') {
+      html += `<div class="nex-gain-header">📜 ${gain.label || 'Benefício Automático'}</div>
+        <div class="nex-gain-body">
+          <div class="info-box">${gain.text}</div>
+        </div>`;
+    } else if (gain.type === 'atr') {
+      const atrMap = [{id:'agilidade',nome:'AGI',cor:'#1a5a72'},{id:'forca',nome:'FOR',cor:'#8b2020'},{id:'intelecto',nome:'INT',cor:'#7a5c1e'},{id:'presenca',nome:'PRE',cor:'#4a2a72'},{id:'vigor',nome:'VIG',cor:'#1e5a32'}];
+      html += `<div class="nex-gain-header">⬆ ${gain.label}</div>
+        <div class="nex-gain-body">
+          <div style="font-family:'Share Tech Mono';font-size:0.65em;color:var(--ink3);margin-bottom:8px;">Escolha um atributo para aumentar em +1 (máximo 5):</div>
+          <div class="atr-choice-grid">`;
+      atrMap.forEach(a => {
+        const cur = parseInt(document.getElementById(a.id)?.value)||0;
+        const disabled = cur >= 5;
+        html += `<button class="atr-choice-btn" id="atrchk_${idx}_${a.id}"
+          style="--atr-c:${a.cor};border-color:${a.cor}20;opacity:${disabled?0.4:1};"
+          onclick="${disabled?'':`nexChooseAtr(${idx},'${a.id}')`}"
+          ${disabled?'disabled':''}>
+          <span style="color:${a.cor};font-family:'Special Elite',serif;">${a.nome}</span>
+          <span class="atr-val-now">${cur}/5</span>
+        </button>`;
+      });
+      html += `</div></div>`;
+    } else if (gain.type === 'hab') {
+      const habs = (typeof HABS_LIVRO !== 'undefined' ? HABS_LIVRO : [])
+        .filter(h => h.classe === gain.classe || h.classe === 'Universal');
+      html += `<div class="nex-gain-header">✦ ${gain.label} <span style="font-size:0.75em;opacity:0.7;">(${gain.classe})</span></div>
+        <div class="nex-gain-body">
+          <div style="font-family:'Share Tech Mono';font-size:0.65em;color:var(--ink3);margin-bottom:8px;">Escolha um poder para adicionar à ficha:</div>
+          <div class="hab-choice-list">`;
+      habs.forEach((h, hi) => {
+        html += `<div class="hab-choice-item" id="habchk_${idx}_${hi}" onclick="nexChooseHab(${idx},${hi},'${escHtml(h.nome)}','${escHtml(h.custo)}','${escHtml(h.desc)}')">
+          <div class="hab-choice-name">${h.nome} <span style="opacity:0.5;font-size:0.8em;">[${h.classe}]</span></div>
+          <div class="hab-choice-desc">Custo: ${h.custo} · ${h.desc.substring(0,100)}${h.desc.length>100?'...':''}</div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    } else if (gain.type === 'rit') {
+      const rits = typeof RITUAIS_LIVRO !== 'undefined' ? RITUAIS_LIVRO : [];
+      html += `<div class="nex-gain-header" style="color:var(--purple);">🌀 ${gain.label}</div>
+        <div class="nex-gain-body">
+          <div style="font-family:'Share Tech Mono';font-size:0.65em;color:var(--ink3);margin-bottom:8px;">Escolha um ritual para aprender:</div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;">
+            ${['Conhecimento','Energia','Morte','Sangue','Medo'].map(e=>`<button onclick="filtrarNexRit(${idx},'${e}')" id="nexritfilt_${idx}_${e}" style="background:transparent;border:1px solid var(--border2);color:var(--ink3);font-family:'Share Tech Mono';font-size:0.55em;padding:3px 8px;cursor:pointer;" class="nrfb">${e}</button>`).join('')}
+            <button onclick="filtrarNexRit(${idx},'Todos')" style="background:transparent;border:1px solid var(--border2);color:var(--ink3);font-family:'Share Tech Mono';font-size:0.55em;padding:3px 8px;cursor:pointer;">Todos</button>
+          </div>
+          <div class="rit-choice-list" id="nexritlist_${idx}">`;
+      rits.forEach((r, ri) => {
+        html += `<div class="rit-choice-item" id="ritchk_${idx}_${ri}"
+          data-elem="${r.elem}"
+          onclick="nexChooseRit(${idx},${ri},'${escHtml(r.nome)}','${r.elem}','${r.circ}')">
+          <div class="rit-choice-name"><span style="opacity:0.6;font-size:0.8em;">[${r.elem} · ${r.circ}°]</span> ${r.nome}</div>
+          <div class="rit-choice-desc">${r.desc.substring(0,100)}${r.desc.length>100?'...':''}</div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+    html += `</div>`;
+  });
+
+  html += `</div>
+      <div class="nex-modal-footer">
+        <button class="nex-modal-close" onclick="fecharNexModal()">✕ Fechar (escolher depois)</button>
+        <button class="nex-modal-confirm" onclick="confirmarNexModal()">✓ Confirmar Escolhas</button>
+      </div>
+    </div>
+  </div>`;
+  container.innerHTML = html;
+}
+
+function escHtml(str) {
+  return (str||'').replace(/'/g,"&#39;").replace(/"/g,"&quot;").replace(/\n/g,' ');
+}
+
+function nexChooseAtr(idx, atrId) {
+  _nexModalChoices[idx] = {type:'atr', atrId};
+  document.querySelectorAll(`[id^="atrchk_${idx}_"]`).forEach(b => b.classList.remove('selected'));
+  const el = document.getElementById(`atrchk_${idx}_${atrId}`);
+  if (el) el.classList.add('selected');
+}
+function nexChooseHab(idx, hi, nome, custo, desc) {
+  _nexModalChoices[idx] = {type:'hab', nome, custo, desc};
+  document.querySelectorAll(`[id^="habchk_${idx}_"]`).forEach(b => b.classList.remove('selected'));
+  const el = document.getElementById(`habchk_${idx}_${hi}`);
+  if (el) el.classList.add('selected');
+}
+function nexChooseRit(idx, ri, nome, elem, circ) {
+  _nexModalChoices[idx] = {type:'rit', ri, nome, elem, circ};
+  document.querySelectorAll(`[id^="ritchk_${idx}_"]`).forEach(b => b.classList.remove('selected'));
+  const el = document.getElementById(`ritchk_${idx}_${ri}`);
+  if (el) el.classList.add('selected');
+}
+function filtrarNexRit(idx, elem) {
+  const list = document.getElementById(`nexritlist_${idx}`);
+  if (!list) return;
+  list.querySelectorAll('.rit-choice-item').forEach(el => {
+    el.style.display = (elem === 'Todos' || el.dataset.elem === elem) ? '' : 'none';
+  });
+}
+
+function confirmarNexModal() {
+  _nexModalPending.forEach((gain, idx) => {
+    const choice = _nexModalChoices[idx];
+    if (!choice) return; // não escolheu, ok
+    if (choice.type === 'atr') {
+      const el = document.getElementById(choice.atrId);
+      if (el) {
+        let v = parseInt(el.value)||0;
+        if (v < 5) { el.value = v + 1; atuDots(choice.atrId); calcDeriv(); }
+      }
+    } else if (choice.type === 'hab') {
+      const cont = document.getElementById('habCont');
+      const d = cont.appendChild(mkHab(choice.nome, 'Custo: '+choice.custo+' · '+choice.desc));
+      d.classList.add('open');
+    } else if (choice.type === 'rit') {
+      const r = (typeof RITUAIS_LIVRO !== 'undefined' ? RITUAIS_LIVRO : [])[choice.ri];
+      if (r) inserirRitual(choice.ri);
+    }
+  });
+  fecharNexModal();
+  triggerSalvar();
+  // Muda aba para mostrar poderes se houve hab/rit
+  const hasHabOrRit = _nexModalPending.some(g => g.type === 'hab' || g.type === 'rit');
+  if (hasHabOrRit) {
+    const btn = document.querySelector('.main-tab:nth-child(3)');
+    if (btn) switchTab('poderes', btn);
+  }
+}
+function fecharNexModal() {
+  document.getElementById('nexModalContainer').innerHTML = '';
+}
+
+// ============================================================
+// DARK MODE
+// ============================================================
+function toggleDark(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const t=isDark?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('btnDark').textContent=t==='dark'?'☾':'☀';
+  localStorage.setItem('op_theme',t);
+}
+function applyTheme(){
+  const t=localStorage.getItem('op_theme')||'light';
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('btnDark').textContent=t==='dark'?'☾':'☀';
+}
+
+// TABS
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.main-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// COLLAPSIBLE
+function collToggle(btn){btn.closest('.coll-item').classList.toggle('open');}
+
+// ATRIBUTOS
+function ajustarAtr(id,delta){
+  const el=document.getElementById(id);
+  let v=(parseInt(el.value)||0)+delta;v=Math.max(0,Math.min(5,v));
+  el.value=v;atuDots(id);calcDeriv();
+}
+function setAtr(id,v){
+  const el=document.getElementById(id);if(!el)return;
+  const cur=parseInt(el.value)||0;
+  el.value=cur===v?v-1:v;
+  el.value=Math.max(0,Math.min(5,parseInt(el.value)||0));
+  atuDots(id);calcDeriv();
+}
+function atuDots(id){
+  const v=parseInt(document.getElementById(id)?.value)||0;
+  const dotsId='dots-'+id;
+  const cont=document.getElementById(dotsId);if(!cont)return;
+  cont.querySelectorAll('.atr-dot').forEach((d,i)=>d.classList.toggle('filled',i<v));
+}
+function atuTodosDots(){['agilidade','forca','intelecto','presenca','vigor'].forEach(atuDots);}
+
+// STAT ADJUST (MUDANÇA 2)
+function adjStat(id, delta) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = (parseInt(el.value)||0) + delta;
+  atuBarras();
+  triggerSalvar();
+}
+
+// PERÍCIAS
+function buildPeri(){
+  const g=document.getElementById('perGrid');g.innerHTML='';
+  const hdr=document.createElement('div');hdr.className='per-header-row';
+  hdr.innerHTML=`<div class="per-hcol">Grau</div><div class="per-hcol">Perícia</div><div class="per-hcol">Atr</div><div class="per-hcol">Bônus</div><div class="per-hcol">Val</div><div class="per-hcol"></div>`;
+  g.appendChild(hdr);
+  let lastGrupo='';
+  PERI.forEach(p=>{
+    if(p.grupo!==lastGrupo){
+      lastGrupo=p.grupo;
+      const gl=document.createElement('div');gl.className='per-group-label';
+      gl.style.setProperty('--pgl-color',GRUPO_CORES[p.grupo]||'var(--border2)');
+      gl.style.background=GRUPO_CORES[p.grupo]||'var(--border2)';
+      gl.textContent=p.grupo;g.appendChild(gl);
+    }
+    if(p.prof){
+      buildProfRow(g,p,'profissao',window._ps['profissao']||'',window._psBon['profissao']||0,window._psAtr['profissao']||p.atr,undefined,document.getElementById('pn_profissao')?.value||'',-1);
+      window._profExtras.forEach((pe2,i)=>buildProfRow(g,p,'profissao_extra_'+i,pe2.grau||'',pe2.bon||0,pe2.atr||p.atr,undefined,pe2.nome||'',i));
+      const addRow=document.createElement('div');addRow.className='per-row';addRow.style.gridColumn='1/-1';
+      addRow.innerHTML=`<button class="btn-add-prof" style="grid-column:1/-1;margin:4px 0;" onclick="addProfExtra()">+ outra Profissão</button>`;
+      g.appendChild(addRow);
+    } else {buildPeriRow(g,p);}
+  });
+}
+function mkAtrSel(id,defAtr,overrideAtr){
+  const cur=overrideAtr||defAtr;
+  let opts=ATRS.map(a=>`<option value="${a}"${a===cur?' selected':''}>${a}</option>`).join('');
+  return `<select class="per-atr-sel" id="pa_${id}" title="Atributo chave" onchange="atuPeriAtr('${id}')">${opts}</select>`;
+}
+function buildPeriRow(g,p){
+  const gr=window._ps[p.id]||'';const bon=(window._psBon[p.id]||0);
+  const atrKey=window._psAtr[p.id]||p.atr;const av=getAtr(atrKey);
+  const row=document.createElement('div');row.className='per-row';
+  row.innerHTML=`
+    <div class="per-grau ${gr}" id="pg_${p.id}" onclick="ciclar('${p.id}')">${gr||'—'}</div>
+    <span class="per-nome">${p.nome}</span>
+    ${mkAtrSel(p.id,p.atr,window._psAtr[p.id])}
+    <input type="number" class="per-bon" id="pb_${p.id}" value="${bon||''}" placeholder="±" oninput="atuPeriBonus('${p.id}')">
+    <span class="per-val" id="pv_${p.id}">${gr||bon?'+'+(av+(gr?GB[gr]:0)+bon):'—'}</span>
+    <button class="btn-pr" onclick="rolarPeri('${p.nome}','${p.id}')">🎲</button>`;
+  g.appendChild(row);
+}
+function buildProfRow(g,p,id,gr,bon,atrKey,comBotao,nomeExtra='',idxExtra){
+  const isExtra=idxExtra>=0;const av=getAtr(atrKey||p.atr);const bonGrau=gr?GB[gr]:0;
+  const row=document.createElement('div');row.className='per-row';
+  const nomeDisplay=isExtra
+    ?`<input type="text" id="pn_${id}" placeholder="Nome..." value="${nomeExtra}" style="flex:1;border:none;border-bottom:1px dashed var(--border);background:transparent;color:var(--ink2);font-size:0.88em;padding:1px 2px;" oninput="atuProfNome('${id}',${idxExtra})">`
+    :`<span class="per-nome">Prof. <input type="text" id="pn_${id}" placeholder="qual?" value="${nomeExtra}" style="width:60px;border:none;border-bottom:1px dashed var(--border2);background:transparent;color:var(--gold);font-size:0.88em;padding:0 2px;" oninput="atuProfNome('${id}',-1)"></span>`;
+  row.innerHTML=`
+    <div class="per-grau ${gr}" id="pg_${id}" onclick="ciclarProf('${id}',${idxExtra})">${gr||'—'}</div>
+    ${nomeDisplay}
+    ${mkAtrSel(id,p.atr,atrKey)}
+    <input type="number" class="per-bon" id="pb_${id}" value="${bon||''}" placeholder="±" oninput="atuPeriBonus('${id}',${idxExtra})">
+    <span class="per-val" id="pv_${id}">${gr||bon?'+'+(av+bonGrau+bon):'—'}</span>
+    <button class="btn-pr" onclick="rolarPeriExtra('${id}',${idxExtra})">🎲</button>
+    ${isExtra?`<button style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:0.75em;padding:0 2px;" onclick="removerProfExtra(${idxExtra})">✕</button>`:''}`;
+  g.appendChild(row);
+}
+function atuPeriAtr(id){
+  const sel=document.getElementById('pa_'+id);if(!sel)return;
+  const v=sel.value;const idx=id.startsWith('profissao_extra_')?parseInt(id.split('_').pop()):-1;
+  if(idx>=0&&window._profExtras[idx]){window._profExtras[idx].atr=v;}else{window._psAtr[id]=v;}
+  if(id.startsWith('profissao'))atuPeriExtra(id,idx);else atuPeri(id);triggerSalvar();
+}
+function atuProfNome(id,idx){const v=document.getElementById('pn_'+id)?.value||'';if(idx>=0&&window._profExtras[idx])window._profExtras[idx].nome=v;triggerSalvar();}
+function addProfExtra(){window._profExtras.push({grau:'',bon:0,nome:'',atr:'Int'});buildPeri();triggerSalvar();}
+function removerProfExtra(i){window._profExtras.splice(i,1);buildPeri();triggerSalvar();}
+function ciclarProf(id,idx){
+  const c=(idx<0?window._ps['profissao']:window._profExtras[idx]?.grau)||'';
+  const n=GS[(GS.indexOf(c)+1)%GS.length];
+  if(idx<0)window._ps['profissao']=n;else if(window._profExtras[idx])window._profExtras[idx].grau=n;
+  const e=document.getElementById('pg_'+id);if(e){e.textContent=n||'—';e.className='per-grau '+n;}
+  atuPeriExtra(id,idx);triggerSalvar();
+}
+function atuPeriExtra(id,idx){
+  const p=PERI.find(x=>x.id==='profissao');if(!p)return;
+  const gr=(idx<0?window._ps['profissao']:window._profExtras[idx]?.grau)||'';
+  const selAtr=document.getElementById('pa_'+id);
+  const atrKey=selAtr?selAtr.value:(idx<0?window._psAtr['profissao']||p.atr:window._profExtras[idx]?.atr||p.atr);
+  const bon=parseInt(document.getElementById('pb_'+id)?.value)||0;
+  const b=getAtr(atrKey)+(gr?GB[gr]:0)+bon;
+  const e=document.getElementById('pv_'+id);if(e)e.textContent=gr||bon?'+'+b:'—';
+}
+function rolarPeriExtra(id,idx){
+  const p=PERI.find(x=>x.id==='profissao');if(!p)return;
+  const gr=(idx<0?window._ps['profissao']:window._profExtras[idx]?.grau)||'';
+  const selAtr=document.getElementById('pa_'+id);
+  const atrKey=selAtr?selAtr.value:(idx<0?window._psAtr['profissao']||p.atr:window._profExtras[idx]?.atr||p.atr);
+  const bon2=gr?GB[gr]:0;const bonExtra=parseInt(document.getElementById('pb_'+id)?.value)||0;
+  const av=getAtr(atrKey);const d=d20s(av);const tot=d.best+bon2+bonExtra;
+  const nomePr=document.getElementById('pn_'+id)?.value||'Profissão';
+  showDado(nomePr+(gr?' ('+{T:'Treinado',V:'Veterano',E:'Expert'}[gr]+')':''),d.best,bon2+bonExtra,tot,av,d.all);
+}
+function ciclar(id){
+  const c=window._ps[id]||'';const n=GS[(GS.indexOf(c)+1)%GS.length];
+  window._ps[id]=n;const e=document.getElementById('pg_'+id);e.textContent=n||'—';e.className='per-grau '+n;
+  atuPeri(id);triggerSalvar();
+}
+function getAtr(a){const m={Agi:'agilidade',For:'forca',Int:'intelecto',Pre:'presenca',Vig:'vigor'};return parseInt(document.getElementById(m[a])?.value)||0;}
+function atuPeri(id){
+  const p=PERI.find(x=>x.id===id);if(!p)return;
+  const g=window._ps[id]||'';const bon=parseInt(window._psBon[id])||0;
+  const selAtr=document.getElementById('pa_'+id);
+  const atrKey=selAtr?selAtr.value:window._psAtr[id]||p.atr;
+  const b=getAtr(atrKey)+(g?GB[g]:0)+bon;
+  const e=document.getElementById('pv_'+id);if(e)e.textContent=g||bon?'+'+b:'—';
+}
+function atuPeriBonus(id,idx){
+  const val=parseInt(document.getElementById('pb_'+id)?.value)||0;
+  if(idx!==undefined&&idx>=0){if(window._profExtras[idx])window._profExtras[idx].bon=val;atuPeriExtra(id,idx);}
+  else if(id==='profissao'){window._psBon[id]=val;atuPeriExtra(id,-1);}
+  else{window._psBon[id]=val;atuPeri(id);}
+  triggerSalvar();
+}
+function atuTodas(){
+  PERI.forEach(p=>{
+    if(p.id!=='profissao')atuPeri(p.id);
+    else{atuPeriExtra('profissao',-1);window._profExtras.forEach((_,i)=>atuPeriExtra('profissao_extra_'+i,i));}
+  });
+}
+
+function atuBarras(){
+  const pv=parseInt(document.getElementById('pvAtual').value)||0;
+  const pvM=parseInt(document.getElementById('pvMax').value)||1;
+  const pe=parseInt(document.getElementById('peAtual').value)||0;
+  const peM=parseInt(document.getElementById('peMax').value)||1;
+  const san=parseInt(document.getElementById('sanAtual').value)||0;
+  const sanM=parseInt(document.getElementById('sanMax').value)||1;
+  const pct=v=>Math.max(0,Math.min(100,Math.round(v/Math.max(1,sanM)*100)));
+  document.getElementById('pvFill').style.width=Math.max(0,Math.min(100,Math.round(pv/Math.max(1,pvM)*100)))+'%';
+  document.getElementById('peFill').style.width=Math.max(0,Math.min(100,Math.round(pe/Math.max(1,peM)*100)))+'%';
+  document.getElementById('sanFill').style.width=pct(san)+'%';
+}
+
+function calcDeriv(){
+  const agi=parseInt(document.getElementById('agilidade').value)||0;
+  document.getElementById('defTotal').textContent=10+agi+(parseInt(document.getElementById('defBonus').value)||0);
+  const cls=document.getElementById('classe').value||'especialista';
+  const nex=parseInt(document.getElementById('nexN').value)||5;
+  const s=CLASSES_STATS[cls];const niveis=Math.floor(nex/5);
+  const pvMax=s.pvBase+(parseInt(document.getElementById('vigor').value)||0)+(niveis-1)*(s.pvNex+(parseInt(document.getElementById('vigor').value)||0));
+  const peMax=s.peBase+(parseInt(document.getElementById('presenca').value)||0)+(niveis-1)*(s.peNex+(parseInt(document.getElementById('presenca').value)||0));
+  const sanMax=s.sanBase+(niveis-1)*s.sanNex;
+  // MUDANÇA 2: só recalcula máximo se não houve modificação manual
+  // Usamos data-auto para detectar se o usuário não editou manualmente
+  const pvEl = document.getElementById('pvMax');
+  const peEl = document.getElementById('peMax');
+  const sanEl = document.getElementById('sanMax');
+  if(!pvEl.dataset.manual) pvEl.value = pvMax;
+  if(!peEl.dataset.manual) peEl.value = peMax;
+  if(!sanEl.dataset.manual) sanEl.value = sanMax;
+  document.getElementById('pvFormula').textContent=`${s.pvBase}+Vig (${cls}), +${s.pvNex}+Vig/NEX`;
+  document.getElementById('peFormula').textContent=`${s.peBase}+Pre (${cls}), +${s.peNex}+Pre/NEX`;
+  document.getElementById('sanFormula').textContent=`${s.sanBase} (${cls}), +${s.sanNex}/NEX`;
+  atuTodas();atuBarras();triggerSalvar();
+}
+
+// rastrear edição manual nos máximos
+['pvMax','peMax','sanMax'].forEach(id => {
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('input', () => { el.dataset.manual = '1'; });
+  });
+});
+
+let _prevNex = 5;
+function ajustarNEX(d){
+  let n=parseInt(document.getElementById('nexN').value)||5;
+  n=Math.max(5,Math.min(99,n+d));
+  document.getElementById('nexN').value=n;
+  atuNEX(true);
+}
+function atuNEX(fromButton){
+  let n=parseInt(document.getElementById('nexN').value)||5;
+  n=Math.max(5,Math.min(99,n));
+  document.getElementById('nexN').value=n;
+  document.getElementById('nexFill').style.width=n+'%';
+  document.getElementById('nexLbl').textContent='NEX '+n+'%';
+  const lim=Math.ceil(n/5);
+  document.getElementById('peLimite').textContent=lim;
+  document.getElementById('nexDesc').textContent='Limite de PE/turno: '+lim+' · Habilidades de NEX '+n+'% desbloqueadas';
+
+  // MUDANÇA 1: abrir modal de progressão quando NEX aumenta
+  if(fromButton && n > _prevNex && n > 5) {
+    const cls=document.getElementById('classe').value||'especialista';
+    abrirNexModal(n, cls);
+  }
+  _prevNex = n;
+
+  calcDeriv();triggerSalvar();
+}
+function atuPatente(){
+  const v=document.getElementById('patente').value;const p=PATENTES[v];
+  if(p){document.getElementById('creditos').value=p.credito;document.getElementById('patenteDisplay').textContent=p.label.toUpperCase();}
+  triggerSalvar();
+}
+
+function d20s(n){const q=Math.max(n,1);const r=[];for(let i=0;i<q;i++)r.push(Math.floor(Math.random()*20)+1);r.sort((a,b)=>b-a);return{best:r[0],all:r,rolou:q};}
+function showDado(descr,dado,bon,tot,qtd,todos){
+  const ov=document.createElement('div');ov.className='dado-ov';
+  const cs=dado===20,cf=dado===1;
+  const outrosHtml=todos&&todos.length>1?`<div class="dado-outros">Outros: ${todos.slice(1).join(' · ')}</div>`:'';
+  ov.innerHTML=`<div class="dado-card ${cs?'cs':cf?'cf':''}">
+    <div class="dado-hd">${descr} · ${qtd||1}d20 · bônus=${bon>=0?'+'+bon:bon}</div>
+    <div class="dado-tot">${tot}</div>
+    ${cs?'<div class="dado-crit">Sucesso Crítico!</div>':cf?'<div class="dado-crit">Falha Crítica!</div>':''}
+    ${outrosHtml}<div class="dado-dis">clique para fechar</div></div>`;
+  document.body.appendChild(ov);ov.addEventListener('click',()=>ov.remove());setTimeout(()=>ov.remove(),8000);
+  addLog(descr,dado,bon,tot);
+}
+function rolarAtrib(nome,id){const v=parseInt(document.getElementById(id).value)||0;const r=d20s(v);showDado('Teste de '+nome,r.best,0,r.best,r.rolou,r.all);}
+function rolarPeri(nome,id){
+  const p=PERI.find(x=>x.id===id);if(!p)return;
+  const selAtr=document.getElementById('pa_'+id);
+  const atrKey=selAtr?selAtr.value:window._psAtr[id]||p.atr;
+  const av=getAtr(atrKey);const g=window._ps[id]||'';const bon=g?GB[g]:0;const bonExtra=parseInt(window._psBon[id]||0);
+  const res=d20s(av);const tot=res.best+bon+bonExtra;
+  showDado(nome+(g?' ('+{T:'Treinado',V:'Veterano',E:'Expert'}[g]+')':''),res.best,bon+bonExtra,tot,res.rolou,res.all);
+}
+function addLog(tipo,dado,bon,tot){
+  const ld=document.getElementById('logDiv');const it=document.createElement('div');
+  it.className='log-it'+(dado===20?' cs':dado===1?' cf':'');
+  const h=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  it.innerHTML=`<span class="log-res">${tot}</span><span>${tipo}</span><br><span style="color:var(--ink3);font-size:0.85em;">d20=${dado} bônus=${bon} · ${h}</span>`;
+  ld.insertBefore(it,ld.firstChild);while(ld.children.length>20)ld.removeChild(ld.lastChild);
+}
+
+// ATAQUES
+function mkAtk(n='',habil='luta',ba=0,d='1d6',bd=0){
+  const div=document.createElement('div');div.className='coll-item atk-item';
+  div.innerHTML=`
+  <div class="coll-header" onclick="collToggle(this)">
+    <span class="coll-arrow">▶</span>
+    <span class="coll-title">${n||'Novo Ataque'}</span>
+    <span class="coll-meta" style="color:var(--gold);">${habil==='luta'?'LUTA':'PONTARIA'}</span>
+    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar()">🗑</button>
+  </div>
+  <div class="coll-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div class="campo" style="margin-bottom:0;"><label class="lbl">Nome</label><input type="text" class="atk-nome" value="${n}" placeholder="Ex: Pistola .38" oninput="this.closest('.coll-item').querySelector('.coll-title').textContent=this.value||'Novo Ataque'"></div>
+      <div class="campo" style="margin-bottom:0;"><label class="lbl">Perícia</label>
+        <select class="atk-habil" onchange="atuAtkMeta(this)">
+          <option value="luta"${habil==='luta'?' selected':''}>Luta</option>
+          <option value="pontaria"${habil==='pontaria'?' selected':''}>Pontaria</option>
+        </select>
+      </div>
+    </div>
+    <div class="atk-grid">
+      <div>
+        <div class="atk-section-lbl">ATAQUE — bônus extra</div>
+        <div class="atk-ctrls">
+          <input type="number" class="atk-bi ba" value="${ba}" title="Bônus extra de ataque" placeholder="±0">
+          <button class="btn-ra" onclick="rolarA(this)">🎲 Atacar</button>
+        </div>
+      </div>
+      <div>
+        <div class="atk-section-lbl">DANO</div>
+        <div class="atk-ctrls">
+          <select class="atk-ds">${['1d4','1d6','1d8','1d10','1d12','2d6','2d8','3d6'].map(x=>`<option${x===d?' selected':''}>${x}</option>`).join('')}</select>
+          <input type="number" class="atk-bi bd" value="${bd}" title="Bônus de dano" placeholder="±0">
+          <button class="btn-rd" onclick="rolarD(this)">🎲 Dano</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  div.addEventListener('input',()=>triggerSalvar());return div;
+}
+function atuAtkMeta(sel){
+  const item=sel.closest('.coll-item');
+  const meta=item.querySelector('.coll-meta');
+  if(meta)meta.textContent=sel.value==='luta'?'LUTA':'PONTARIA';
+  triggerSalvar();
+}
+function addAtk(){const d=document.getElementById('atkCont').appendChild(mkAtk());d.classList.add('open');}
+function rolarA(btn){
+  const box=btn.closest('.coll-item');const ba=parseInt(box.querySelector('.ba').value)||0;
+  const nome=box.querySelector('.atk-nome').value||'Ataque';
+  const habil=box.querySelector('.atk-habil').value;
+  const gr=window._ps[habil]||'';const ps=gr?GB[gr]:0;
+  const atrKey=habil==='luta'?'forca':'agilidade';
+  const av=parseInt(document.getElementById(atrKey).value)||0;
+  const res=d20s(av);
+  showDado('Ataque: '+nome,res.best,ps+ba,res.best+ps+ba,res.rolou,res.all);
+}
+function rolarD(btn){
+  const box=btn.closest('.coll-item');const sel=box.querySelector('.atk-ds').value;
+  const bd=parseInt(box.querySelector('.bd').value)||0;const nome=box.querySelector('.atk-nome').value||'Ataque';
+  const[nd,df]=sel.split('d').map(Number);let tot=0,rr=[];
+  for(let i=0;i<nd;i++){const r=Math.floor(Math.random()*df)+1;rr.push(r);tot+=r;}
+  showDado('Dano: '+nome+' ('+rr.join('+')+')'+( bd?'+'+bd:''),rr[0],bd,tot+bd);
+}
+
+// HABILIDADES
+function mkHab(n='',d=''){
+  const div=document.createElement('div');div.className='coll-item hab-item';
+  div.innerHTML=`
+  <div class="coll-header" onclick="collToggle(this)">
+    <span class="coll-arrow">▶</span>
+    <span class="coll-title">${n||'Nova Habilidade'}</span>
+    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar()">🗑</button>
+  </div>
+  <div class="coll-body">
+    <div class="campo" style="margin-bottom:8px;"><label class="lbl">Nome</label>
+      <input type="text" class="hab-nome" value="${n}" placeholder="Nome da Habilidade" oninput="this.closest('.coll-item').querySelector('.coll-title').textContent=this.value||'Nova Habilidade'">
+    </div>
+    <div class="campo"><label class="lbl">Custo / Efeito / Pré-requisito</label>
+      <textarea class="hab-desc" style="min-height:50px;" placeholder="Ex: 2 PE — Recebe +5 no teste de ataque...">${d}</textarea>
+    </div>
+  </div>`;
+  div.addEventListener('input',()=>triggerSalvar());return div;
+}
+function addHab(){const d=document.getElementById('habCont').appendChild(mkHab());d.classList.add('open');}
+
+// MODAL HABILIDADES
+let _habFiltro='Todos';
+function abrirModalHab(){
+  let html=`<div class="modal-ov" id="modalHab"><div class="modal-box">
+    <div class="modal-hd">
+      <span class="modal-title">Habilidades do Livro</span>
+      <button class="modal-close" onclick="document.getElementById('modalHab').remove()">✕</button>
+    </div>
+    <div class="modal-filters-area">
+      <input type="text" class="modal-search" id="habSearch" placeholder="Buscar habilidade..." oninput="filtrarHabModal()">
+      <span class="filter-row-label">Filtrar por classe</span>
+      <div class="hab-filters">
+        <button class="hab-filter-btn active" onclick="setHabFiltro('Todos',this)">Todos</button>
+        <button class="hab-filter-btn" onclick="setHabFiltro('Universal',this)">Universal</button>
+        <button class="hab-filter-btn" onclick="setHabFiltro('Especialista',this)">Especialista</button>
+        <button class="hab-filter-btn" onclick="setHabFiltro('Combatente',this)">Combatente</button>
+        <button class="hab-filter-btn" onclick="setHabFiltro('Ocultista',this)">Ocultista</button>
+      </div>
+    </div>
+    <div class="modal-scroll">
+      <div class="modal-list" id="hab-item-list">`;
+  if(typeof HABS_LIVRO !== 'undefined') {
+    HABS_LIVRO.forEach((h,i)=>{
+      html+=`<div class="modal-item hab" data-classe="${h.classe}" data-search="${h.nome.toLowerCase()} ${h.classe.toLowerCase()}" onclick="inserirHab(${i})">
+        <div class="modal-item-name">${h.nome} <span style="opacity:0.6;font-size:0.8em;">[${h.classe}]</span></div>
+        <div class="modal-item-meta">Custo: ${h.custo}</div>
+        <div class="modal-item-desc">${h.desc}</div>
+      </div>`;
+    });
+  }
+  html+=`</div></div>
+    <div class="modal-footer">
+      <button class="modal-footer-close" onclick="document.getElementById('modalHab').remove()">✕ Fechar</button>
+    </div>
+  </div></div>`;
+  document.getElementById('modalContainer').innerHTML=html;
+  _habFiltro='Todos';
+}
+function setHabFiltro(filtro,btn){
+  _habFiltro=filtro;
+  document.querySelectorAll('.hab-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');filtrarHabModal();
+}
+function filtrarHabModal(){
+  const q=(document.getElementById('habSearch')?.value||'').toLowerCase().trim();
+  document.getElementById('hab-item-list')?.querySelectorAll('.modal-item').forEach(el=>{
+    const classeOk=_habFiltro==='Todos'||el.dataset.classe===_habFiltro;
+    const buscaOk=!q||el.dataset.search.includes(q);
+    el.style.display=(classeOk&&buscaOk)?'':'none';
+  });
+}
+function inserirHab(i){
+  if(typeof HABS_LIVRO==='undefined')return;
+  const h=HABS_LIVRO[i];
+  const d=document.getElementById('habCont').appendChild(mkHab(h.nome,'Custo: '+h.custo+' · '+h.desc));
+  d.classList.add('open');document.getElementById('modalHab')?.remove();triggerSalvar();
+}
+
+// ELEM CLASS MAP
+const ELEM_CLS={'Conhecimento':'rit-elem-conhecimento','Energia':'rit-elem-energia','Morte':'rit-elem-morte','Sangue':'rit-elem-sangue','Medo':'rit-elem-medo'};
+const ELEM_CARD_CLS={'Conhecimento':'rit-card-conhecimento','Energia':'rit-card-energia','Morte':'rit-card-morte','Sangue':'rit-card-sangue','Medo':'rit-card-medo'};
+const EXEC_OPTS=['livre','padrão','movimento','completo','rodada'];
+const ALC_OPTS=['pessoal','toque','curto','médio','longo','extremo','ilimitado'];
+const DUR_OPTS=['instantânea','cena','sustentada','permanente'];
+
+// RITUAIS
+function mkRit(data={}){
+  const{nome='',elem='Conhecimento',circ='1',resistencia='Anula',atrResistencia='For',n_exec='padrão',n_alc='toque',n_dur='cena',n_pe=1,n_desc='',d_exec='padrão',d_alc='toque',d_dur='cena',d_pe='',d_desc='',v_exec='padrão',v_alc='toque',v_dur='cena',v_pe='',v_desc='',activeTab='normal'}=data;
+  const div=document.createElement('div');
+  div.className='coll-item rit-item '+(ELEM_CLS[elem]||'rit-elem-conhecimento');
+  const uid=Math.random().toString(36).slice(2,7);
+  const sel=(id,val,opts,extra)=>`<select id="${id}" style="background:var(--bg2);border:1px solid var(--border);color:var(--rit-color,var(--cyan));font-family:'Share Tech Mono';font-size:0.65em;padding:3px 4px;width:100%;${extra||''}">${opts.map(o=>`<option${o===val?' selected':''}>${o}</option>`).join('')}</select>`;
+  const circTxt=circ+'° Círculo';
+  div.innerHTML=`
+  <div class="coll-header" onclick="collToggle(this)">
+    <span class="coll-arrow">▶</span>
+    <span class="coll-title">${nome||'Novo Ritual'}</span>
+    <span class="coll-meta" style="color:var(--rit-color,var(--cyan));">${elem} · ${circTxt}</span>
+    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar()">🗑</button>
+  </div>
+  <div class="coll-body">
+    <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:10px;align-items:end;">
+      <div class="campo" style="margin-bottom:0;"><label class="lbl">Nome</label>
+        <input type="text" class="rit-nome" value="${nome}" placeholder="Nome..." style="color:var(--rit-color,var(--purple))!important;" oninput="atuRitHeader(this)">
+      </div>
+      <select class="rit-elem" style="background:var(--bg2);border:1px solid var(--border);color:var(--ink2);font-family:'Share Tech Mono';font-size:0.65em;padding:5px 8px;height:34px;" onchange="atuRitElem(this)">
+        ${['Conhecimento','Energia','Morte','Sangue','Medo'].map(e=>`<option${e===elem?' selected':''}>${e}</option>`).join('')}
+      </select>
+      <select class="rit-circ" style="background:var(--bg2);border:1px solid var(--rit-color,var(--purple));color:var(--rit-color,var(--purple));font-family:'Share Tech Mono';font-size:0.65em;padding:5px 8px;height:34px;" onchange="atuRitHeader(this)">
+        ${[1,2,3,4].map(n=>`<option${n==circ?' selected':''}>${n}°</option>`).join('')}
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div class="campo" style="margin-bottom:0;"><label class="lbl">Resistência</label>
+        <select class="rit-resist" style="background:var(--bg2);border:1px solid var(--border);color:var(--ink2);font-family:'Share Tech Mono';font-size:0.65em;padding:5px 8px;width:100%;">
+          <option value="Anula"${resistencia==='Anula'?' selected':''}>Anula</option>
+          <option value="Desacredita"${resistencia==='Desacredita'?' selected':''}>Desacredita</option>
+          <option value="Parcial"${resistencia==='Parcial'?' selected':''}>Parcial</option>
+          <option value="Reduz à Metade"${resistencia==='Reduz à Metade'?' selected':''}>Reduz à Metade</option>
+        </select>
+      </div>
+      <div class="campo" style="margin-bottom:0;"><label class="lbl">Atributo de Resistência</label>
+        <select class="rit-atr-resist" style="background:var(--bg2);border:1px solid var(--border);color:var(--ink2);font-family:'Share Tech Mono';font-size:0.65em;padding:5px 8px;width:100%;">
+          <option value="For"${atrResistencia==='For'?' selected':''}>For</option>
+          <option value="Vig"${atrResistencia==='Vig'?' selected':''}>Vig</option>
+          <option value="Agi"${atrResistencia==='Agi'?' selected':''}>Agi</option>
+          <option value="Int"${atrResistencia==='Int'?' selected':''}>Int</option>
+          <option value="Pre"${atrResistencia==='Pre'?' selected':''}>Pre</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:10px;">
+      <button class="btn-add" style="border-color:var(--purple);color:var(--purple);" onclick="conjurarRitual(this)">Conjurar Ritual</button>
+    </div>
+    <div class="rit-tabs">
+      <button class="rit-tab ${activeTab==='normal'?'active':''}" onclick="switchRitTab(this,'normal')">Normal</button>
+      <button class="rit-tab ${activeTab==='discente'?'active':''}" onclick="switchRitTab(this,'discente')">Discente</button>
+      <button class="rit-tab ${activeTab==='verdadeiro'?'active':''}" onclick="switchRitTab(this,'verdadeiro')">Verdadeiro</button>
+    </div>
+    <div class="rit-version ${activeTab==='normal'?'active':''}" data-tab="normal">
+      <div class="rit-fields">
+        <div><div class="rit-slbl">Execução</div>${sel('rn_exec_'+uid,n_exec,EXEC_OPTS)}</div>
+        <div><div class="rit-slbl">Alcance</div>${sel('rn_alc_'+uid,n_alc,ALC_OPTS)}</div>
+        <div><div class="rit-slbl">Duração</div>${sel('rn_dur_'+uid,n_dur,DUR_OPTS)}</div>
+        <div><div class="rit-slbl">Custo PE</div><input type="number" value="${n_pe}" min="0" style="text-align:center;color:var(--rit-color,var(--cyan))!important;border:1px solid var(--border)!important;background:var(--bg2)!important;width:100%;padding:4px!important;"></div>
+      </div>
+      <textarea class="rit-desc-area" placeholder="Efeito normal...">${n_desc}</textarea>
+    </div>
+    <div class="rit-version ${activeTab==='discente'?'active':''}" data-tab="discente">
+      <div class="rit-fields">
+        <div><div class="rit-slbl">Execução</div>${sel('rd_exec_'+uid,d_exec,EXEC_OPTS)}</div>
+        <div><div class="rit-slbl">Alcance</div>${sel('rd_alc_'+uid,d_alc,ALC_OPTS)}</div>
+        <div><div class="rit-slbl">Duração</div>${sel('rd_dur_'+uid,d_dur,DUR_OPTS)}</div>
+        <div><div class="rit-slbl">PE extra</div><input type="number" value="${d_pe}" min="0" placeholder="total" style="text-align:center;color:var(--rit-color,var(--purple))!important;border:1px solid var(--border)!important;background:var(--bg2)!important;width:100%;padding:4px!important;"></div>
+      </div>
+      <textarea class="rit-desc-area" placeholder="Efeito discente...">${d_desc}</textarea>
+    </div>
+    <div class="rit-version ${activeTab==='verdadeiro'?'active':''}" data-tab="verdadeiro">
+      <div class="rit-fields">
+        <div><div class="rit-slbl">Execução</div>${sel('rv_exec_'+uid,v_exec,EXEC_OPTS)}</div>
+        <div><div class="rit-slbl">Alcance</div>${sel('rv_alc_'+uid,v_alc,ALC_OPTS)}</div>
+        <div><div class="rit-slbl">Duração</div>${sel('rv_dur_'+uid,v_dur,DUR_OPTS)}</div>
+        <div><div class="rit-slbl">PE extra</div><input type="number" value="${v_pe}" min="0" placeholder="total" style="text-align:center;color:var(--rit-color,var(--gold))!important;border:1px solid var(--border)!important;background:var(--bg2)!important;width:100%;padding:4px!important;"></div>
+      </div>
+      <textarea class="rit-desc-area" placeholder="Efeito verdadeiro...">${v_desc}</textarea>
+    </div>
+  </div>`;
+  div.addEventListener('input',()=>triggerSalvar());return div;
+}
+function atuRitElem(sel){
+  const item=sel.closest('.coll-item');const elem=sel.value;
+  Object.values(ELEM_CLS).forEach(c=>item.classList.remove(c));
+  item.classList.add(ELEM_CLS[elem]||'rit-elem-conhecimento');
+  const meta=item.querySelector('.coll-meta');
+  if(meta){const circ=item.querySelector('.rit-circ')?.value||'1';meta.textContent=elem+' · '+circ+' Círculo';}
+  triggerSalvar();
+}
+function atuRitHeader(inp){
+  const item=inp.closest('.coll-item');
+  const nome=item.querySelector('.rit-nome')?.value||'Novo Ritual';
+  const elem=item.querySelector('.rit-elem')?.value||'Conhecimento';
+  const circ=item.querySelector('.rit-circ')?.value||'1';
+  const title=item.querySelector('.coll-title');if(title)title.textContent=nome;
+  const meta=item.querySelector('.coll-meta');if(meta)meta.textContent=elem+' · '+circ+' Círculo';
+  triggerSalvar();
+}
+function switchRitTab(btn,tab){
+  const item=btn.closest('.coll-item');
+  item.querySelectorAll('.rit-tab').forEach(b=>b.classList.remove('active'));
+  item.querySelectorAll('.rit-version').forEach(v=>v.classList.remove('active'));
+  btn.classList.add('active');
+  item.querySelector('.rit-version[data-tab="'+tab+'"]').classList.add('active');
+}
+function addRit(){const d=document.getElementById('ritCont').appendChild(mkRit());d.classList.add('open');}
+function mkParanormal(n='',d=''){
+  const div=document.createElement('div');div.className='coll-item hab-item';
+  div.innerHTML=`
+  <div class="coll-header" onclick="collToggle(this)">
+    <span class="coll-arrow">▶</span>
+    <span class="coll-title">${n||'Novo Poder Paranormal'}</span>
+    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar()">🗑</button>
+  </div>
+  <div class="coll-body">
+    <div class="campo" style="margin-bottom:8px;"><label class="lbl">Nome</label>
+      <input type="text" class="paranormal-nome" value="${n}" placeholder="Nome do Poder" oninput="this.closest('.coll-item').querySelector('.coll-title').textContent=this.value||'Novo Poder Paranormal'">
+    </div>
+    <div class="campo"><label class="lbl">Descrição</label>
+      <textarea class="paranormal-desc" style="min-height:50px;" placeholder="Descrição do poder...">${d}</textarea>
+    </div>
+  </div>`;
+  div.addEventListener('input',()=>triggerSalvar());return div;
+}
+function addParanormal(){const d=document.getElementById('paranormalCont').appendChild(mkParanormal());d.classList.add('open');}
+
+// MODAL RITUAIS
+let _ritFiltroElem='Todos';
+let _ritFiltroCirc='Todos';
+function abrirModalRit(){
+  let html=`<div class="modal-ov" id="modalRit"><div class="modal-box">
+    <div class="modal-hd">
+      <span class="modal-title">Rituais do Livro</span>
+      <button class="modal-close" onclick="document.getElementById('modalRit').remove()">✕</button>
+    </div>
+    <div class="modal-filters-area">
+      <input type="text" class="modal-search" id="ritSearch" placeholder="Buscar por nome..." oninput="filtrarRitModal()">
+      <span class="filter-row-label">Filtrar por elemento</span>
+      <div class="rit-filters" style="margin-bottom:8px;">
+        <button class="rit-filter-btn active" onclick="setRitFiltroElem('Todos',this)">Todos</button>
+        ${['Conhecimento','Energia','Morte','Sangue','Medo'].map(e=>`<button class="rit-filter-btn" onclick="setRitFiltroElem('${e}',this)">${e}</button>`).join('')}
+      </div>
+      <span class="filter-row-label">Filtrar por círculo</span>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">
+        <button class="rit-circ-btn active" onclick="setRitFiltroCirc('Todos',this)">Todos</button>
+        ${[1,2,3,4].map(n=>`<button class="rit-circ-btn" onclick="setRitFiltroCirc('${n}',this)">${n}° Círculo</button>`).join('')}
+      </div>
+    </div>
+    <div class="modal-scroll">
+      <div class="modal-list" id="rit-item-list">`;
+  if(typeof RITUAIS_LIVRO !== 'undefined') {
+    RITUAIS_LIVRO.forEach((r,i)=>{
+      const cardCls=ELEM_CARD_CLS[r.elem]||'';
+      html+=`<div class="modal-item rit-card ${cardCls}" data-search="${r.nome.toLowerCase()} ${r.elem.toLowerCase()}" data-elem="${r.elem}" data-circ="${r.circ}" onclick="inserirRitual(${i})">
+        <div class="modal-item-name"><span class="rit-elem-chip">${r.elem}</span>${r.nome}<span style="opacity:0.6;font-size:0.75em;margin-left:6px;">${r.circ}° Círculo</span></div>
+        <div class="modal-item-meta">Exec: ${r.exec} · Alc: ${r.alc} · Dur: ${r.dur} · ${r.pe} PE</div>
+        <div class="modal-item-desc">${r.desc.substring(0,150)}${r.desc.length>150?'...':''}</div>
+      </div>`;
+    });
+  }
+  html+=`</div></div>
+    <div class="modal-footer">
+      <button class="modal-footer-close" onclick="document.getElementById('modalRit').remove()">✕ Fechar</button>
+    </div>
+  </div></div>`;
+  document.getElementById('modalContainer').innerHTML=html;
+  _ritFiltroElem='Todos';_ritFiltroCirc='Todos';
+}
+function setRitFiltroElem(filtro,btn){
+  _ritFiltroElem=filtro;
+  btn.closest('.rit-filters').querySelectorAll('.rit-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');filtrarRitModal();
+}
+function setRitFiltroCirc(filtro,btn){
+  _ritFiltroCirc=filtro;
+  btn.closest('div').querySelectorAll('.rit-circ-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');filtrarRitModal();
+}
+function filtrarRitModal(){
+  const q=(document.getElementById('ritSearch')?.value||'').toLowerCase().trim();
+  document.getElementById('rit-item-list')?.querySelectorAll('.modal-item').forEach(el=>{
+    const elemOk=_ritFiltroElem==='Todos'||el.dataset.elem===_ritFiltroElem;
+    const circOk=_ritFiltroCirc==='Todos'||el.dataset.circ===_ritFiltroCirc;
+    const buscaOk=!q||el.dataset.search.includes(q);
+    el.style.display=(elemOk&&circOk&&buscaOk)?'':'none';
+  });
+}
+function inserirRitual(i){
+  if(typeof RITUAIS_LIVRO==='undefined')return;
+  const r=RITUAIS_LIVRO[i];
+  let n_desc=r.desc,d_pe='',d_desc='',v_pe='',v_desc='';
+  if(r.d_desc!==undefined){d_desc=r.d_desc;d_pe=r.d_pe||'';}
+  if(r.v_desc!==undefined){v_desc=r.v_desc;v_pe=r.v_pe||'';}
+  if(!r.d_desc){const discM=r.desc.match(/Disc\(([^)]+)\):\s*([^.]+)\./);if(discM){const m=discM[1].match(/\+(\d+)PE/);if(m)d_pe=m[1];d_desc=discM[2].trim();}}
+  if(!r.v_desc){const verdM=r.desc.match(/Verd\(([^)]+)\):\s*([^.]+)\./);if(verdM){const m=verdM[1].match(/\+(\d+)PE/);if(m)v_pe=m[1];v_desc=verdM[2].trim();}}
+  if(r.desc.includes('Disc(')||r.desc.includes('Verd('))
+    n_desc=r.desc.replace(/Disc\([^)]+\):[^.]+\./g,'').replace(/Verd\([^)]+\):[^.]+\./g,'').trim();
+  const d=document.getElementById('ritCont').appendChild(mkRit({nome:r.nome,elem:r.elem,circ:r.circ,n_exec:r.exec,n_alc:r.alc,n_dur:r.dur,n_pe:r.pe,n_desc,d_exec:r.exec,d_alc:r.alc,d_dur:r.dur,d_pe,d_desc,v_exec:r.exec,v_alc:r.alc,v_dur:r.dur,v_pe,v_desc}));
+  d.classList.add('open');document.getElementById('modalRit')?.remove();triggerSalvar();
+}
+
+// INVENTÁRIO
+function mkItem(n='',d='',exp=false){
+  const div=document.createElement('div');div.className='inv-it';
+  div.innerHTML=`<div class="inv-row"><button class="inv-exp" onclick="toggleInv(this)">▸</button><input type="text" class="inv-ni" placeholder="Item..."><button class="inv-del" onclick="this.closest('.inv-it').remove();triggerSalvar()">✕</button></div><textarea class="inv-dt" placeholder="Detalhes, propriedades..."${exp?' style="display:block;"':''}></textarea>`;
+  div.querySelector('.inv-ni').value=n;div.querySelector('.inv-dt').value=d;
+  if(exp)div.querySelector('.inv-exp').textContent='▾';
+  div.addEventListener('input',()=>triggerSalvar());return div;
+}
+function addItem(){document.getElementById('invCont').appendChild(mkItem());}
+function toggleInv(btn){const d=btn.closest('.inv-it').querySelector('.inv-dt');const v=d.style.display==='block';d.style.display=v?'none':'block';btn.textContent=v?'▸':'▾';}
+function extI(){return Array.from(document.getElementById('invCont').children).map(d=>({n:d.querySelector('.inv-ni')?.value||'',d:d.querySelector('.inv-dt')?.value||'',exp:d.querySelector('.inv-dt')?.style.display==='block'}));}
+
+function editarAvatar(){
+  const u=prompt('URL da imagem:',document.getElementById('avatarUrl').value||'');
+  if(u!==null){document.getElementById('avatarUrl').value=u;setAv(u);triggerSalvar();}
+}
+function setAv(u){const i=document.getElementById('avatarImg'),p=document.getElementById('avatarPh');if(u&&u.trim()){i.src=u;i.style.display='block';p.style.display='none';}else{i.style.display='none';p.style.display='flex';}}
+
+// ============================================================
+// EXTRAÇÃO + SALVAR — CORRIGIDO (MUDANÇA 5)
+// ============================================================
+function extA(){
+  return Array.from(document.getElementById('atkCont')?.children||[]).map(d=>({
+    n:d.querySelector('.atk-nome')?.value||'',
+    habil:d.querySelector('.atk-habil')?.value||'luta',
+    ba:+(d.querySelector('.ba')?.value)||0,
+    d:d.querySelector('.atk-ds')?.value||'1d6',
+    bd:+(d.querySelector('.bd')?.value)||0
+  }));
+}
+function extH(){
+  return Array.from(document.getElementById('habCont')?.children||[]).map(d=>({
+    n:d.querySelector('.hab-nome')?.value||'',
+    d:d.querySelector('.hab-desc')?.value||''
+  }));
+}
+function extR(){
+  return Array.from(document.getElementById('ritCont')?.children||[]).map(div=>{
+    const activeTab=div.querySelector('.rit-tab.active')?.textContent?.toLowerCase().trim()||'normal';
+    return{
+      circ:div.querySelector('.rit-circ')?.value?.replace('°','')||'1',
+      nome:div.querySelector('.rit-nome')?.value||'',
+      elem:div.querySelector('.rit-elem')?.value||'Conhecimento',
+      resistencia:div.querySelector('.rit-resist')?.value||'Anula',
+      atrResistencia:div.querySelector('.rit-atr-resist')?.value||'For',
+      activeTab,
+      n_exec:div.querySelector('.rit-version[data-tab="normal"] select:nth-child(1)')?.value||'padrão',
+      n_alc:div.querySelector('.rit-version[data-tab="normal"] select:nth-child(2)')?.value||'toque',
+      n_dur:div.querySelector('.rit-version[data-tab="normal"] select:nth-child(3)')?.value||'cena',
+      n_pe:div.querySelector('.rit-version[data-tab="normal"] input[type="number"]')?.value||'1',
+      n_desc:div.querySelector('.rit-version[data-tab="normal"] textarea')?.value||'',
+      d_exec:div.querySelector('.rit-version[data-tab="discente"] select:nth-child(1)')?.value||'padrão',
+      d_alc:div.querySelector('.rit-version[data-tab="discente"] select:nth-child(2)')?.value||'toque',
+      d_dur:div.querySelector('.rit-version[data-tab="discente"] select:nth-child(3)')?.value||'cena',
+      d_pe:div.querySelector('.rit-version[data-tab="discente"] input[type="number"]')?.value||'',
+      d_desc:div.querySelector('.rit-version[data-tab="discente"] textarea')?.value||'',
+      v_exec:div.querySelector('.rit-version[data-tab="verdadeiro"] select:nth-child(1)')?.value||'padrão',
+      v_alc:div.querySelector('.rit-version[data-tab="verdadeiro"] select:nth-child(2)')?.value||'toque',
+      v_dur:div.querySelector('.rit-version[data-tab="verdadeiro"] select:nth-child(3)')?.value||'cena',
+      v_pe:div.querySelector('.rit-version[data-tab="verdadeiro"] input[type="number"]')?.value||'',
+      v_desc:div.querySelector('.rit-version[data-tab="verdadeiro"] textarea')?.value||''
+    };
+  });
+}
+function extP(){
+  return Array.from(document.getElementById('paranormalCont')?.children||[]).map(d=>({
+    n:d.querySelector('.paranormal-nome')?.value||'',
+    d:d.querySelector('.paranormal-desc')?.value||''
+  }));
+}
+
+const gv=id=>document.getElementById(id)?.value||'';
+const sv=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+
+function coletarFicha(){
+  // Salvar atributos atuais de perícia dos selects
+  const psAtrSave={};
+  PERI.forEach(p=>{const s=document.getElementById('pa_'+p.id);if(s)psAtrSave[p.id]=s.value;});
+  window._profExtras.forEach((_,i)=>{const s=document.getElementById('pa_profissao_extra_'+i);if(s)window._profExtras[i].atr=s.value;});
+  const profNomeEl = document.getElementById('pn_profissao');
+
+  return {
+    nome:gv('nome'),classe:gv('classe'),origem:gv('origem'),trilha:gv('trilha'),
+    nex:parseInt(gv('nexN'))||5,deslocamento:gv('deslocamento'),
+    patente:gv('patente'),creditos:gv('creditos'),avatarUrl:gv('avatarUrl'),
+    agilidade:parseInt(gv('agilidade'))||0,forca:parseInt(gv('forca'))||0,
+    intelecto:parseInt(gv('intelecto'))||0,presenca:parseInt(gv('presenca'))||0,
+    vigor:parseInt(gv('vigor'))||0,
+    pvAtual:parseInt(gv('pvAtual'))||0,pvMax:parseInt(gv('pvMax'))||0,
+    pvMaxManual:document.getElementById('pvMax')?.dataset.manual||'',
+    peAtual:parseInt(gv('peAtual'))||0,peMax:parseInt(gv('peMax'))||0,
+    peMaxManual:document.getElementById('peMax')?.dataset.manual||'',
+    sanAtual:parseInt(gv('sanAtual'))||0,sanMax:parseInt(gv('sanMax'))||0,
+    sanMaxManual:document.getElementById('sanMax')?.dataset.manual||'',
+    defBonus:parseInt(gv('defBonus'))||0,
+    pericias:JSON.stringify(window._ps||{}),
+    perBonus:JSON.stringify(window._psBon||{}),
+    perAtr:JSON.stringify(psAtrSave),
+    profNome:profNomeEl?.value||'',
+    profExtras:JSON.stringify(window._profExtras||[]),
+    ataques:extA(),habilidades:extH(),rituais:extR(),
+    poderesParanormais:extP(),inventario:extI()
+  };
+}
+
+function preencher(f){
+  ['nome','origem','trilha','deslocamento'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=f[id]||'';});
+  sv('classe',f.classe||'especialista');sv('nexN',f.nex||5);
+  ['agilidade','forca','intelecto','presenca','vigor'].forEach(id=>sv(id,f[id]||0));
+
+  // MUDANÇA 2+5: restaurar valores com flags manuais
+  const pvMaxEl = document.getElementById('pvMax');
+  const peMaxEl = document.getElementById('peMax');
+  const sanMaxEl = document.getElementById('sanMax');
+  sv('pvAtual',f.pvAtual||0); sv('pvMax',f.pvMax||0);
+  sv('peAtual',f.peAtual||0); sv('peMax',f.peMax||0);
+  sv('sanAtual',f.sanAtual||0); sv('sanMax',f.sanMax||0);
+  if(f.pvMaxManual) pvMaxEl.dataset.manual='1';
+  if(f.peMaxManual) peMaxEl.dataset.manual='1';
+  if(f.sanMaxManual) sanMaxEl.dataset.manual='1';
+
+  sv('defBonus',f.defBonus||0);
+  sv('patente',f.patente||'recruta');sv('creditos',f.creditos||'baixo');
+  const pt=PATENTES[f.patente||'recruta'];if(pt)document.getElementById('patenteDisplay').textContent=pt.label.toUpperCase();
+  document.getElementById('avatarUrl').value=f.avatarUrl||'';setAv(f.avatarUrl||'');
+  window._ps=f.pericias?JSON.parse(f.pericias):{};
+  window._psBon=f.perBonus?JSON.parse(f.perBonus):{};
+  window._psAtr=f.perAtr?JSON.parse(f.perAtr):{};
+  window._profExtras=f.profExtras?JSON.parse(f.profExtras):[];
+  buildPeri();
+  if(f.profNome){const el=document.getElementById('pn_profissao');if(el)el.value=f.profNome;}
+  document.getElementById('atkCont').innerHTML='';
+  (f.ataques||[]).forEach(a=>document.getElementById('atkCont').appendChild(mkAtk(a.n,a.habil||'luta',a.ba,a.d,a.bd)));
+  document.getElementById('habCont').innerHTML='';
+  (f.habilidades||[]).forEach(h=>document.getElementById('habCont').appendChild(mkHab(h.n,h.d)));
+  document.getElementById('ritCont').innerHTML='';
+  (f.rituais||[]).forEach(r=>document.getElementById('ritCont').appendChild(mkRit(r)));
+  document.getElementById('paranormalCont').innerHTML='';
+  (f.poderesParanormais||[]).forEach(p=>document.getElementById('paranormalCont').appendChild(mkParanormal(p.n,p.d)));
+  document.getElementById('invCont').innerHTML='';
+  (f.inventario||[]).forEach(i=>document.getElementById('invCont').appendChild(mkItem(i.n,i.d,i.exp)));
+  _prevNex = parseInt(f.nex)||5;
+  atuTodosDots();calcDeriv();atuNEX(false);atuBarras();
+}
+
+function limpar(){
+  ['nome','origem','trilha'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  sv('classe','especialista');sv('nexN',5);sv('deslocamento','9m');
+  ['agilidade','forca','intelecto','presenca','vigor'].forEach(id=>sv(id,0));
+  const pvMaxEl=document.getElementById('pvMax');
+  const peMaxEl=document.getElementById('peMax');
+  const sanMaxEl=document.getElementById('sanMax');
+  sv('pvAtual',0);sv('pvMax',0);delete pvMaxEl.dataset.manual;
+  sv('peAtual',0);sv('peMax',0);delete peMaxEl.dataset.manual;
+  sv('sanAtual',0);sv('sanMax',0);delete sanMaxEl.dataset.manual;
+  sv('defBonus',0);sv('patente','recruta');sv('creditos','baixo');
+  document.getElementById('patenteDisplay').textContent='RECRUTA';
+  setAv('');document.getElementById('avatarUrl').value='';
+  window._ps={};window._psBon={};window._psAtr={};window._profExtras=[];
+  ['atkCont','habCont','ritCont','paranormalCont','invCont'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.innerHTML='';
+  });
+  _prevNex=5;buildPeri();atuTodosDots();calcDeriv();atuNEX(false);atuBarras();
+}
+
+// MUDANÇA 5: salvar corrigido com try/catch robusto
+function salvarFicha(){
+  setSave('saving');
+  try {
+    const dados = coletarFicha();
+    const json = JSON.stringify(dados);
+    localStorage.setItem('op_ficha', json);
+    setSave('saved');
+  } catch(e) {
+    console.error('Erro ao salvar:', e);
+    setSave('error');
+  }
+}
+
+function carregarFicha(){
+  try {
+    const raw=localStorage.getItem('op_ficha');
+    if(raw) preencher(JSON.parse(raw));
+  } catch(e) {
+    console.error('Erro ao carregar:', e);
+  }
+}
+
+function novaFicha(){
+  if(!confirm('Criar nova ficha? Os dados não salvos serão perdidos.'))return;
+  localStorage.removeItem('op_ficha');limpar();
+}
+function exportarJSON(){
+  const dados=coletarFicha();const nome=dados.nome||'agente';
+  const blob=new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`ficha-${nome.toLowerCase().replace(/\s+/g,'-')}.json`;a.click();
+}
+function importarJSON(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{try{preencher(JSON.parse(ev.target.result));salvarFicha();}catch(err){alert('Arquivo inválido.');}};
+    r.readAsText(f);
+  };inp.click();
+}
+
+let saveTm;
+function triggerSalvar(){clearTimeout(saveTm);setSave('saving');saveTm=setTimeout(salvarFicha,1500);}
+function setSave(s){
+  const e=document.getElementById('saveIndicator');if(!e)return;
+  e.className='save-ind '+s;
+  e.textContent=s==='saving'?'Salvando...':s==='saved'?'✓ Salvo':'✗ Erro';
+  if(s==='saved')setTimeout(()=>e.className='save-ind idle',3000);
+}
+
+// Conjurar ritual
+function conjurarRitual(btn){
+  const item=btn.closest('.coll-item');
+  const nome=item.querySelector('.rit-nome')?.value||'Ritual';
+  const activeTab=item.querySelector('.rit-tab.active')?.textContent?.toLowerCase().trim()||'normal';
+  const peInput=item.querySelector('.rit-version[data-tab="'+activeTab+'"] input[type="number"]');
+  const custoPE=parseInt(peInput?.value)||0;
+  if(custoPE<=0)return alert('Ritual sem custo de PE.');
+  const peAtualEl=document.getElementById('peAtual');
+  let peAtual=parseInt(peAtualEl.value)||0;
+  peAtual-=custoPE;peAtualEl.value=peAtual;atuBarras();
+  const ocultismo=window._ps['ocultismo']||'';
+  const av=getAtr('Int')+(ocultismo?GB[ocultismo]:0)+parseInt(window._psBon['ocultismo']||0);
+  const dificuldade=20+custoPE;const res=d20s(av);const tot=res.best;
+  const sucesso=tot>=dificuldade;const margemFalha=dificuldade-tot;
+  showDado('Conjuração: '+nome+' (Ocultismo)',res.best,0,tot,res.rolou,res.all);
+  if(!sucesso){
+    const sanAtualEl=document.getElementById('sanAtual');const sanMaxEl=document.getElementById('sanMax');
+    let sanAtual=parseInt(sanAtualEl.value)||0;let sanMax=parseInt(sanMaxEl.value)||0;
+    sanAtual-=custoPE;if(margemFalha>=5){sanMax-=1;sanMaxEl.dataset.manual='1';}
+    sanAtualEl.value=sanAtual;sanMaxEl.value=sanMax;
+    atuBarras();addLog('Falha em Conjuração: '+nome+' - Sanidade -'+custoPE+(margemFalha>=5?' (Máx -1)':''));
+  } else {addLog('Sucesso em Conjuração: '+nome);}
+}
+
+// INIT
+window.addEventListener('load',()=>{
+  applyTheme();
+  window._ps={};window._psBon={};window._psAtr={};window._profExtras=[];
+  buildPeri();
+
+  // listener para marcar edição manual nos max
+  ['pvMax','peMax','sanMax'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('input',()=>{el.dataset.manual='1';atuBarras();});
+  });
+  // listener para pvAtual/peAtual/sanAtual
+  ['pvAtual','peAtual','sanAtual'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('input',()=>atuBarras());
+  });
+
+  calcDeriv();atuNEX(false);atuBarras();atuTodosDots();
+  carregarFicha();
+
+  document.addEventListener('change',e=>{
+    if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))triggerSalvar();
+  });
+});
