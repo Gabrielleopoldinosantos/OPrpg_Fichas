@@ -48,7 +48,11 @@
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
           <div class="campo"><label class="lbl">Origem</label><input type="text" id="origem" placeholder="ex: Investigador"></div>
-          <div class="campo"><label class="lbl">Trilha</label><input type="text" id="trilha" placeholder="ex: Infiltrador"></div>
+          <div class="campo"><label class="lbl">Trilha</label>
+            <select id="trilha" onchange="onTrilhaChange();triggerSalvar()">
+              <option value="">Selecione a trilha (NEX 10%)</option>
+            </select>
+          </div>
           <div class="campo"><label class="lbl">Patente</label>
             <select id="patente" onchange="atuPatente()">
               <option value="recruta">Recruta</option>
@@ -294,6 +298,7 @@
       <div class="ptitle">👻 Poderes Paranormais</div>
       <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
         <button class="btn-add" style="margin-bottom:0;" onclick="addParanormal()">+ Novo</button>
+        <button class="btn-add" style="margin-bottom:0;border-color:var(--red);color:var(--red);" onclick="abrirModalParanormal()">📖 Do Livro</button>
       </div>
       <div id="paranormalCont"></div>
     </div>
