@@ -387,6 +387,7 @@ const PROFICIENCIAS = {
     { id: 'prof_armas_simples', label: 'Armas Simples', always: true },
   ],
 };
+window._profSel = {};
 
 function buildProficiencias() {
   const cont = document.getElementById('profCont');
@@ -400,13 +401,25 @@ function buildProficiencias() {
   const temProtPesada = checkHabExists('Proteção Pesada');
 
   profs.forEach(p => {
-    const disabled = (!p.always && p.req === 'Proteção Pesada' && !temProtPesada);
-    const checked = document.getElementById(p.id)?.checked ?? p.always;
-    const item = document.createElement('label');
-    item.className = 'prof-item' + (disabled ? ' prof-disabled' : '');
-    item.innerHTML = `<input type="checkbox" id="${p.id}" ${p.always ? '' : ''} ${disabled ? 'disabled' : ''} ${checked && !disabled ? 'checked' : (p.always ? 'checked' : '')} onchange="triggerSalvar()">
-      <span class="prof-label">${p.label}</span>
-      ${p.req ? `<span class="prof-req">(requer: ${p.req})</span>` : ''}`;
+    const requiresProtPesada = (!p.always && p.req === 'Proteção Pesada');
+    if (requiresProtPesada && !temProtPesada) return;
+    const wasActive = document.getElementById(p.id)?.dataset.active === '1';
+    const active = p.always ? true : (window._profSel[p.id] ?? wasActive);
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.id = p.id;
+    item.className = 'prof-tag' + (active ? ' active' : '') + (p.always ? ' locked' : '');
+    item.dataset.active = active ? '1' : '0';
+    item.title = p.always ? 'Proficiência base da classe' : 'Clique para marcar/desmarcar';
+    item.innerHTML = `<span class="prof-label">${p.label}</span>${p.req ? `<span class="prof-req">${p.req}</span>` : ''}`;
+    item.onclick = () => {
+      if (p.always) return;
+      const next = item.dataset.active !== '1';
+      item.dataset.active = next ? '1' : '0';
+      item.classList.toggle('active', next);
+      window._profSel[p.id] = next;
+      triggerSalvar();
+    };
     cont.appendChild(item);
   });
 }
@@ -610,7 +623,7 @@ function calcDeriv(){
   const lim=Math.ceil(nex/5);
   document.getElementById('peLimite').textContent=lim;
 
-  atuTodas();atuBarras();triggerSalvar();
+  atuTodas();atuBarras();atuInventarioPeso();triggerSalvar();
 }
 
 let _prevNex = 5;
@@ -1032,18 +1045,37 @@ function inserirRitual(i){
 // ============================================================
 // INVENTÁRIO — COM DRAG & DROP
 // ============================================================
-function mkItem(n='',d='',exp=false){
+const INV_CAT_PESO = { I: 1, II: 2, III: 3, VI: 6 };
+
+function mkItem(n='',d='',exp=false,qtd=1,cat='I',pesoAj=0){
   const div=document.createElement('div');div.className='inv-it';div.draggable=true;
   div.innerHTML=`<div class="inv-row">
     <span class="inv-drag" title="Arrastar para reordenar">⠿</span>
     <button class="inv-exp" onclick="toggleInv(this)">▸</button>
     <input type="text" class="inv-ni" placeholder="Item...">
-    <button class="inv-del" onclick="this.closest('.inv-it').remove();triggerSalvar()">✕</button>
+    <input type="number" class="inv-qtd" min="1" value="1" title="Quantidade" aria-label="Quantidade">
+    <select class="inv-cat" title="Categoria">
+      <option value="I">I</option>
+      <option value="II">II</option>
+      <option value="III">III</option>
+      <option value="VI">VI</option>
+    </select>
+    <button class="inv-del" onclick="this.closest('.inv-it').remove();atuInventarioPeso();triggerSalvar()">✕</button>
   </div>
-  <textarea class="inv-dt" placeholder="Detalhes, propriedades..."${exp?' style="display:block;"':''}></textarea>`;
+  <textarea class="inv-dt" placeholder="Detalhes, propriedades..."${exp?' style="display:block;"':''}></textarea>
+  <div class="inv-extra"${exp?' style="display:block;"':''}>
+    <label>Ajuste de Peso <span>(pode ser negativo)</span></label>
+    <input type="number" class="inv-peso-aj" value="0" placeholder="0">
+  </div>`;
   div.querySelector('.inv-ni').value=n;div.querySelector('.inv-dt').value=d;
+  div.querySelector('.inv-qtd').value = Math.max(1, parseInt(qtd)||1);
+  div.querySelector('.inv-cat').value = INV_CAT_PESO[cat] ? cat : 'I';
+  div.querySelector('.inv-peso-aj').value = parseInt(pesoAj)||0;
   if(exp)div.querySelector('.inv-exp').textContent='▾';
-  div.addEventListener('input',()=>triggerSalvar());
+  div.addEventListener('input',()=>{
+    atuInventarioPeso();
+    triggerSalvar();
+  });
   // Drag and drop events
   div.addEventListener('dragstart', invDragStart);
   div.addEventListener('dragover', invDragOver);
@@ -1076,9 +1108,61 @@ function invDragEnd(e) {
   _dragSrc = null;
 }
 
-function addItem(){document.getElementById('invCont').appendChild(mkItem());}
-function toggleInv(btn){const d=btn.closest('.inv-it').querySelector('.inv-dt');const v=d.style.display==='block';d.style.display=v?'none':'block';btn.textContent=v?'▸':'▾';}
-function extI(){return Array.from(document.getElementById('invCont').children).map(d=>({n:d.querySelector('.inv-ni')?.value||'',d:d.querySelector('.inv-dt')?.value||'',exp:d.querySelector('.inv-dt')?.style.display==='block'}));}
+function addItem(){
+  document.getElementById('invCont').appendChild(mkItem());
+  atuInventarioPeso();
+}
+function toggleInv(btn){
+  const item=btn.closest('.inv-it');
+  const d=item.querySelector('.inv-dt');
+  const extra=item.querySelector('.inv-extra');
+  const v=d.style.display==='block';
+  d.style.display=v?'none':'block';
+  if (extra) extra.style.display=v?'none':'block';
+  btn.textContent=v?'▸':'▾';
+}
+function extI(){
+  return Array.from(document.getElementById('invCont').children).map(d=>({
+    n:d.querySelector('.inv-ni')?.value||'',
+    d:d.querySelector('.inv-dt')?.value||'',
+    exp:d.querySelector('.inv-dt')?.style.display==='block',
+    qtd:parseInt(d.querySelector('.inv-qtd')?.value)||1,
+    cat:d.querySelector('.inv-cat')?.value||'I',
+    pesoAj:parseInt(d.querySelector('.inv-peso-aj')?.value)||0
+  }));
+}
+
+function calcCapacidadeInventario() {
+  const forca = parseInt(document.getElementById('forca')?.value)||0;
+  return forca > 0 ? forca * 5 : 2;
+}
+
+function calcPesoInventario() {
+  return Array.from(document.querySelectorAll('#invCont .inv-it')).reduce((sum, item) => {
+    const qtd = Math.max(1, parseInt(item.querySelector('.inv-qtd')?.value)||1);
+    const cat = item.querySelector('.inv-cat')?.value || 'I';
+    const pesoBase = INV_CAT_PESO[cat] || 0;
+    const ajuste = parseInt(item.querySelector('.inv-peso-aj')?.value)||0;
+    return sum + (qtd * pesoBase) + ajuste;
+  }, 0);
+}
+
+function atuInventarioPeso(){
+  const cap = calcCapacidadeInventario();
+  const usado = calcPesoInventario();
+  const livre = cap - usado;
+  const pct = Math.max(0, Math.min(100, Math.round((usado / Math.max(1, cap)) * 100)));
+  const usoEl = document.getElementById('invUso');
+  const capEl = document.getElementById('invCap');
+  const livreEl = document.getElementById('invLivre');
+  const barEl = document.getElementById('invPesoFill');
+  const wrap = document.getElementById('invPesoWrap');
+  if (usoEl) usoEl.textContent = usado;
+  if (capEl) capEl.textContent = cap;
+  if (livreEl) livreEl.textContent = livre;
+  if (barEl) barEl.style.width = pct + '%';
+  if (wrap) wrap.classList.toggle('estourado', usado > cap);
+}
 
 function editarAvatar(){
   const u=prompt('URL da imagem:',document.getElementById('avatarUrl').value||'');
@@ -1140,9 +1224,10 @@ function extP(){
 }
 function extProfs() {
   const result = {};
-  document.querySelectorAll('#profCont input[type=checkbox]').forEach(el => {
-    result[el.id] = el.checked;
+  document.querySelectorAll('#profCont .prof-tag').forEach(el => {
+    result[el.id] = el.dataset.active === '1';
   });
+  window._profSel = {...result};
   return result;
 }
 
@@ -1220,17 +1305,22 @@ function preencher(f){
   document.getElementById('paranormalCont').innerHTML='';
   (f.poderesParanormais||[]).forEach(p=>document.getElementById('paranormalCont').appendChild(mkParanormal(p.n,p.d)));
   document.getElementById('invCont').innerHTML='';
-  (f.inventario||[]).forEach(i=>document.getElementById('invCont').appendChild(mkItem(i.n,i.d,i.exp)));
+  (f.inventario||[]).forEach(i=>document.getElementById('invCont').appendChild(mkItem(i.n,i.d,i.exp,i.qtd,i.cat,i.pesoAj)));
   // Restaurar proficiências
+  window._profSel = f.proficiencias || {};
   buildProficiencias();
   if(f.proficiencias) {
     Object.entries(f.proficiencias).forEach(([id, checked]) => {
       const el = document.getElementById(id);
-      if (el && !el.disabled) el.checked = checked;
+      if (el && !el.classList.contains('locked')) {
+        el.dataset.active = checked ? '1' : '0';
+        el.classList.toggle('active', !!checked);
+        window._profSel[id] = !!checked;
+      }
     });
   }
   _prevNex = parseInt(f.nex)||5;
-  atuTodosDots();calcDeriv();atuNEX(false);atuBarras();
+  atuTodosDots();calcDeriv();atuNEX(false);atuBarras();atuInventarioPeso();
 }
 
 function limpar(){
@@ -1250,7 +1340,8 @@ function limpar(){
   ['atkCont','habCont','ritCont','paranormalCont','invCont'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.innerHTML='';
   });
-  _prevNex=5;buildPeri();atuTodosDots();calcDeriv();atuNEX(false);atuBarras();buildProficiencias();
+  window._profSel = {};
+  _prevNex=5;buildPeri();atuTodosDots();calcDeriv();atuNEX(false);atuBarras();buildProficiencias();atuInventarioPeso();
 }
 
 function salvarFicha(){
@@ -1381,7 +1472,7 @@ window.addEventListener('load',()=>{
   const classeEl = document.getElementById('classe');
   if(classeEl) classeEl.addEventListener('change', () => { buildProficiencias(); calcDeriv(); triggerSalvar(); });
 
-  calcDeriv();atuNEX(false);atuBarras();atuTodosDots();
+  calcDeriv();atuNEX(false);atuBarras();atuTodosDots();atuInventarioPeso();
   buildProficiencias();
   carregarFicha();
 

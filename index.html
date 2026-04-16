@@ -315,6 +315,14 @@
       </div>
       <div class="panel panel-accent-ink">
         <div class="ptitle">🎒 Inventário</div>
+        <div class="inv-peso-wrap" id="invPesoWrap">
+          <div class="inv-peso-head">
+            <span>Uso de Carga</span>
+            <strong><span id="invUso">0</span>/<span id="invCap">2</span></strong>
+          </div>
+          <div class="inv-peso-bar"><div id="invPesoFill"></div></div>
+          <div class="inv-peso-foot">Espaço livre: <b id="invLivre">2</b></div>
+        </div>
         <div class="inv-c" id="invCont"></div>
         <button class="btn-add-i" onclick="addItem()">+ Adicionar Item</button>
       </div>
