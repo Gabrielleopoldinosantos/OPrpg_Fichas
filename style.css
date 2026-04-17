@@ -648,11 +648,524 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
 /* PODERES LAYOUT */
 .poderes-layout { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 @media(max-width:900px){.poderes-layout{grid-template-columns:1fr;}}
+
+/* ============================================================
+   RESPONSIVIDADE DESKTOP INTERMEDIÁRIA (max-width: 768px)
+   ============================================================ */
 @media(max-width:768px){
-  .grid3{grid-template-columns:1fr;} .grid4{grid-template-columns:repeat(2,1fr);}
+  .grid3{grid-template-columns:1fr;}
+  .grid4{grid-template-columns:repeat(2,1fr);}
   .atr-grid{grid-template-columns:repeat(3,1fr);}
-  .s2{grid-column:span 1;} .rit-fields{grid-template-columns:1fr 1fr;}
-  .masthead-btns{flex-wrap:wrap;} .main-tabs{flex-wrap:wrap;} .atk-grid{grid-template-columns:1fr;}
+  .s2{grid-column:span 1;}
+  .rit-fields{grid-template-columns:1fr 1fr;}
+  .masthead-btns{flex-wrap:wrap;}
+  .main-tabs{flex-wrap:wrap;}
+  .atk-grid{grid-template-columns:1fr;}
   .atr-choice-grid{grid-template-columns:repeat(3,1fr);}
   .prof-grid{flex-direction:column;}
+}
+
+/* ============================================================
+   RESPONSIVIDADE MOBILE — Samsung Galaxy A51/71 (412×915)
+   Base: tela 412px de largura, densidade alta
+   ============================================================ */
+@media (max-width: 480px) {
+
+  /* CORPO E CONTAINER */
+  body {
+    font-size: 15px;
+    padding-bottom: 80px;
+    /* Evita zoom em inputs no iOS/Android */
+    -webkit-text-size-adjust: 100%;
+  }
+  .ficha-c {
+    padding: 0 0 40px;
+  }
+
+  /* SAVE INDICATOR */
+  .save-ind {
+    top: auto;
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    text-align: center;
+    font-size: 0.6em;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    padding: 10px 12px 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .masthead::before { display: none; }
+  .masthead-t {
+    font-size: 1.1em;
+    letter-spacing: 2px;
+    line-height: 1.2;
+  }
+  .masthead-s {
+    font-size: 0.38em;
+    letter-spacing: 2px;
+  }
+  .masthead-btns {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px;
+  }
+  .btn-hd {
+    font-size: 0.55em;
+    padding: 7px 4px;
+    letter-spacing: 1px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .btn-dark {
+    grid-column: 1;
+    font-size: 0.9em;
+    padding: 7px 6px;
+  }
+
+  /* ── TABS ── */
+  .main-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-bottom: 2px solid var(--border2);
+    overflow: hidden;
+  }
+  .main-tab {
+    font-size: 0.62em;
+    letter-spacing: 1px;
+    padding: 10px 4px;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.2;
+    border: none;
+    border-right: 1px solid var(--border2);
+    border-bottom: 1px solid var(--border2);
+  }
+  .main-tab:nth-child(2n) { border-right: none; }
+  .main-tab.active {
+    font-size: 0.64em;
+    border-bottom: 3px solid var(--nex);
+    margin-bottom: 0;
+    background: var(--paper);
+    color: var(--nex);
+  }
+
+  /* ── TAB PANELS ── */
+  .tab-panel {
+    padding-top: 10px;
+  }
+
+  /* ── PANELS ── */
+  .panel {
+    padding: 10px 10px;
+    border-left: none;
+    border-right: none;
+  }
+  .panel.mb12 { margin-bottom: 8px; }
+
+  /* ── IDENTIDADE GRID ── */
+  #tab-identidade > div:first-child {
+    grid-template-columns: 1fr !important;
+  }
+  /* Avatar fica menor e ao lado do nome em mobile */
+  #tab-identidade > div:first-child > div:last-child {
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 10px;
+    padding: 8px 10px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--ink2);
+    margin-bottom: 8px;
+  }
+  .av-frame {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+  }
+  .av-ph { font-size: 1.5em; }
+  .btn-av { margin-top: 4px; font-size: 0.5em; padding: 3px 8px; }
+
+  /* Campos de identidade */
+  #tab-identidade > div:first-child > div:first-child > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  #tab-identidade > div:first-child > div:first-child > div:nth-child(2) {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  /* Patente badge */
+  .patente-badge {
+    font-size: 0.6em;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+  }
+
+  /* ── PROFICIÊNCIAS ── */
+  .prof-grid {
+    gap: 6px;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .prof-tag {
+    padding: 5px 10px;
+    font-size: 0.9em;
+    gap: 5px;
+  }
+  .prof-label { font-size: 0.75em; }
+  .prof-req { font-size: 0.5em; }
+
+  /* ── NEX ── */
+  .nex-wrap {
+    margin: 0 0 8px;
+    padding: 10px 12px;
+  }
+  .nex-row { gap: 10px; }
+  .nex-num input {
+    font-size: 1.8em;
+    width: 72px;
+  }
+  .nex-lbl { font-size: 0.8em; letter-spacing: 1px; }
+  .nex-desc { font-size: 0.6em; line-height: 1.4; }
+  .btn-nex { width: 34px; height: 34px; font-size: 1.1em; }
+
+  /* ── ATRIBUTOS ── */
+  .atr-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  /* Vigor fica centralizado na última linha sozinho */
+  .atr-box:last-child {
+    grid-column: 2;
+  }
+  .atr-box {
+    padding: 10px 6px 8px;
+    border-radius: 8px;
+  }
+  .atr-lbl {
+    font-size: 0.55em;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+  .atr-val-i {
+    font-size: 1.8em;
+    width: 44px;
+  }
+  .atr-btn {
+    width: 20px;
+    height: 28px;
+    font-size: 0.8em;
+  }
+  .atr-dots { gap: 4px; margin-bottom: 4px; }
+  .atr-dot { width: 8px; height: 8px; }
+  .atr-hint {
+    font-size: 0.47em;
+    min-height: 34px;
+    line-height: 1.4;
+  }
+  .btn-dice {
+    font-size: 0.85em;
+    padding: 2px 6px;
+    margin-top: 4px;
+  }
+
+  /* ── STATUS (GRID 4) ── */
+  .grid4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .stat-box {
+    padding: 10px 8px;
+  }
+  .stat-lbl {
+    font-size: 0.58em;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .stat-inputs input {
+    width: 46px;
+    height: 40px;
+    font-size: 1.3em;
+  }
+  .stat-sep { font-size: 1em; }
+  .stat-adj-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85em;
+  }
+  .stat-hint { font-size: 0.52em; line-height: 1.4; }
+  .def-big { font-size: 2.4em; }
+
+  /* ── PERÍCIAS ── */
+  .per-header-row {
+    grid-template-columns: 28px 1fr 32px 44px 32px 24px;
+    gap: 2px;
+    padding: 4px 6px;
+  }
+  .per-hcol { font-size: 0.48em; }
+  .per-row {
+    grid-template-columns: 28px 1fr 32px 44px 32px 24px;
+    gap: 2px;
+    padding: 3px 6px;
+    min-height: 36px;
+  }
+  .per-grau {
+    width: 22px;
+    height: 22px;
+    font-size: 0.58em;
+  }
+  .per-nome { font-size: 0.84em; }
+  .per-atr-sel { font-size: 0.48em; }
+  .per-val { font-size: 0.88em; }
+  .per-bon { font-size: 0.7em !important; padding: 1px !important; }
+  .btn-pr { font-size: 0.8em; padding: 2px 5px; min-height: 28px; min-width: 28px; }
+  .per-group-label { font-size: 0.55em; padding: 4px 8px; letter-spacing: 2px; }
+  .per-tip-crimson { font-size: 0.85em !important; }
+
+  /* ── COLLAPSIBLE ITEMS ── */
+  .coll-header { padding: 10px 10px; gap: 6px; min-height: 46px; }
+  .coll-title { font-size: 0.88em; letter-spacing: 0.5px; }
+  .coll-meta { font-size: 0.52em; }
+  .coll-body { padding: 10px 10px 12px; }
+  .coll-item { margin-bottom: 6px; }
+
+  /* ── ATAQUES ── */
+  .atk-grid { grid-template-columns: 1fr; gap: 8px; }
+  .atk-ctrls { gap: 5px; }
+  .btn-ra, .btn-rd {
+    padding: 8px 12px;
+    font-size: 0.78em;
+    flex: 1;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+  .atk-bi { width: 56px !important; height: 36px !important; font-size: 1em !important; }
+
+  /* ── PODERES LAYOUT ── */
+  .poderes-layout { grid-template-columns: 1fr; gap: 8px; }
+
+  /* ── RITUAIS ── */
+  .rit-fields {
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+  }
+  .rit-tabs { flex-wrap: wrap; gap: 3px; }
+  .rit-tab {
+    font-size: 0.56em;
+    padding: 5px 10px;
+    flex: 1;
+    text-align: center;
+  }
+  .rit-desc-area { font-size: 0.85em !important; min-height: 52px; }
+
+  /* ── INVENTÁRIO ── */
+  .inv-drag { display: none; } /* Esconde drag handle no mobile */
+  .inv-row { min-height: 40px; gap: 3px; }
+  .inv-ni { font-size: 0.88em; }
+  .inv-qtd {
+    width: 40px !important;
+    padding: 6px 3px !important;
+    font-size: 0.78em !important;
+  }
+  .inv-cat {
+    width: 50px !important;
+    padding: 6px 2px !important;
+    font-size: 0.7em !important;
+  }
+  .inv-del {
+    width: 28px;
+    font-size: 0.9em;
+  }
+  .inv-exp {
+    width: 28px;
+    min-height: 40px;
+    font-size: 1em;
+  }
+  .inv-dt { padding: 5px 10px !important; font-size: 0.82em; }
+  .inv-extra { padding: 4px 10px 8px; }
+  .inv-peso-head { font-size: 0.58em; }
+  .inv-peso-foot { font-size: 0.55em; }
+
+  /* ── GRID DE COMBATE ── */
+  .grid2 {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  /* ── DADO CARD ── */
+  .dado-card {
+    padding: 20px 28px;
+    min-width: 260px;
+    max-width: 90vw;
+  }
+  .dado-hd { font-size: 0.58em; letter-spacing: 1px; margin-bottom: 8px; }
+  .dado-tot { font-size: 2.8em; }
+  .dado-dis { font-size: 0.54em; margin-top: 10px; }
+
+  /* ── MODAL ── */
+  .modal-box {
+    width: 100vw;
+    max-height: 95vh;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    align-self: flex-end;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.4);
+  }
+  .modal-ov {
+    align-items: flex-end;
+  }
+  .modal-hd { padding: 12px 14px 10px; }
+  .modal-title { font-size: 0.9em; letter-spacing: 2px; }
+  .modal-filters-area { padding: 8px 12px 6px; }
+  .modal-search {
+    font-size: 0.72em !important;
+    padding: 8px 10px !important;
+  }
+  .modal-scroll { padding: 8px 12px; }
+  .modal-item { padding: 10px 10px; }
+  .modal-item-name { font-size: 0.85em; }
+  .modal-item-desc { font-size: 0.84em; }
+  .modal-item-meta { font-size: 0.56em; }
+  .modal-footer { padding: 8px 14px; }
+  .modal-footer-close { padding: 10px 20px; font-size: 0.75em; }
+
+  /* ── NEX MODAL ── */
+  .nex-modal-box {
+    width: 100vw;
+    max-height: 95vh;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    align-self: flex-end;
+  }
+  .nex-modal-ov { align-items: flex-end; }
+  .nex-modal-header { padding: 12px 14px; }
+  .nex-modal-title { font-size: 0.95em; letter-spacing: 2px; }
+  .nex-modal-body { padding: 14px; }
+  .nex-modal-footer { padding: 10px 14px; gap: 8px; }
+  .nex-modal-close {
+    font-size: 0.58em;
+    padding: 8px 14px;
+    letter-spacing: 1px;
+  }
+  .nex-modal-confirm {
+    font-size: 0.78em;
+    padding: 8px 18px;
+    letter-spacing: 1px;
+  }
+  .atr-choice-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .atr-choice-btn {
+    padding: 8px 3px;
+    font-size: 0.82em;
+  }
+  .hab-choice-list { max-height: 220px; }
+  .rit-choice-list { max-height: 200px; }
+  .hab-choice-item { padding: 8px 10px; }
+  .hab-choice-name { font-size: 0.88em; }
+  .hab-choice-desc { font-size: 0.78em; }
+
+  /* ── FILTROS ── */
+  .hab-filters, .rit-filters {
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+  .hab-filter-btn, .rit-filter-btn {
+    font-size: 0.52em;
+    padding: 5px 8px;
+    letter-spacing: 0.5px;
+  }
+  .rit-circ-btn {
+    font-size: 0.6em;
+    padding: 4px 8px;
+  }
+  .filter-row-label { font-size: 0.5em; }
+
+  /* ── SEC DIVIDER ── */
+  .sec-div { margin: 12px 0 8px; }
+  .sec-div-label { font-size: 0.62em; letter-spacing: 2px; }
+
+  /* ── BOTÕES GERAIS ── */
+  .btn-add, .btn-add-i {
+    font-size: 0.58em;
+    padding: 8px 12px;
+    letter-spacing: 0.5px;
+    width: 100%;
+    text-align: center;
+  }
+  .btn-del {
+    padding: 5px 10px;
+    font-size: 0.8em;
+  }
+
+  /* ── PTITLE ── */
+  .ptitle {
+    font-size: 0.68em;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+  }
+
+  /* ── LABEL E INPUTS ── */
+  label.lbl {
+    font-size: 0.55em;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  input[type=text], input[type=number]:not(.stat-inp), textarea, select {
+    font-size: 0.95em;
+    padding: 8px 4px;
+  }
+  /* Previne zoom no foco de inputs no mobile */
+  input[type=text]:focus,
+  input[type=number]:focus,
+  textarea:focus,
+  select:focus {
+    font-size: 1em;
+  }
+  textarea { min-height: 52px; padding: 7px; }
+  select { padding: 7px 6px; }
+
+  /* ── LOG DE ROLAGENS ── */
+  .log-it { font-size: 0.6em; padding: 5px 7px; }
+  .log-res { font-size: 1.1em; }
+
+  /* ── INFO BOX ── */
+  .info-box { font-size: 0.58em; padding: 7px 10px; }
+
+  /* ── BOTÃO CONJURAR ── */
+  button.btn-add[onclick*="conjurarRitual"] {
+    font-size: 0.6em;
+    padding: 9px 12px;
+  }
+}
+
+/* ============================================================
+   AJUSTE EXTRA PARA TELAS MUITO PEQUENAS (< 360px)
+   ============================================================ */
+@media (max-width: 360px) {
+  .atr-grid { grid-template-columns: repeat(2, 1fr); }
+  .atr-box:last-child { grid-column: auto; }
+  .grid4 { grid-template-columns: 1fr; }
+  .masthead-btns { grid-template-columns: 1fr 1fr; }
+  .main-tabs { grid-template-columns: 1fr; }
+  .stat-inputs input { width: 40px; height: 36px; font-size: 1.1em; }
 }
