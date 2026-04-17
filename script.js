@@ -76,6 +76,130 @@ const CLASSES_STATS={
   ocultista:{pvBase:12,pvNex:2,peBase:4,peNex:4,sanBase:20,sanNex:5}
 };
 const PATENTES={recruta:{label:'Recruta',credito:'baixo'},operador:{label:'Operador',credito:'medio'},agente_especial:{label:'Agente Especial',credito:'medio'},oficial_operacoes:{label:'Oficial de Operações',credito:'alto'},agente_elite:{label:'Agente de Elite',credito:'ilimitado'}};
+const TRILHAS_POR_CLASSE = {
+  combatente: ['Aniquilador','Comandante de Campo','Guerreiro','Operações Especiais','Tropa de Choque'],
+  especialista: ['Atirador de Elite','Infiltrador','Médico de Campo','Negociador','Técnico'],
+  ocultista: ['Conduíte','Flagelador','Graduado','Intuitivo','Lâmina Paranormal']
+};
+const TRILHA_BENEFICIOS = {
+  'Aniquilador': {
+    10:{nome:'A Favorita',desc:'Escolha uma arma favorita. A categoria da arma é reduzida em I.'},
+    40:{nome:'Técnica Secreta',desc:'Categoria da favorita reduzida em II. Ao atacar com ela, pode gastar 2 PE para: Amplo (alvo adjacente extra) e/ou Destruidor (+1 multiplicador de crítico). Efeitos adicionais custam +2 PE cada.'},
+    65:{nome:'Técnica Sublime',desc:'Adiciona efeitos à Técnica Secreta: Letal (+2 margem de ameaça, pode repetir para +5) e Perfurante (ignora até 5 de resistência a dano).'},
+    99:{nome:'Máquina de Matar',desc:'Categoria da favorita reduzida em III, +2 margem de ameaça e dano aumenta em um dado do mesmo tipo.'}
+  },
+  'Comandante de Campo': {
+    10:{nome:'Inspirar Confiança',desc:'Reação + 2 PE: aliado em alcance curto pode rerrolar um teste recém realizado.'},
+    40:{nome:'Estrategista',desc:'Ação padrão + 1 PE por aliado (limitado por Intelecto): aliados em alcance curto recebem ação de movimento adicional no próximo turno.'},
+    65:{nome:'Brecha na Guarda',desc:'1/rodada, quando aliado causar dano em alcance curto, reação + 2 PE para você ou outro aliado fazer ataque adicional. Alcance de Inspirar Confiança e Estrategista vira médio.'},
+    99:{nome:'Oficial Comandante',desc:'Ação padrão + 5 PE: todos aliados em alcance médio recebem uma ação padrão adicional no próximo turno.'}
+  },
+  'Guerreiro': {
+    10:{nome:'Técnica Letal',desc:'+2 na margem de ameaça com todos os ataques corpo a corpo.'},
+    40:{nome:'Revidar',desc:'Ao bloquear, reação + 2 PE para atacar corpo a corpo o inimigo que atacou você.'},
+    65:{nome:'Força Opressora',desc:'Ao acertar ataque corpo a corpo, gaste 1 PE para derrubar/empurrar como ação livre.'},
+    99:{nome:'Potência Máxima',desc:'Ataque Especial com armas corpo a corpo dobra todos os bônus numéricos.'}
+  },
+  'Operações Especiais': {
+    10:{nome:'Iniciativa Aprimorada',desc:'+5 em Iniciativa e uma ação de movimento adicional na primeira rodada.'},
+    40:{nome:'Ataque Extra',desc:'1/rodada, ao atacar, gaste 2 PE para realizar um ataque adicional.'},
+    65:{nome:'Surto de Adrenalina',desc:'1/rodada, gaste 5 PE para realizar ação padrão ou movimento adicional.'},
+    99:{nome:'Sempre Alerta',desc:'Recebe uma ação padrão adicional no início de cada cena de combate.'}
+  },
+  'Tropa de Choque': {
+    10:{nome:'Casca Grossa',desc:'+1 PV para cada 5% de NEX e, ao bloquear, soma Vigor na resistência a dano recebido.'},
+    40:{nome:'Cai Dentro',desc:'Quando inimigo em alcance curto atacar aliado, reação + 1 PE para forçar teste de Vontade (DT Vig) e redirecionar ataque para você.'},
+    65:{nome:'Duro de Matar',desc:'Ao sofrer dano não paranormal, reação + 2 PE para reduzir dano à metade (NEX 85% também contra paranormal).'},
+    99:{nome:'Inquebrável',desc:'Enquanto machucado: +5 Defesa e resistência 5. Enquanto morrendo: não fica indefeso e ainda pode agir.'}
+  },
+  'Atirador de Elite': {
+    10:{nome:'Mira de Elite',desc:'Proficiência com armas de fogo de balas longas e soma Intelecto no dano com elas.'},
+    40:{nome:'Disparo Letal',desc:'Ao mirar, gaste 1 PE para +2 na margem de ameaça do próximo ataque até o fim do próximo turno.'},
+    65:{nome:'Disparo Impactante',desc:'Com arma de fogo calibre grosso, gaste 2 PE para manobras derrubar, desarmar, empurrar ou quebrar à distância.'},
+    99:{nome:'Atirar para Matar',desc:'Ao acertar crítico com arma de fogo, causa dano máximo sem rolar dados.'}
+  },
+  'Infiltrador': {
+    10:{nome:'Ataque Furtivo',desc:'1/rodada, ao acertar alvo desprevenido/flanqueado, gaste 1 PE para +1d6 dano (+2d6 no NEX 40%, +3d6 no NEX 65%, +4d6 no NEX 99%).'},
+    40:{nome:'Gatuno',desc:'+5 em Atletismo e Crime. Pode se mover normalmente ao se esconder sem penalidade.'},
+    65:{nome:'Assassinar',desc:'Ação de movimento + 3 PE para analisar alvo; primeiro Ataque Furtivo até fim do próximo turno dobra dados extras.'},
+    99:{nome:'Sombra Fugaz',desc:'Ao fazer Furtividade após ação chamativa, gaste 3 PE para ignorar penalidade –15.'}
+  },
+  'Médico de Campo': {
+    10:{nome:'Paramédico',desc:'Ação padrão + 2 PE para curar 2d10 PV de aliado adjacente (+1d10 nos NEX 40/65/99 com +1 PE por dado).'},
+    40:{nome:'Equipe de Trauma',desc:'Ação padrão + 2 PE para remover uma condição negativa (exceto morrendo) de aliado adjacente.'},
+    65:{nome:'Resgate',desc:'1/rodada, aproximação com ação livre de aliado machucado/morrendo e bônus defensivo após cura/suporte.'},
+    99:{nome:'Reanimação',desc:'1/cena, ação completa + 10 PE para reviver personagem morto na mesma cena (exceto dano massivo).'}
+  },
+  'Negociador': {
+    10:{nome:'Eloquência',desc:'Ação completa + 1 PE por alvo em alcance curto; teste social oposto à Vontade para fascinar.'},
+    40:{nome:'Discurso Motivador',desc:'Ação padrão + 4 PE para bônus de perícia em alcance curto até fim da cena (em NEX 65%, 8 PE dobra o bônus).'},
+    65:{nome:'Eu Conheço um Cara',desc:'1/missão, aciona rede de contatos para um favor narrativo (a critério do mestre).'},
+    99:{nome:'Truque de Mestre',desc:'Gaste 5 PE para simular efeito de habilidade que aliado usou na cena.'}
+  },
+  'Técnico': {
+    10:{nome:'Inventário Otimizado',desc:'Soma Intelecto à Força para calcular a capacidade de carga.'},
+    40:{nome:'Remendão',desc:'Ação completa + 1 PE remove condição quebrado de equipamento adjacente até fim da cena; equipamentos gerais têm categoria reduzida em I para você.'},
+    65:{nome:'Improvisar',desc:'Ação completa + 2 PE (+2 PE por categoria) para criar versão funcional de equipamento geral até o fim da cena.'},
+    99:{nome:'Preparado para Tudo',desc:'Ação de movimento + 3 PE por categoria para sacar item “do fundo da bolsa” (exceto armas).'}
+  },
+  'Conduíte': {
+    10:{nome:'Ampliar Ritual',desc:'Ao lançar ritual, gaste +2 PE para aumentar alcance em um passo ou dobrar área de efeito.'},
+    40:{nome:'Acelerar Ritual',desc:'1/rodada, aumente custo em 4 PE para conjurar ritual como ação livre.'},
+    65:{nome:'Anular Ritual',desc:'Ao ser alvo de ritual, gaste PE iguais ao custo e faça teste oposto de Ocultismo para anulá-lo.'},
+    99:{nome:'Canalizar o Medo',desc:'Aprende o ritual Canalizar o Medo.'}
+  },
+  'Flagelador': {
+    10:{nome:'Poder do Flagelo',desc:'Ao conjurar ritual, pode gastar PV no lugar de PE (2 PV por PE).'},
+    40:{nome:'Abraçar a Dor',desc:'Ao sofrer dano não paranormal, reação + 2 PE para reduzir dano à metade.'},
+    65:{nome:'Absorver Agonia',desc:'Ao reduzir inimigos a 0 PV com ritual, recebe PE temporários iguais ao círculo do ritual.'},
+    99:{nome:'Medo Tangível',desc:'Aprende o ritual Medo Tangível.'}
+  },
+  'Graduado': {
+    10:{nome:'Saber Ampliado',desc:'Aprende um ritual extra de 1º círculo; ao ganhar novos círculos, aprende ritual adicional do círculo.'},
+    40:{nome:'Grimório Ritualístico',desc:'Cria grimório especial para armazenar rituais, com capacidade baseada em Intelecto.'},
+    65:{nome:'Rituais Eficientes',desc:'+5 na DT para resistir a todos os seus rituais.'},
+    99:{nome:'Conhecendo o Medo',desc:'Aprende o ritual Conhecendo o Medo.'}
+  },
+  'Intuitivo': {
+    10:{nome:'Mente Sã',desc:'+5 em testes de resistência contra efeitos paranormais.'},
+    40:{nome:'Presença Poderosa',desc:'Adiciona Presença ao limite de PE por turno para conjurar rituais.'},
+    65:{nome:'Inabalável',desc:'Resistência a dano mental e paranormal 10 e melhoria em Vontade contra efeitos paranormais.'},
+    99:{nome:'Presença do Medo',desc:'Aprende o ritual Presença do Medo.'}
+  },
+  'Lâmina Paranormal': {
+    10:{nome:'Lâmina Maldita',desc:'Aprende Amaldiçoar Arma (ou reduz custo em 1 PE se já conhece) e pode usar Ocultismo para atacar com arma amaldiçoada.'},
+    40:{nome:'Gladiador Paranormal',desc:'Ao acertar ataque corpo a corpo, recebe 2 PE temporários (limite por cena = limite de PE).'},
+    65:{nome:'Conjuração Marcial',desc:'1/rodada, ao lançar ritual de ação padrão, gaste 2 PE para ataque corpo a corpo como ação livre.'},
+    99:{nome:'Lâmina do Medo',desc:'Aprende o ritual Lâmina do Medo.'}
+  }
+};
+const PODERES_PARANORMAIS_LIVRO = [
+  {nome:'Aprender Ritual',elemento:'Universal',pre:'Nenhum',afinidade:'—',desc:'Aprende um ritual (1º círculo; 2º no NEX 45%; 3º no NEX 75%). Pode ser escolhido várias vezes, respeitando limite de rituais conhecidos.'},
+  {nome:'Resistir a Conhecimento',elemento:'Conhecimento',pre:'Nenhum',afinidade:'Resistência sobe para 20.',desc:'Recebe resistência 10 contra Conhecimento.'},
+  {nome:'Resistir a Energia',elemento:'Energia',pre:'Nenhum',afinidade:'Resistência sobe para 20.',desc:'Recebe resistência 10 contra Energia.'},
+  {nome:'Resistir a Morte',elemento:'Morte',pre:'Nenhum',afinidade:'Resistência sobe para 20.',desc:'Recebe resistência 10 contra Morte.'},
+  {nome:'Resistir a Sangue',elemento:'Sangue',pre:'Nenhum',afinidade:'Resistência sobe para 20.',desc:'Recebe resistência 10 contra Sangue.'},
+  {nome:'Expansão de Conhecimento',elemento:'Conhecimento',pre:'Conhecimento 1',afinidade:'Aprende um segundo poder de classe de outra classe.',desc:'Aprende um poder de classe que não pertença à sua classe (respeitando pré-requisitos).'},
+  {nome:'Percepção Paranormal',elemento:'Conhecimento',pre:'Nenhum',afinidade:'Pode rerrolar até dois dados menores que 10.',desc:'Em investigação, ao procurar pistas, pode rerrolar um dado com resultado menor que 10.'},
+  {nome:'Precognição',elemento:'Conhecimento',pre:'Conhecimento 1',afinidade:'Fica imune à condição desprevenido.',desc:'+2 em Defesa e em testes de resistência.'},
+  {nome:'Sensitivo',elemento:'Conhecimento',pre:'Nenhum',afinidade:'Em testes opostos dessas perícias, o oponente sofre penalidade.',desc:'+5 em Diplomacia, Intimidação e Intuição.'},
+  {nome:'Visão do Oculto',elemento:'Conhecimento',pre:'Nenhum',afinidade:'Ignora camuflagem.',desc:'+5 em Percepção e enxerga no escuro.'},
+  {nome:'Afortunado',elemento:'Energia',pre:'Nenhum',afinidade:'Também permite rerrolar um resultado 1 no d20, 1 vez por teste.',desc:'1 vez por rolagem, pode rerrolar resultado 1 em qualquer dado que não seja d20.'},
+  {nome:'Campo Protetor',elemento:'Energia',pre:'Energia 1',afinidade:'Também recebe +5 em Reflexos e pode anular dano em sucesso de Reflexos que reduziria à metade.',desc:'Ao usar esquiva, gaste 1 PE para receber +5 em Defesa.'},
+  {nome:'Causalidade Fortuita',elemento:'Energia',pre:'Nenhum',afinidade:'A DT para procurar pistas sempre diminui em –5 para você.',desc:'Em investigação, a DT para procurar pistas diminui em –5 para você até encontrar uma pista.'},
+  {nome:'Golpe de Sorte',elemento:'Energia',pre:'Energia 1',afinidade:'+1 no multiplicador de crítico.',desc:'+1 na margem de ameaça em seus ataques.'},
+  {nome:'Manipular Entropia',elemento:'Energia',pre:'Energia 1',afinidade:'O alvo rerrola todos os dados que você escolher.',desc:'Gaste 2 PE para forçar alvo em alcance curto a rerrolar um dado em teste de perícia.'},
+  {nome:'Encarar a Morte',elemento:'Morte',pre:'Nenhum',afinidade:'Durante cenas de ação, limite de PE aumenta em +2 (total +3).',desc:'Durante cenas de ação, seu limite de gasto de PE aumenta em +1.'},
+  {nome:'Escapar da Morte',elemento:'Morte',pre:'Morte 1',afinidade:'Evita completamente o dano; em dano massivo, fica com 1 PV.',desc:'1 vez por cena, ao receber dano que deixaria você com 0 PV, fica com 1 PV.'},
+  {nome:'Potencial Aprimorado',elemento:'Morte',pre:'Nenhum',afinidade:'Recebe +1 PE adicional por NEX (total +2 por NEX).',desc:'Recebe +1 PE por NEX; escala automaticamente quando o NEX aumenta.'},
+  {nome:'Potencial Reaproveitado',elemento:'Morte',pre:'Nenhum',afinidade:'Ganha 3 PE temporários em vez de 2.',desc:'1 vez por rodada, ao passar em teste de resistência, ganha 2 PE temporários cumulativos até fim da cena.'},
+  {nome:'Surto Temporal',elemento:'Morte',pre:'Morte 2',afinidade:'Pode usar uma vez por turno (em vez de 1 vez por cena).',desc:'1 vez por cena, durante seu turno, gaste 3 PE para ação padrão adicional.'},
+  {nome:'Anatomia Insana',elemento:'Sangue',pre:'Sangue 2',afinidade:'Imune a efeitos de acertos críticos e ataques furtivos.',desc:'50% de chance de ignorar dano adicional de acerto crítico ou ataque furtivo.'},
+  {nome:'Arma de Sangue',elemento:'Sangue',pre:'Nenhum',afinidade:'Arma torna-se permanente e passa a causar 1d10 de dano de Sangue.',desc:'Ação de movimento + 2 PE para criar arma de sangue 1d6; 1 vez por turno pode gastar 1 PE para ataque adicional corpo a corpo.'},
+  {nome:'Sangue de Ferro',elemento:'Sangue',pre:'Nenhum',afinidade:'+5 em Fortitude e imunidade a venenos e doenças.',desc:'Recebe +2 PV por NEX; escala automaticamente quando o NEX aumenta.'},
+  {nome:'Sangue Fervente',elemento:'Sangue',pre:'Sangue 2',afinidade:'Bônus em Agilidade ou Força aumenta para +2.',desc:'Enquanto machucado, recebe +1 em Agilidade ou Força (à escolha).'},
+  {nome:'Sangue Vivo',elemento:'Sangue',pre:'Sangue 1',afinidade:'Cura acelerada aumenta para 5.',desc:'Primeira vez que fica machucado na cena, recebe cura acelerada 2 sem passar da metade dos PV máximos.'}
+];
 const PERI=[
   {id:'acrobacia',nome:'Acrobacia',atr:'Agi',grupo:'Agilidade'},
   {id:'crime',nome:'Crime',atr:'Agi',grupo:'Agilidade'},
@@ -331,6 +455,9 @@ function switchTab(id,btn){
   document.getElementById('tab-'+id).classList.add('active');
   btn.classList.add('active');
 }
+function classeLabel(classeId){
+  return {combatente:'Combatente',especialista:'Especialista',ocultista:'Ocultista'}[classeId]||'Especialista';
+}
 
 // COLLAPSIBLE
 function collToggle(btn){btn.closest('.coll-item').classList.toggle('open');}
@@ -387,6 +514,7 @@ const PROFICIENCIAS = {
     { id: 'prof_armas_simples', label: 'Armas Simples', always: true },
   ],
 };
+window._profSel = {};
 
 function buildProficiencias() {
   const cont = document.getElementById('profCont');
@@ -400,13 +528,25 @@ function buildProficiencias() {
   const temProtPesada = checkHabExists('Proteção Pesada');
 
   profs.forEach(p => {
-    const disabled = (!p.always && p.req === 'Proteção Pesada' && !temProtPesada);
-    const checked = document.getElementById(p.id)?.checked ?? p.always;
-    const item = document.createElement('label');
-    item.className = 'prof-item' + (disabled ? ' prof-disabled' : '');
-    item.innerHTML = `<input type="checkbox" id="${p.id}" ${p.always ? '' : ''} ${disabled ? 'disabled' : ''} ${checked && !disabled ? 'checked' : (p.always ? 'checked' : '')} onchange="triggerSalvar()">
-      <span class="prof-label">${p.label}</span>
-      ${p.req ? `<span class="prof-req">(requer: ${p.req})</span>` : ''}`;
+    const requiresProtPesada = (!p.always && p.req === 'Proteção Pesada');
+    if (requiresProtPesada && !temProtPesada) return;
+    const wasActive = document.getElementById(p.id)?.dataset.active === '1';
+    const active = p.always ? true : (window._profSel[p.id] ?? wasActive);
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.id = p.id;
+    item.className = 'prof-tag' + (active ? ' active' : '') + (p.always ? ' locked' : '');
+    item.dataset.active = active ? '1' : '0';
+    item.title = p.always ? 'Proficiência base da classe' : 'Clique para marcar/desmarcar';
+    item.innerHTML = `<span class="prof-label">${p.label}</span>${p.req ? `<span class="prof-req">${p.req}</span>` : ''}`;
+    item.onclick = () => {
+      if (p.always) return;
+      const next = item.dataset.active !== '1';
+      item.dataset.active = next ? '1' : '0';
+      item.classList.toggle('active', next);
+      window._profSel[p.id] = next;
+      triggerSalvar();
+    };
     cont.appendChild(item);
   });
 }
@@ -414,6 +554,45 @@ function buildProficiencias() {
 function checkHabExists(nome) {
   return Array.from(document.getElementById('habCont')?.querySelectorAll('.hab-nome') || [])
     .some(el => el.value.toLowerCase().includes(nome.toLowerCase()));
+}
+
+function syncTrilhaOptions() {
+  const trilhaEl = document.getElementById('trilha');
+  const cls = document.getElementById('classe')?.value || 'especialista';
+  const nex = parseInt(document.getElementById('nexN')?.value)||5;
+  if (!trilhaEl) return;
+  const cur = trilhaEl.value;
+  const trilhas = TRILHAS_POR_CLASSE[cls] || [];
+  trilhaEl.innerHTML = `<option value="">Selecione a trilha (NEX 10%)</option>` + trilhas.map(t => `<option value="${t}">${t}</option>`).join('');
+  trilhaEl.disabled = nex < 10;
+  if (trilhas.includes(cur)) trilhaEl.value = cur;
+  else trilhaEl.value = '';
+  if (nex >= 10) trilhaEl.title = 'Escolha a trilha da sua classe';
+  else trilhaEl.title = 'Disponível a partir do NEX 10%';
+}
+
+function addHabTrilhaAutomatica(trilha, nexMarco, beneficio) {
+  const nome = `[Trilha ${trilha}] ${beneficio.nome}`;
+  if (checkHabExists(nome)) return;
+  const desc = `Trilha ${trilha} · NEX ${nexMarco}% — ${beneficio.desc}`;
+  const d = document.getElementById('habCont').appendChild(mkHab(nome, desc));
+  d.classList.add('open');
+}
+
+function aplicarBeneficiosTrilhaAteNex() {
+  const trilha = document.getElementById('trilha')?.value || '';
+  const nex = parseInt(document.getElementById('nexN')?.value)||5;
+  if (!trilha || !TRILHA_BENEFICIOS[trilha]) return;
+  [10,40,65,99].forEach(marco => {
+    if (nex >= marco) {
+      const beneficio = TRILHA_BENEFICIOS[trilha][marco];
+      if (beneficio) addHabTrilhaAutomatica(trilha, marco, beneficio);
+    }
+  });
+}
+
+function onTrilhaChange() {
+  aplicarBeneficiosTrilhaAteNex();
 }
 
 // PERÍCIAS
@@ -610,7 +789,7 @@ function calcDeriv(){
   const lim=Math.ceil(nex/5);
   document.getElementById('peLimite').textContent=lim;
 
-  atuTodas();atuBarras();triggerSalvar();
+  atuTodas();atuBarras();atuInventarioPeso();triggerSalvar();
 }
 
 let _prevNex = 5;
@@ -634,6 +813,8 @@ function atuNEX(fromButton){
     const cls=document.getElementById('classe').value||'especialista';
     abrirNexModal(n, cls);
   }
+  syncTrilhaOptions();
+  aplicarBeneficiosTrilhaAteNex();
   _prevNex = n;
 
   calcDeriv();triggerSalvar();
@@ -762,7 +943,31 @@ function addHab(){const d=document.getElementById('habCont').appendChild(mkHab()
 
 // MODAL HABILIDADES
 let _habFiltro='Todos';
+let _habFiltroTrilha='Todas';
+function getHabLivroComTrilhas() {
+  const base = (typeof HABS_LIVRO !== 'undefined') ? [...HABS_LIVRO] : [];
+  Object.entries(TRILHA_BENEFICIOS).forEach(([trilha, marcos]) => {
+    const classe = Object.entries(TRILHAS_POR_CLASSE).find(([,arr])=>arr.includes(trilha))?.[0] || 'especialista';
+    const classeTxt = classeLabel(classe);
+    [10,40,65,99].forEach(nex => {
+      if (!marcos[nex]) return;
+      base.push({
+        classe: classeTxt,
+        trilha,
+        nome: `[Trilha ${trilha}] ${marcos[nex].nome}`,
+        custo: '—',
+        nex: `${nex}%`,
+        desc: marcos[nex].desc
+      });
+    });
+  });
+  return base;
+}
 function abrirModalHab(){
+  const cls = document.getElementById('classe')?.value || 'especialista';
+  const trilhasDaClasse = TRILHAS_POR_CLASSE[cls] || [];
+  const classeAtualTxt = classeLabel(cls);
+  const todasHabilidades = getHabLivroComTrilhas();
   let html=`<div class="modal-ov" id="modalHab"><div class="modal-box">
     <div class="modal-hd">
       <span class="modal-title">Habilidades do Livro</span>
@@ -778,42 +983,60 @@ function abrirModalHab(){
         <button class="hab-filter-btn" onclick="setHabFiltro('Combatente',this)">Combatente</button>
         <button class="hab-filter-btn" onclick="setHabFiltro('Ocultista',this)">Ocultista</button>
       </div>
+      <span class="filter-row-label">Trilhas da classe atual</span>
+      <div class="hab-filters">
+        <button class="hab-filter-btn active" onclick="setHabFiltroTrilha('Todas',this)">Todas</button>
+        ${trilhasDaClasse.map(t=>`<button class="hab-filter-btn" onclick="setHabFiltroTrilha('${t.replace(/'/g, "\\'")}',this)">${t}</button>`).join('')}
+      </div>
     </div>
     <div class="modal-scroll">
       <div class="modal-list" id="hab-item-list">`;
-  if(typeof HABS_LIVRO !== 'undefined') {
-    HABS_LIVRO.forEach((h,i)=>{
-      html+=`<div class="modal-item hab" data-classe="${h.classe}" data-search="${h.nome.toLowerCase()} ${h.classe.toLowerCase()}" onclick="inserirHab(${i})">
-        <div class="modal-item-name">${h.nome} <span style="opacity:0.6;font-size:0.8em;">[${h.classe}]</span></div>
+  todasHabilidades.forEach((h,i)=>{
+      const trilhaTxt = h.trilha ? ` · ${h.trilha}` : '';
+      html+=`<div class="modal-item hab" data-classe="${h.classe}" data-trilha="${h.trilha||''}" data-search="${h.nome.toLowerCase()} ${h.classe.toLowerCase()} ${(h.trilha||'').toLowerCase()}" onclick="inserirHab(${i})">
+        <div class="modal-item-name">${h.nome} <span style="opacity:0.6;font-size:0.8em;">[${h.classe}${trilhaTxt}]</span></div>
         <div class="modal-item-meta">Custo: ${h.custo}</div>
         <div class="modal-item-desc">${h.desc}</div>
       </div>`;
-    });
-  }
+  });
   html+=`</div></div>
     <div class="modal-footer">
       <button class="modal-footer-close" onclick="document.getElementById('modalHab').remove()">✕ Fechar</button>
     </div>
   </div></div>`;
   document.getElementById('modalContainer').innerHTML=html;
-  _habFiltro='Todos';
+  _habFiltro=classeAtualTxt;
+  _habFiltroTrilha='Todas';
+  const classeBtn = Array.from(document.querySelectorAll('#modalHab .hab-filters:first-of-type .hab-filter-btn')).find(b=>b.textContent===classeAtualTxt);
+  if (classeBtn) {
+    classeBtn.parentElement.querySelectorAll('.hab-filter-btn').forEach(b=>b.classList.remove('active'));
+    classeBtn.classList.add('active');
+  }
+  filtrarHabModal();
 }
 function setHabFiltro(filtro,btn){
   _habFiltro=filtro;
-  document.querySelectorAll('.hab-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.closest('.hab-filters')?.querySelectorAll('.hab-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');filtrarHabModal();
+}
+function setHabFiltroTrilha(filtro,btn){
+  _habFiltroTrilha=filtro;
+  btn.closest('.hab-filters')?.querySelectorAll('.hab-filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');filtrarHabModal();
 }
 function filtrarHabModal(){
   const q=(document.getElementById('habSearch')?.value||'').toLowerCase().trim();
   document.getElementById('hab-item-list')?.querySelectorAll('.modal-item').forEach(el=>{
     const classeOk=_habFiltro==='Todos'||el.dataset.classe===_habFiltro;
+    const trilhaOk=_habFiltroTrilha==='Todas'||el.dataset.trilha===_habFiltroTrilha;
     const buscaOk=!q||el.dataset.search.includes(q);
-    el.style.display=(classeOk&&buscaOk)?'':'none';
+    el.style.display=(classeOk&&trilhaOk&&buscaOk)?'':'none';
   });
 }
 function inserirHab(i){
-  if(typeof HABS_LIVRO==='undefined')return;
-  const h=HABS_LIVRO[i];
+  const all = getHabLivroComTrilhas();
+  const h=all[i];
+  if(!h)return;
   const d=document.getElementById('habCont').appendChild(mkHab(h.nome,'Custo: '+h.custo+' · '+h.desc));
   d.classList.add('open');document.getElementById('modalHab')?.remove();triggerSalvar();buildProficiencias();
 }
@@ -953,6 +1176,58 @@ function mkParanormal(n='',d=''){
   div.addEventListener('input',()=>triggerSalvar());return div;
 }
 function addParanormal(){const d=document.getElementById('paranormalCont').appendChild(mkParanormal());d.classList.add('open');}
+let _paranormalFiltroElem='Todos';
+function abrirModalParanormal(){
+  let html=`<div class="modal-ov" id="modalParanormal"><div class="modal-box">
+    <div class="modal-hd">
+      <span class="modal-title">Poderes Paranormais</span>
+      <button class="modal-close" onclick="document.getElementById('modalParanormal').remove()">✕</button>
+    </div>
+    <div class="modal-filters-area">
+      <input type="text" class="modal-search" id="paranormalSearch" placeholder="Buscar poder..." oninput="filtrarParanormalModal()">
+      <span class="filter-row-label">Filtrar por elemento</span>
+      <div class="rit-filters">
+        <button class="rit-filter-btn active" onclick="setParanormalFiltro('Todos',this)">Todos</button>
+        ${['Universal','Conhecimento','Energia','Morte','Sangue'].map(e=>`<button class="rit-filter-btn" onclick="setParanormalFiltro('${e}',this)">${e}</button>`).join('')}
+      </div>
+    </div>
+    <div class="modal-scroll"><div class="modal-list" id="paranormal-item-list">`;
+  PODERES_PARANORMAIS_LIVRO.forEach((p,i)=>{
+    html += `<div class="modal-item hab" data-elem="${p.elemento}" data-search="${p.nome.toLowerCase()} ${p.elemento.toLowerCase()} ${p.pre.toLowerCase()}" onclick="inserirParanormalLivro(${i})">
+      <div class="modal-item-name">${p.nome} <span style="opacity:.6;font-size:.8em;">[${p.elemento}]</span></div>
+      <div class="modal-item-meta">Pré-requisito: ${p.pre}</div>
+      <div class="modal-item-desc">${p.desc}${p.afinidade&&p.afinidade!=='—' ? ` · Afinidade: ${p.afinidade}` : ''}</div>
+    </div>`;
+  });
+  html += `</div></div>
+    <div class="modal-footer"><button class="modal-footer-close" onclick="document.getElementById('modalParanormal').remove()">✕ Fechar</button></div>
+  </div></div>`;
+  document.getElementById('modalContainer').innerHTML = html;
+  _paranormalFiltroElem='Todos';
+}
+function setParanormalFiltro(elem,btn){
+  _paranormalFiltroElem=elem;
+  btn.closest('.rit-filters')?.querySelectorAll('.rit-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filtrarParanormalModal();
+}
+function filtrarParanormalModal(){
+  const q=(document.getElementById('paranormalSearch')?.value||'').toLowerCase().trim();
+  document.querySelectorAll('#paranormal-item-list .modal-item').forEach(el=>{
+    const okElem=_paranormalFiltroElem==='Todos'||el.dataset.elem===_paranormalFiltroElem;
+    const okBusca=!q||el.dataset.search.includes(q);
+    el.style.display=(okElem&&okBusca)?'':'none';
+  });
+}
+function inserirParanormalLivro(i){
+  const p=PODERES_PARANORMAIS_LIVRO[i];
+  if(!p)return;
+  const texto=`Elemento: ${p.elemento} · Pré-requisito: ${p.pre}\n${p.desc}${p.afinidade&&p.afinidade!=='—' ? `\nAfinidade: ${p.afinidade}` : ''}`;
+  const d=document.getElementById('paranormalCont').appendChild(mkParanormal(p.nome,texto));
+  d.classList.add('open');
+  document.getElementById('modalParanormal')?.remove();
+  triggerSalvar();
+}
 
 // MODAL RITUAIS
 let _ritFiltroElem='Todos';
@@ -1032,18 +1307,37 @@ function inserirRitual(i){
 // ============================================================
 // INVENTÁRIO — COM DRAG & DROP
 // ============================================================
-function mkItem(n='',d='',exp=false){
+const INV_CAT_PESO = { I: 1, II: 2, III: 3, VI: 6 };
+
+function mkItem(n='',d='',exp=false,qtd=1,cat='I',pesoAj=0){
   const div=document.createElement('div');div.className='inv-it';div.draggable=true;
   div.innerHTML=`<div class="inv-row">
     <span class="inv-drag" title="Arrastar para reordenar">⠿</span>
     <button class="inv-exp" onclick="toggleInv(this)">▸</button>
     <input type="text" class="inv-ni" placeholder="Item...">
-    <button class="inv-del" onclick="this.closest('.inv-it').remove();triggerSalvar()">✕</button>
+    <input type="number" class="inv-qtd" min="1" value="1" title="Quantidade" aria-label="Quantidade">
+    <select class="inv-cat" title="Categoria">
+      <option value="I">I</option>
+      <option value="II">II</option>
+      <option value="III">III</option>
+      <option value="VI">VI</option>
+    </select>
+    <button class="inv-del" onclick="this.closest('.inv-it').remove();atuInventarioPeso();triggerSalvar()">✕</button>
   </div>
-  <textarea class="inv-dt" placeholder="Detalhes, propriedades..."${exp?' style="display:block;"':''}></textarea>`;
+  <textarea class="inv-dt" placeholder="Detalhes, propriedades..."${exp?' style="display:block;"':''}></textarea>
+  <div class="inv-extra"${exp?' style="display:block;"':''}>
+    <label>Ajuste de Peso <span>(pode ser negativo)</span></label>
+    <input type="number" class="inv-peso-aj" value="0" placeholder="0">
+  </div>`;
   div.querySelector('.inv-ni').value=n;div.querySelector('.inv-dt').value=d;
+  div.querySelector('.inv-qtd').value = Math.max(1, parseInt(qtd)||1);
+  div.querySelector('.inv-cat').value = INV_CAT_PESO[cat] ? cat : 'I';
+  div.querySelector('.inv-peso-aj').value = parseInt(pesoAj)||0;
   if(exp)div.querySelector('.inv-exp').textContent='▾';
-  div.addEventListener('input',()=>triggerSalvar());
+  div.addEventListener('input',()=>{
+    atuInventarioPeso();
+    triggerSalvar();
+  });
   // Drag and drop events
   div.addEventListener('dragstart', invDragStart);
   div.addEventListener('dragover', invDragOver);
@@ -1076,9 +1370,64 @@ function invDragEnd(e) {
   _dragSrc = null;
 }
 
-function addItem(){document.getElementById('invCont').appendChild(mkItem());}
-function toggleInv(btn){const d=btn.closest('.inv-it').querySelector('.inv-dt');const v=d.style.display==='block';d.style.display=v?'none':'block';btn.textContent=v?'▸':'▾';}
-function extI(){return Array.from(document.getElementById('invCont').children).map(d=>({n:d.querySelector('.inv-ni')?.value||'',d:d.querySelector('.inv-dt')?.value||'',exp:d.querySelector('.inv-dt')?.style.display==='block'}));}
+function addItem(){
+  document.getElementById('invCont').appendChild(mkItem());
+  atuInventarioPeso();
+}
+function toggleInv(btn){
+  const item=btn.closest('.inv-it');
+  const d=item.querySelector('.inv-dt');
+  const extra=item.querySelector('.inv-extra');
+  const v=d.style.display==='block';
+  d.style.display=v?'none':'block';
+  if (extra) extra.style.display=v?'none':'block';
+  btn.textContent=v?'▸':'▾';
+}
+function extI(){
+  return Array.from(document.getElementById('invCont').children).map(d=>({
+    n:d.querySelector('.inv-ni')?.value||'',
+    d:d.querySelector('.inv-dt')?.value||'',
+    exp:d.querySelector('.inv-dt')?.style.display==='block',
+    qtd:parseInt(d.querySelector('.inv-qtd')?.value)||1,
+    cat:d.querySelector('.inv-cat')?.value||'I',
+    pesoAj:parseInt(d.querySelector('.inv-peso-aj')?.value)||0
+  }));
+}
+
+function calcCapacidadeInventario() {
+  const forca = parseInt(document.getElementById('forca')?.value)||0;
+  const intelecto = parseInt(document.getElementById('intelecto')?.value)||0;
+  const trilha = document.getElementById('trilha')?.value || '';
+  const baseFor = (trilha === 'Técnico') ? (forca + intelecto) : forca;
+  return baseFor > 0 ? baseFor * 5 : 2;
+}
+
+function calcPesoInventario() {
+  return Array.from(document.querySelectorAll('#invCont .inv-it')).reduce((sum, item) => {
+    const qtd = Math.max(1, parseInt(item.querySelector('.inv-qtd')?.value)||1);
+    const cat = item.querySelector('.inv-cat')?.value || 'I';
+    const pesoBase = INV_CAT_PESO[cat] || 0;
+    const ajuste = parseInt(item.querySelector('.inv-peso-aj')?.value)||0;
+    return sum + (qtd * pesoBase) + ajuste;
+  }, 0);
+}
+
+function atuInventarioPeso(){
+  const cap = calcCapacidadeInventario();
+  const usado = calcPesoInventario();
+  const livre = cap - usado;
+  const pct = Math.max(0, Math.min(100, Math.round((usado / Math.max(1, cap)) * 100)));
+  const usoEl = document.getElementById('invUso');
+  const capEl = document.getElementById('invCap');
+  const livreEl = document.getElementById('invLivre');
+  const barEl = document.getElementById('invPesoFill');
+  const wrap = document.getElementById('invPesoWrap');
+  if (usoEl) usoEl.textContent = usado;
+  if (capEl) capEl.textContent = cap;
+  if (livreEl) livreEl.textContent = livre;
+  if (barEl) barEl.style.width = pct + '%';
+  if (wrap) wrap.classList.toggle('estourado', usado > cap);
+}
 
 function editarAvatar(){
   const u=prompt('URL da imagem:',document.getElementById('avatarUrl').value||'');
@@ -1140,9 +1489,10 @@ function extP(){
 }
 function extProfs() {
   const result = {};
-  document.querySelectorAll('#profCont input[type=checkbox]').forEach(el => {
-    result[el.id] = el.checked;
+  document.querySelectorAll('#profCont .prof-tag').forEach(el => {
+    result[el.id] = el.dataset.active === '1';
   });
+  window._profSel = {...result};
   return result;
 }
 
@@ -1184,8 +1534,10 @@ function coletarFicha(){
 }
 
 function preencher(f){
-  ['nome','origem','trilha','deslocamento'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=f[id]||'';});
+  ['nome','origem','deslocamento'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=f[id]||'';});
   sv('classe',f.classe||'especialista');sv('nexN',f.nex||5);
+  syncTrilhaOptions();
+  sv('trilha',f.trilha||'');
   ['agilidade','forca','intelecto','presenca','vigor'].forEach(id=>sv(id,f[id]||0));
 
   const pvMaxEl = document.getElementById('pvMax');
@@ -1220,22 +1572,28 @@ function preencher(f){
   document.getElementById('paranormalCont').innerHTML='';
   (f.poderesParanormais||[]).forEach(p=>document.getElementById('paranormalCont').appendChild(mkParanormal(p.n,p.d)));
   document.getElementById('invCont').innerHTML='';
-  (f.inventario||[]).forEach(i=>document.getElementById('invCont').appendChild(mkItem(i.n,i.d,i.exp)));
+  (f.inventario||[]).forEach(i=>document.getElementById('invCont').appendChild(mkItem(i.n,i.d,i.exp,i.qtd,i.cat,i.pesoAj)));
   // Restaurar proficiências
+  window._profSel = f.proficiencias || {};
   buildProficiencias();
   if(f.proficiencias) {
     Object.entries(f.proficiencias).forEach(([id, checked]) => {
       const el = document.getElementById(id);
-      if (el && !el.disabled) el.checked = checked;
+      if (el && !el.classList.contains('locked')) {
+        el.dataset.active = checked ? '1' : '0';
+        el.classList.toggle('active', !!checked);
+        window._profSel[id] = !!checked;
+      }
     });
   }
   _prevNex = parseInt(f.nex)||5;
-  atuTodosDots();calcDeriv();atuNEX(false);atuBarras();
+  atuTodosDots();calcDeriv();atuNEX(false);atuBarras();atuInventarioPeso();
 }
 
 function limpar(){
-  ['nome','origem','trilha'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['nome','origem'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   sv('classe','especialista');sv('nexN',5);sv('deslocamento','9m');
+  syncTrilhaOptions();sv('trilha','');
   ['agilidade','forca','intelecto','presenca','vigor'].forEach(id=>sv(id,0));
   const pvMaxEl=document.getElementById('pvMax');
   const peMaxEl=document.getElementById('peMax');
@@ -1250,7 +1608,8 @@ function limpar(){
   ['atkCont','habCont','ritCont','paranormalCont','invCont'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.innerHTML='';
   });
-  _prevNex=5;buildPeri();atuTodosDots();calcDeriv();atuNEX(false);atuBarras();buildProficiencias();
+  window._profSel = {};
+  _prevNex=5;buildPeri();atuTodosDots();calcDeriv();atuNEX(false);atuBarras();buildProficiencias();atuInventarioPeso();
 }
 
 function salvarFicha(){
@@ -1379,9 +1738,16 @@ window.addEventListener('load',()=>{
 
   // listener para classe — rebuildar proficiências
   const classeEl = document.getElementById('classe');
-  if(classeEl) classeEl.addEventListener('change', () => { buildProficiencias(); calcDeriv(); triggerSalvar(); });
+  if(classeEl) classeEl.addEventListener('change', () => {
+    syncTrilhaOptions();
+    buildProficiencias();
+    aplicarBeneficiosTrilhaAteNex();
+    calcDeriv();
+    triggerSalvar();
+  });
 
-  calcDeriv();atuNEX(false);atuBarras();atuTodosDots();
+  syncTrilhaOptions();
+  calcDeriv();atuNEX(false);atuBarras();atuTodosDots();atuInventarioPeso();
   buildProficiencias();
   carregarFicha();
 

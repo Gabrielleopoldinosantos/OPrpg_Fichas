@@ -48,7 +48,11 @@
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
           <div class="campo"><label class="lbl">Origem</label><input type="text" id="origem" placeholder="ex: Investigador"></div>
-          <div class="campo"><label class="lbl">Trilha</label><input type="text" id="trilha" placeholder="ex: Infiltrador"></div>
+          <div class="campo"><label class="lbl">Trilha</label>
+            <select id="trilha" onchange="onTrilhaChange();triggerSalvar()">
+              <option value="">Selecione a trilha (NEX 10%)</option>
+            </select>
+          </div>
           <div class="campo"><label class="lbl">Patente</label>
             <select id="patente" onchange="atuPatente()">
               <option value="recruta">Recruta</option>
@@ -294,6 +298,7 @@
       <div class="ptitle">👻 Poderes Paranormais</div>
       <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
         <button class="btn-add" style="margin-bottom:0;" onclick="addParanormal()">+ Novo</button>
+        <button class="btn-add" style="margin-bottom:0;border-color:var(--red);color:var(--red);" onclick="abrirModalParanormal()">📖 Do Livro</button>
       </div>
       <div id="paranormalCont"></div>
     </div>
@@ -315,6 +320,14 @@
       </div>
       <div class="panel panel-accent-ink">
         <div class="ptitle">🎒 Inventário</div>
+        <div class="inv-peso-wrap" id="invPesoWrap">
+          <div class="inv-peso-head">
+            <span>Uso de Carga</span>
+            <strong><span id="invUso">0</span>/<span id="invCap">2</span></strong>
+          </div>
+          <div class="inv-peso-bar"><div id="invPesoFill"></div></div>
+          <div class="inv-peso-foot">Espaço livre: <b id="invLivre">2</b></div>
+        </div>
         <div class="inv-c" id="invCont"></div>
         <button class="btn-add-i" onclick="addItem()">+ Adicionar Item</button>
       </div>
@@ -324,5 +337,6 @@
 </div><!-- /ficha-c -->
 <script src="Op dados.js"></script>
 <script src="script.js"></script>
+<script src="estado-critico-auto.js"></script>
 </body>
 </html>
