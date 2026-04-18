@@ -30,10 +30,11 @@
     <button class="main-tab" onclick="switchTab('poderes',this)">Poderes</button>
     <button class="main-tab" onclick="switchTab('combate',this)">Combate &amp; Inventário</button>
   </div>
+  <datalist id="origensList"></datalist>
 
   <!-- TAB 1 -->
   <div class="tab-panel active" id="tab-identidade">
-    <div style="display:grid;grid-template-columns:1fr 116px;gap:12px;margin-bottom:12px;margin-top:2px;">
+    <div class="ident-top-grid" style="display:grid;grid-template-columns:1fr minmax(200px,260px);gap:16px;margin-bottom:12px;margin-top:2px;">
       <div class="panel panel-accent-ink">
         <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-bottom:8px;">
           <div class="campo"><label class="lbl">Nome do Agente</label><input type="text" id="nome" placeholder="Nome completo"></div>
@@ -47,7 +48,7 @@
           <div class="campo"><label class="lbl">Deslocamento</label><input type="text" id="deslocamento" value="9m"></div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
-          <div class="campo"><label class="lbl">Origem</label><input type="text" id="origem" placeholder="ex: Investigador"></div>
+          <div class="campo"><label class="lbl">Origem</label><input type="text" id="origem" list="origensList" placeholder="ex: Investigador"></div>
           <div class="campo"><label class="lbl">Trilha</label>
             <select id="trilha" onchange="onTrilhaChange();triggerSalvar()">
               <option value="">Selecione a trilha (NEX 10%)</option>
@@ -112,15 +113,8 @@
           <span class="atr-lbl">Agilidade</span>
           <div class="atr-val-wrap">
             <button class="atr-btn" onclick="ajustarAtr('agilidade',-1)">−</button>
-            <input type="number" class="atr-val-i" id="agilidade" value="0" min="0" max="5" oninput="calcDeriv();atuDots('agilidade')">
+            <input type="number" class="atr-val-i" id="agilidade" value="0" min="0" oninput="calcDeriv()">
             <button class="atr-btn" onclick="ajustarAtr('agilidade',1)">+</button>
-          </div>
-          <div class="atr-dots" id="dots-agilidade">
-            <div class="atr-dot filled" onclick="setAtr('agilidade',1)"></div>
-            <div class="atr-dot" onclick="setAtr('agilidade',2)"></div>
-            <div class="atr-dot" onclick="setAtr('agilidade',3)"></div>
-            <div class="atr-dot" onclick="setAtr('agilidade',4)"></div>
-            <div class="atr-dot" onclick="setAtr('agilidade',5)"></div>
           </div>
           <div class="atr-hint">Acrobacia · Crime · Furtividade · Iniciativa · Pilotagem · Pontaria · Reflexos</div>
           <button class="btn-dice" onclick="rolarAtrib('Agilidade','agilidade')">🎲</button>
@@ -129,15 +123,8 @@
           <span class="atr-lbl">Força</span>
           <div class="atr-val-wrap">
             <button class="atr-btn" onclick="ajustarAtr('forca',-1)">−</button>
-            <input type="number" class="atr-val-i" id="forca" value="0" min="0" max="5" oninput="calcDeriv();atuDots('forca')">
+            <input type="number" class="atr-val-i" id="forca" value="0" min="0" oninput="calcDeriv()">
             <button class="atr-btn" onclick="ajustarAtr('forca',1)">+</button>
-          </div>
-          <div class="atr-dots" id="dots-forca">
-            <div class="atr-dot filled" onclick="setAtr('forca',1)"></div>
-            <div class="atr-dot" onclick="setAtr('forca',2)"></div>
-            <div class="atr-dot" onclick="setAtr('forca',3)"></div>
-            <div class="atr-dot" onclick="setAtr('forca',4)"></div>
-            <div class="atr-dot" onclick="setAtr('forca',5)"></div>
           </div>
           <div class="atr-hint">Atletismo · Luta · Dano corpo a corpo</div>
           <button class="btn-dice" onclick="rolarAtrib('Força','forca')">🎲</button>
@@ -146,15 +133,8 @@
           <span class="atr-lbl">Intelecto</span>
           <div class="atr-val-wrap">
             <button class="atr-btn" onclick="ajustarAtr('intelecto',-1)">−</button>
-            <input type="number" class="atr-val-i" id="intelecto" value="0" min="0" max="5" oninput="calcDeriv();atuDots('intelecto')">
+            <input type="number" class="atr-val-i" id="intelecto" value="0" min="0" oninput="calcDeriv()">
             <button class="atr-btn" onclick="ajustarAtr('intelecto',1)">+</button>
-          </div>
-          <div class="atr-dots" id="dots-intelecto">
-            <div class="atr-dot filled" onclick="setAtr('intelecto',1)"></div>
-            <div class="atr-dot" onclick="setAtr('intelecto',2)"></div>
-            <div class="atr-dot" onclick="setAtr('intelecto',3)"></div>
-            <div class="atr-dot" onclick="setAtr('intelecto',4)"></div>
-            <div class="atr-dot" onclick="setAtr('intelecto',5)"></div>
           </div>
           <div class="atr-hint">Atualidades · Ciências · Investigação · Medicina · Ocultismo · Profissão · Sobrevivência · Tática · Tecnologia</div>
           <button class="btn-dice" onclick="rolarAtrib('Intelecto','intelecto')">🎲</button>
@@ -163,15 +143,8 @@
           <span class="atr-lbl">Presença</span>
           <div class="atr-val-wrap">
             <button class="atr-btn" onclick="ajustarAtr('presenca',-1)">−</button>
-            <input type="number" class="atr-val-i" id="presenca" value="0" min="0" max="5" oninput="calcDeriv();atuDots('presenca')">
+            <input type="number" class="atr-val-i" id="presenca" value="0" min="0" oninput="calcDeriv()">
             <button class="atr-btn" onclick="ajustarAtr('presenca',1)">+</button>
-          </div>
-          <div class="atr-dots" id="dots-presenca">
-            <div class="atr-dot filled" onclick="setAtr('presenca',1)"></div>
-            <div class="atr-dot" onclick="setAtr('presenca',2)"></div>
-            <div class="atr-dot" onclick="setAtr('presenca',3)"></div>
-            <div class="atr-dot" onclick="setAtr('presenca',4)"></div>
-            <div class="atr-dot" onclick="setAtr('presenca',5)"></div>
           </div>
           <div class="atr-hint">Diplomacia · Enganação · Intimidação · Intuição · Percepção · Religião · Vontade + PE/NEX</div>
           <button class="btn-dice" onclick="rolarAtrib('Presença','presenca')">🎲</button>
@@ -180,15 +153,8 @@
           <span class="atr-lbl">Vigor</span>
           <div class="atr-val-wrap">
             <button class="atr-btn" onclick="ajustarAtr('vigor',-1)">−</button>
-            <input type="number" class="atr-val-i" id="vigor" value="0" min="0" max="5" oninput="calcDeriv();atuDots('vigor')">
+            <input type="number" class="atr-val-i" id="vigor" value="0" min="0" oninput="calcDeriv()">
             <button class="atr-btn" onclick="ajustarAtr('vigor',1)">+</button>
-          </div>
-          <div class="atr-dots" id="dots-vigor">
-            <div class="atr-dot filled" onclick="setAtr('vigor',1)"></div>
-            <div class="atr-dot" onclick="setAtr('vigor',2)"></div>
-            <div class="atr-dot" onclick="setAtr('vigor',3)"></div>
-            <div class="atr-dot" onclick="setAtr('vigor',4)"></div>
-            <div class="atr-dot" onclick="setAtr('vigor',5)"></div>
           </div>
           <div class="atr-hint">Fortitude + PV/NEX</div>
           <button class="btn-dice" onclick="rolarAtrib('Vigor','vigor')">🎲</button>
@@ -254,13 +220,27 @@
         <div class="stat-hint" id="sanFormula">16 base (Especialista)</div>
       </div>
       <!-- DEF -->
-      <div class="stat-box panel-accent-gold" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+      <div class="stat-box panel-accent-gold def-box">
         <span class="stat-lbl" style="color:var(--gold);">Defesa</span>
         <div class="def-big" id="defTotal">11</div>
-        <div style="font-family:'Share Tech Mono';font-size:0.62em;color:var(--ink3);text-align:center;margin-top:3px;">10 + Agi + bônus</div>
-        <div style="display:flex;align-items:center;gap:6px;justify-content:center;margin-top:6px;">
-          <span style="font-family:'Share Tech Mono';font-size:0.62em;color:var(--ink3);">Bônus:</span>
-          <input type="number" id="defBonus" value="0" style="width:46px;" oninput="calcDeriv()">
+        <div class="def-formula">10 + Agi + bônus defesa + proteção + Reforçada (+2 por item) (<span id="defProtSum">0</span>)</div>
+        <div class="def-bonus-row">
+          <span class="def-bonus-lbl">Bônus defesa</span>
+          <input type="number" id="defBonus" value="0" oninput="calcDeriv()">
+        </div>
+        <div class="def-subgrid">
+          <div class="def-subcard">
+            <span class="def-sub-lbl">Bloqueio</span>
+            <div class="def-sub-val" id="bloqTotal">0</div>
+            <span class="def-sub-hint">Fortitude + bônus</span>
+            <input type="number" id="bloqBonus" value="0" class="def-sub-inp" oninput="calcDeriv()">
+          </div>
+          <div class="def-subcard">
+            <span class="def-sub-lbl">Esquiva</span>
+            <div class="def-sub-val" id="esquivaTotal">0</div>
+            <span class="def-sub-hint">Defesa + Reflexos + bônus</span>
+            <input type="number" id="esquivaBonus" value="0" class="def-sub-inp" oninput="calcDeriv()">
+          </div>
         </div>
       </div>
     </div>
@@ -274,63 +254,111 @@
     </div>
   </div>
 
-  <!-- TAB 3: PODERES -->
+  <!-- TAB 3: PODERES (layout otimizado Galaxy A51/A71: 360–412px) -->
   <div class="tab-panel" id="tab-poderes">
-    <div class="poderes-layout">
-      <div class="panel panel-accent-gold" style="align-self:start;">
-        <div class="ptitle">✦ Habilidades &amp; Poderes</div>
-        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
-          <button class="btn-add" style="margin-bottom:0;" onclick="addHab()">+ Nova</button>
-          <button class="btn-add" style="margin-bottom:0;border-color:var(--gold);color:var(--gold);" onclick="abrirModalHab()">📖 Do Livro</button>
+    <nav class="gal-subnav gal-subnav--poderes" id="galSubnavPoderes" aria-label="Seções de poderes">
+      <button type="button" class="gal-subnav-btn active" data-gal-sub="gal-p-hab" onclick="switchGalSubnav('poderes','gal-p-hab',this)">✦ Habilidades</button>
+      <button type="button" class="gal-subnav-btn" data-gal-sub="gal-p-org" onclick="switchGalSubnav('poderes','gal-p-org',this)">🧬 Origem</button>
+      <button type="button" class="gal-subnav-btn" data-gal-sub="gal-p-rit" onclick="switchGalSubnav('poderes','gal-p-rit',this)">🌀 Rituais</button>
+      <button type="button" class="gal-subnav-btn" data-gal-sub="gal-p-para" onclick="switchGalSubnav('poderes','gal-p-para',this)">👻 Paranormais</button>
+    </nav>
+    <div class="gal-poderes-body">
+      <section id="gal-p-hab" class="gal-subsec gal-subsec--poderes active">
+        <div class="panel panel-accent-gold mb12">
+          <div class="ptitle">✦ Habilidades &amp; Poderes</div>
+          <div class="gal-actions-row">
+            <button class="btn-add" onclick="addHab()">+ Nova</button>
+            <button class="btn-add gal-btn-book" onclick="abrirModalHab()">📖 Do Livro</button>
+          </div>
+          <div id="habCont"></div>
         </div>
-        <div id="habCont"></div>
-      </div>
-      <div class="panel panel-accent-purple" style="align-self:start;">
-        <div class="ptitle">🌀 Rituais Conhecidos</div>
-        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
-          <button class="btn-add" style="margin-bottom:0;border-color:var(--purple);color:var(--purple);" onclick="addRit()">+ Novo</button>
-          <button class="btn-add" style="margin-bottom:0;border-color:var(--purple);color:var(--purple);" onclick="abrirModalRit()">📖 Do Livro</button>
+      </section>
+      <section id="gal-p-org" class="gal-subsec gal-subsec--poderes">
+        <div class="panel panel-accent-ink mb12">
+          <div class="ptitle">🧬 Poderes de Origem</div>
+          <div class="gal-actions-row">
+            <button class="btn-add" onclick="addOrigemPoder()">+ Novo</button>
+            <button class="btn-add gal-btn-book" onclick="abrirModalOrigemLivro()">📖 Do Livro</button>
+          </div>
+          <div id="origemCont"></div>
         </div>
-        <div id="ritCont"></div>
-      </div>
-    </div>
-    <div class="panel panel-accent-red" style="align-self:start;margin-top:12px;">
-      <div class="ptitle">👻 Poderes Paranormais</div>
-      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
-        <button class="btn-add" style="margin-bottom:0;" onclick="addParanormal()">+ Novo</button>
-        <button class="btn-add" style="margin-bottom:0;border-color:var(--red);color:var(--red);" onclick="abrirModalParanormal()">📖 Do Livro</button>
-      </div>
-      <div id="paranormalCont"></div>
+      </section>
+      <section id="gal-p-rit" class="gal-subsec gal-subsec--poderes">
+        <div class="panel panel-accent-purple mb12">
+          <div class="ptitle">🌀 Rituais Conhecidos</div>
+          <div class="gal-actions-row">
+            <button class="btn-add gal-btn-rit" onclick="addRit()">+ Novo</button>
+            <button class="btn-add gal-btn-rit" onclick="abrirModalRit()">📖 Do Livro</button>
+          </div>
+          <div id="ritDtHost" class="rit-dt-host rit-dt-host--empty" aria-live="polite">
+            <div class="lbl rit-dt-host-lbl">DT do ritual (resistência) — <span id="ritDtNomeAlvo" class="rit-dt-nome-alvo"></span></div>
+            <div class="rit-dt-host-valrow">
+              <span id="ritDtValHost" class="rit-dt-val-host">—</span>
+              <span class="rit-dt-host-hint">10 + limite PE/turno + atributo + outros</span>
+            </div>
+            <div class="rit-dt-host-grid">
+              <div class="campo" style="margin-bottom:0;">
+                <label class="lbl">Atributo</label>
+                <select id="ritDtAtrHost" class="rit-dt-atr-host" onchange="onRitDtHostChange()"></select>
+              </div>
+              <div class="campo" style="margin-bottom:0;">
+                <label class="lbl">Bônus exteriores</label>
+                <input type="number" id="ritDtOutHost" class="rit-dt-out-host" value="0" step="1" oninput="onRitDtHostChange()">
+              </div>
+            </div>
+          </div>
+          <div id="ritCont"></div>
+        </div>
+      </section>
+      <section id="gal-p-para" class="gal-subsec gal-subsec--poderes">
+        <div class="panel panel-accent-red mb12">
+          <div class="ptitle">👻 Poderes Paranormais</div>
+          <div class="gal-actions-row">
+            <button class="btn-add" onclick="addParanormal()">+ Novo</button>
+            <button class="btn-add gal-btn-para" onclick="abrirModalParanormal()">📖 Do Livro</button>
+          </div>
+          <div id="paranormalCont"></div>
+        </div>
+      </section>
     </div>
   </div>
 
-  <!-- TAB 4: COMBATE + INVENTÁRIO -->
+  <!-- TAB 4: COMBATE + INVENTÁRIO (mesmo critério de tela) -->
   <div class="tab-panel" id="tab-combate">
-    <div class="grid2" style="margin-top:2px;">
-      <div>
+    <nav class="gal-subnav gal-subnav--combate" id="galSubnavCombate" aria-label="Combate e inventário">
+      <button type="button" class="gal-subnav-btn active" data-gal-sub="gal-c-atk" onclick="switchGalSubnav('combate','gal-c-atk',this)">⚔ Ataques</button>
+      <button type="button" class="gal-subnav-btn" data-gal-sub="gal-c-inv" onclick="switchGalSubnav('combate','gal-c-inv',this)">🎒 Inventário</button>
+      <button type="button" class="gal-subnav-btn" data-gal-sub="gal-c-log" onclick="switchGalSubnav('combate','gal-c-log',this)">🎲 Rolagens</button>
+    </nav>
+    <div class="gal-combate-body">
+      <section id="gal-c-atk" class="gal-subsec gal-subsec--combate active">
         <div class="panel panel-accent-gold mb12">
           <div class="ptitle">⚔ Ataques</div>
           <button class="btn-add" onclick="addAtk()">+ Adicionar Ataque</button>
           <div id="atkCont"></div>
         </div>
-        <div class="panel panel-accent-green">
-          <div class="ptitle">🎲 Últimas Rolagens</div>
-          <div id="logDiv" style="max-height:300px;overflow-y:auto;"></div>
-        </div>
-      </div>
-      <div class="panel panel-accent-ink">
-        <div class="ptitle">🎒 Inventário</div>
-        <div class="inv-peso-wrap" id="invPesoWrap">
-          <div class="inv-peso-head">
-            <span>Uso de Carga</span>
-            <strong><span id="invUso">0</span>/<span id="invCap">2</span></strong>
+      </section>
+      <section id="gal-c-inv" class="gal-subsec gal-subsec--combate">
+        <div class="panel panel-accent-ink mb12">
+          <div class="ptitle">🎒 Inventário</div>
+          <div class="inv-peso-wrap" id="invPesoWrap">
+            <div class="inv-peso-head">
+              <span>Uso de Carga</span>
+              <strong><span id="invUso">0</span>/<span id="invCap">2</span></strong>
+            </div>
+            <div class="inv-peso-bar"><div id="invPesoFill"></div></div>
+            <div class="inv-peso-foot">Carga usada = soma das quantidades (podem ser negativas). Espaço livre: <b id="invLivre">2</b></div>
           </div>
-          <div class="inv-peso-bar"><div id="invPesoFill"></div></div>
-          <div class="inv-peso-foot">Espaço livre: <b id="invLivre">2</b></div>
+          <div class="inv-c" id="invCont"></div>
+          <button class="btn-add-i" onclick="addItem()">+ Adicionar Item</button>
         </div>
-        <div class="inv-c" id="invCont"></div>
-        <button class="btn-add-i" onclick="addItem()">+ Adicionar Item</button>
-      </div>
+      </section>
+      <section id="gal-c-log" class="gal-subsec gal-subsec--combate">
+        <div class="panel panel-accent-green mb12">
+          <div class="ptitle">🎲 Últimas Rolagens</div>
+          <div id="logDiv" class="gal-log-scroll"></div>
+        </div>
+      </section>
     </div>
   </div>
 
@@ -338,6 +366,5 @@
 <script src="Op dados.js"></script>
 <script src="script.js"></script>
 <script src="estado-critico-auto.js"></script>
-<script src="mobile-poderes-combate.js"></script> 
 </body>
 </html>

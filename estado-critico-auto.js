@@ -200,10 +200,10 @@
     _hookedAtuBarras = true;
   }
 
-  // ── Salvar/carregar estado nos checks ─────────────────────
-  // Hook na função coletarFicha
+  let _hookedColetar = false;
   function _hookColetarFicha() {
-    if (typeof coletarFicha !== 'function') return;
+    if (_hookedColetar || typeof coletarFicha !== 'function') return;
+    _hookedColetar = true;
     const orig = coletarFicha;
     window.coletarFicha = function() {
       const data = orig.apply(this, arguments);
@@ -213,9 +213,10 @@
     };
   }
 
-  // Hook na função preencher
+  let _hookedPreencher = false;
   function _hookPreencher() {
-    if (typeof preencher !== 'function') return;
+    if (_hookedPreencher || typeof preencher !== 'function') return;
+    _hookedPreencher = true;
     const orig = preencher;
     window.preencher = function(f) {
       orig.apply(this, arguments);
@@ -252,26 +253,45 @@
     };
   }
 
-  // ── Init após carregamento da página ─────────────────────
+  function _bindStatListeners() {
+    ['pvAtual','sanAtual'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.dataset.estadoCritHook) {
+        el.dataset.estadoCritHook = '1';
+        el.addEventListener('input', _verificar);
+      }
+    });
+    document.querySelectorAll('.stat-adj-btn').forEach(btn => {
+      if (!btn.dataset.estadoCritHook) {
+        btn.dataset.estadoCritHook = '1';
+        btn.addEventListener('click', () => setTimeout(_verificar, 50));
+      }
+    });
+  }
+
+  function _initCore() {
+    _hookAtuBarras();
+    _hookColetarFicha();
+    _hookPreencher();
+    _injetar();
+    _bindStatListeners();
+    _verificar();
+  }
+
+  // Hooks antes do primeiro carregarFicha() no load de script.js
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => { _initCore(); });
+  } else {
+    _initCore();
+  }
+
   window.addEventListener('load', () => {
     setTimeout(() => {
       _injetar();
-      _hookAtuBarras();
-      _hookColetarFicha();
-      _hookPreencher();
+      _bindStatListeners();
       _verificar();
-
-      // Re-verificar quando pvAtual ou sanAtual mudam
-      ['pvAtual','sanAtual'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', _verificar);
-      });
-
-      // Observer para os botões de ajuste stat
-      document.querySelectorAll('.stat-adj-btn').forEach(btn => {
-        btn.addEventListener('click', () => setTimeout(_verificar, 50));
-      });
     }, 200);
   });
 
 })();
+a

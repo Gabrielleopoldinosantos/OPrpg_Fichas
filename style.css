@@ -125,14 +125,54 @@ input[type=number].stat-inp::-webkit-inner-spin-button,
 input[type=number].stat-inp::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number].stat-inp { -moz-appearance: textfield; }
 
-/* AVATAR */
-.av-frame { width:96px; height:96px; border:2px solid var(--border2); background:var(--bg2); overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-.av-frame:hover { border-color:var(--ink); }
+/* AVATAR — destaque sóbrio */
+.av-frame {
+  width: 200px;
+  height: 200px;
+  max-width: 100%;
+  border: 2px solid var(--ink2);
+  border-radius: 2px;
+  box-shadow: 0 2px 0 var(--border2), 0 12px 28px rgba(0,0,0,0.14);
+  background: var(--bg2);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s;
+}
+[data-theme="dark"] .av-frame {
+  border-color: #3a3a3a;
+  box-shadow: 0 2px 0 #111, 0 10px 28px rgba(0,0,0,0.5);
+}
+.av-frame:hover {
+  border-color: var(--ink);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 var(--border2), 0 16px 32px rgba(0,0,0,0.18);
+}
 .av-frame img { width:100%; height:100%; object-fit:cover; }
-.av-ph { display:flex; flex-direction:column; align-items:center; color:var(--ink3); font-size:2.2em; }
+.av-ph { display:flex; flex-direction:column; align-items:center; color:var(--ink3); font-size:2.6em; }
 .av-ph span { font-family:'Share Tech Mono'; font-size:0.2em; letter-spacing:1px; margin-top:3px; }
 .btn-av { background:none; border:1px solid var(--border2); color:var(--ink3); font-family:'Share Tech Mono'; font-size:0.56em; letter-spacing:1px; padding:4px 10px; cursor:pointer; transition:all 0.15s; text-transform:uppercase; margin-top:6px; }
 .btn-av:hover { border-color:var(--ink); color:var(--ink); }
+
+/* Defesa + bloqueio / esquiva */
+.def-box { display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start; text-align:center; padding:12px 10px 14px; }
+.def-formula { font-family:'Share Tech Mono'; font-size:0.58em; color:var(--ink3); text-align:center; margin-top:4px; line-height:1.35; }
+.def-bonus-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:8px; flex-wrap:wrap; }
+.def-bonus-lbl { font-family:'Share Tech Mono'; font-size:0.58em; color:var(--ink3); }
+.def-bonus-row input#defBonus { width:52px; text-align:center; }
+.def-subgrid { display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:12px; width:100%; }
+.def-subcard {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 6px;
+  background: var(--bg3);
+}
+.def-sub-lbl { font-family:'Share Tech Mono'; font-size:0.52em; color:var(--ink3); letter-spacing:1px; text-transform:uppercase; display:block; }
+.def-sub-val { font-family:'Special Elite',serif; font-size:1.35em; color:var(--gold); line-height:1.1; margin:4px 0; }
+.def-sub-hint { font-family:'Share Tech Mono'; font-size:0.48em; color:var(--ink3); display:block; line-height:1.3; margin-bottom:6px; }
+.def-sub-inp { width:100%; text-align:center; padding:4px !important; font-size:0.85em !important; }
 .patente-badge { display:inline-block; font-family:'Special Elite',serif; font-size:0.7em; letter-spacing:2px; border:2px solid var(--ink); padding:4px 10px; color:var(--ink); background:var(--gold-lt); text-transform:uppercase; }
 
 /* ATRIBUTOS */
@@ -156,10 +196,7 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
 .atr-btn:hover { filter: brightness(1.1); transform: scale(1.04); }
 .atr-val-i { font-family: 'Special Elite', serif; font-size: 2.2em; color: var(--atr-color, var(--gold)); text-align: center; background: transparent; border: none; width: 56px; padding: 0; line-height: 1; }
 .atr-val-i:focus { outline: none; }
-.atr-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 6px; }
-.atr-dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--atr-color, var(--gold)) 50%, var(--border2)); background: transparent; transition: all 0.15s; cursor: pointer; }
-.atr-dot.filled { background: var(--atr-color, var(--gold)); border-color: var(--atr-color, var(--gold)); }
-.atr-hint { font-family:'Share Tech Mono'; font-size:0.54em; color:var(--ink3); line-height:1.45; margin-top:2px; min-height:42px; }
+.atr-hint { font-family:'Share Tech Mono'; font-size:0.54em; color:var(--ink3); line-height:1.45; margin-top:2px; min-height:28px; }
 .btn-dice { background:none; border:1px solid color-mix(in srgb, var(--atr-color, var(--gold)) 48%, var(--border2)); border-radius:999px; cursor:pointer; font-size:1em; padding:2px 8px; transition:all 0.15s; display:block; margin:6px auto 0; color:var(--atr-color, var(--gold)); }
 .btn-dice:hover { transform:scale(1.15); border-color:var(--atr-color,var(--gold)); background:color-mix(in srgb, var(--atr-color, var(--gold)) 12%, transparent); }
 
@@ -243,21 +280,199 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
 .coll-item.atk-item .coll-header { background:var(--gold-lt); }
 .coll-item.atk-item .coll-header:hover { filter:brightness(0.97); }
 .coll-item.atk-item .coll-title { color:var(--gold); }
-.atk-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:10px; }
+.atk-grid { display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:10px; }
+.atk-grid .atk-rolagem-row { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
 .atk-section-lbl { font-family:'Share Tech Mono'; font-size:0.58em; color:var(--ink3); letter-spacing:2px; margin-bottom:5px; }
 .atk-ctrls { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
 .atk-bi { width:52px!important; height:30px!important; font-size:0.9em!important; padding:3px!important; text-align:center; border:1px solid var(--border)!important; background:var(--bg2)!important; }
+.atk-dano-atr { font-size:0.72em !important; padding:4px 6px !important; min-width:120px; }
 .atk-ds { background:var(--bg2); border:1px solid var(--border); color:var(--cyan); font-family:'Share Tech Mono'; font-size:0.78em; padding:4px 5px; cursor:pointer; }
 .btn-ra { background:var(--gold-lt); border:1px solid var(--gold); color:var(--gold); font-family:'Special Elite',serif; font-size:0.72em; padding:5px 10px; cursor:pointer; letter-spacing:1px; transition:all 0.15s; }
 .btn-ra:hover { background:var(--gold); color:#fff; }
 .btn-rd { background:var(--cyan-lt); border:1px solid var(--cyan); color:var(--cyan); font-family:'Special Elite',serif; font-size:0.72em; padding:5px 10px; cursor:pointer; letter-spacing:1px; transition:all 0.15s; }
 .btn-rd:hover { background:var(--cyan); color:#fff; }
 
+/* Ritual DT (painel acima da lista) */
+.rit-dt-host {
+  margin: 10px 0 12px;
+  padding: 12px 14px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: 4px;
+}
+.rit-dt-host--empty {
+  display: none;
+}
+.rit-dt-nome-alvo {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85em;
+  color: var(--rit-color, var(--purple));
+}
+.coll-item.rit-item.rit-dt-active .coll-header {
+  outline: 2px solid color-mix(in srgb, var(--rit-color, var(--purple)) 55%, transparent);
+  outline-offset: 1px;
+}
+.rit-dt-host-lbl { margin-bottom: 6px !important; color: var(--ink2); }
+.rit-dt-host-valrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.rit-dt-val-host {
+  font-family: 'Special Elite', serif;
+  font-size: 1.35em;
+  color: var(--purple);
+  letter-spacing: 1px;
+}
+.rit-dt-host-hint {
+  font-family: 'Share Tech Mono';
+  font-size: 0.58em;
+  color: var(--ink3);
+  line-height: 1.35;
+}
+.rit-dt-host-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 480px) {
+  .rit-dt-host-grid { grid-template-columns: 1fr; }
+}
+
+/* Resistências dinâmicas */
+.res-list { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; min-height: 0; }
+.res-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: 'Share Tech Mono';
+  font-size: 0.72em;
+}
+.res-row-auto { opacity: 0.92; border-left: 3px solid var(--ink3); }
+.res-row-custom { border-left: 3px solid var(--gold); }
+.res-row-val { font-family: 'Special Elite', serif; font-size: 1.1em; color: var(--gold); }
+.res-add-panel {
+  display: none;
+  margin: 8px 0;
+  padding: 10px;
+  background: var(--bg2);
+  border: 1px dashed var(--border2);
+  border-radius: 6px;
+}
+.res-add-panel.open { display: block; }
+.res-add-panel .lbl { margin-top: 6px; }
+.res-add-panel .lbl:first-child { margin-top: 0; }
+.res-add-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.btn-res-ok { font-family: 'Share Tech Mono'; font-size: 0.62em; padding: 6px 12px; cursor: pointer; background: var(--green-lt); border: 1px solid var(--green); color: var(--green); }
+.btn-res-cancel { font-family: 'Share Tech Mono'; font-size: 0.62em; padding: 6px 12px; cursor: pointer; background: transparent; border: 1px solid var(--border2); color: var(--ink3); }
+
+/* Ataque: dado separado |n||d| */
+.atk-dice-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Share Tech Mono';
+  font-size: 0.75em;
+  color: var(--ink3);
+}
+.atk-dn, .atk-df {
+  width: 44px !important;
+  text-align: center;
+  padding: 4px !important;
+  border: 1px solid var(--border) !important;
+  background: var(--bg2) !important;
+}
+.atk-crit-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+@media (max-width: 480px) {
+  .atk-crit-row { grid-template-columns: 1fr; }
+}
+.atk-inv-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+@media (max-width: 480px) {
+  .atk-inv-row { grid-template-columns: 1fr; }
+}
+.atk-inv-w, .atk-inv-m {
+  width: 100%;
+  font-size: 0.72em !important;
+  padding: 5px !important;
+  background: var(--bg2) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Inventário melhorias */
+.btn-inv-melh {
+  font-family: 'Share Tech Mono';
+  font-size: 0.58em;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  cursor: pointer;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--ink2);
+  white-space: nowrap;
+}
+.btn-inv-melh:hover { border-color: var(--gold); color: var(--gold); }
+.inv-melh-chips {
+  font-family: 'Share Tech Mono';
+  font-size: 0.55em;
+  color: var(--ink3);
+  flex: 1;
+  min-width: 0;
+}
+
 /* HAB item */
 .coll-item.hab-item { border-left:3px solid var(--gold); }
 .coll-item.hab-item .coll-header { background:var(--gold-lt); }
 .coll-item.hab-item .coll-header:hover { filter:brightness(0.97); }
 .coll-item.hab-item .coll-title { color:var(--gold); }
+.coll-item.paranormal-item .paranormal-meta { color:inherit; opacity:0.85; }
+.coll-item.paranormal-item.para-elem-sangue { border-left-color:#d04030; }
+.coll-item.paranormal-item.para-elem-sangue .coll-header { background:#f5e0e0; }
+.coll-item.paranormal-item.para-elem-sangue .coll-title,
+.coll-item.paranormal-item.para-elem-sangue .paranormal-meta { color:#d04030; }
+.coll-item.paranormal-item.para-elem-energia { border-left-color:#6a3aaa; }
+.coll-item.paranormal-item.para-elem-energia .coll-header { background:#ede8f5; }
+.coll-item.paranormal-item.para-elem-energia .coll-title,
+.coll-item.paranormal-item.para-elem-energia .paranormal-meta { color:#6a3aaa; }
+.coll-item.paranormal-item.para-elem-morte { border-left-color:#333333; }
+.coll-item.paranormal-item.para-elem-morte .coll-header { background:#e8e8e8; }
+.coll-item.paranormal-item.para-elem-morte .coll-title,
+.coll-item.paranormal-item.para-elem-morte .paranormal-meta { color:#333333; }
+[data-theme="dark"] .coll-item.paranormal-item.para-elem-sangue .coll-header { background:#1a0808; }
+[data-theme="dark"] .coll-item.paranormal-item.para-elem-energia .coll-header { background:#180d28; }
+[data-theme="dark"] .coll-item.paranormal-item.para-elem-morte .coll-header { background:#111111; }
+[data-theme="dark"] .coll-item.paranormal-item.para-elem-morte .coll-title,
+[data-theme="dark"] .coll-item.paranormal-item.para-elem-morte .paranormal-meta { color:#aaaaaa; }
+[data-theme="dark"] .coll-item.paranormal-item.para-elem-conhecimento .coll-header { background:#2a2010; }
+
+#gal-p-hab .panel { border-top-color: var(--border2); }
+#gal-p-org .panel { border-top-color: var(--border2); }
+#gal-p-hab .ptitle, #gal-p-org .ptitle { color: var(--ink); }
+#gal-p-hab .gal-btn-book, #gal-p-org .gal-btn-book {
+  border-color: var(--border2);
+  color: var(--ink2);
+}
+#gal-p-hab .gal-btn-book:hover, #gal-p-org .gal-btn-book:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
 
 /* RITUAL element colors */
 .coll-item.rit-item { border-left:3px solid var(--rit-color, var(--purple)); }
@@ -287,19 +502,16 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
 .inv-c { display:flex; flex-direction:column; gap:1px; }
 .inv-it { background:transparent; border-bottom:1px solid var(--border); overflow:hidden; transition: background 0.1s, border 0.1s; }
 .inv-it:hover { background:var(--bg2); }
-.inv-row { display:flex; align-items:center; min-height:34px; gap:4px; }
+.inv-row { display:flex; align-items:center; flex-wrap:wrap; min-height:34px; gap:4px; }
 .inv-exp { flex-shrink:0; width:26px; height:100%; background:none; border:none; color:var(--ink3); font-size:1em; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:color 0.15s; }
 .inv-exp:hover { color:var(--ink); }
 .inv-ni { flex:1; height:100%; background:transparent!important; border:none!important; color:var(--ink2)!important; font-size:0.92em; padding:0 4px!important; min-width:120px; }
-.inv-qtd { width:46px !important; padding:4px !important; font-size:0.78em !important; text-align:center; border:1px solid var(--border) !important; border-radius:4px; background:var(--bg3) !important; }
-.inv-cat { width:58px !important; padding:4px !important; font-size:0.74em !important; border:1px solid var(--border) !important; border-radius:4px; background:var(--bg3) !important; text-align:center; }
+.inv-qtd { width:52px !important; padding:4px !important; font-size:0.78em !important; text-align:center; border:1px solid var(--border) !important; border-radius:4px; background:var(--bg3) !important; }
+.inv-cat { width:52px !important; padding:4px 2px !important; font-size:0.7em !important; border:1px solid var(--border) !important; border-radius:4px; background:var(--bg3) !important; text-align:center; }
+.inv-tag { flex:1; min-width:0; max-width:140px; padding:4px 2px !important; font-size:0.62em !important; border:1px solid var(--border) !important; border-radius:4px; background:var(--bg3) !important; }
 .inv-del { flex-shrink:0; width:22px; height:100%; background:none; border:none; color:var(--border2); font-size:0.72em; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:color 0.15s; }
 .inv-del:hover { color:var(--red); }
 .inv-dt { width:100%; background:rgba(0,0,0,0.02)!important; border:none!important; border-top:1px dashed var(--border)!important; font-size:0.85em; min-height:40px; padding:5px 26px!important; color:var(--ink3)!important; display:none; }
-.inv-extra { display:none; padding:4px 26px 8px; }
-.inv-extra label { font-family:'Share Tech Mono'; font-size:0.57em; color:var(--ink3); letter-spacing:1px; display:block; margin-bottom:3px; }
-.inv-extra label span { opacity:0.7; }
-.inv-extra .inv-peso-aj { width:100px !important; border:1px solid var(--border) !important; border-radius:4px; background:var(--bg3) !important; padding:4px !important; font-size:0.78em !important; }
 .inv-peso-wrap { border:1px solid var(--border); background:var(--bg2); padding:8px 10px; margin-bottom:8px; border-radius:6px; }
 .inv-peso-head { display:flex; justify-content:space-between; font-family:'Share Tech Mono'; font-size:0.64em; color:var(--ink2); margin-bottom:6px; letter-spacing:1px; }
 .inv-peso-bar { height:8px; background:var(--paper); border:1px solid var(--border); overflow:hidden; border-radius:999px; }
@@ -307,6 +519,17 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
 .inv-peso-foot { font-family:'Share Tech Mono'; font-size:0.6em; color:var(--ink3); margin-top:5px; }
 .inv-peso-wrap.estourado { border-color: var(--red); }
 .inv-peso-wrap.estourado #invPesoFill { background: var(--red); }
+
+.inv-prot-row {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 8px 30px;
+  border-bottom: 1px dashed var(--border);
+  flex-wrap: wrap;
+}
+.inv-prot-lbl { margin: 0 !important; flex: 1; min-width: 120px; font-size: 0.55em !important; }
+.inv-prot-val { width: 72px !important; text-align: center; padding: 5px !important; }
 
 /* DRAG & DROP INVENTÁRIO */
 .inv-drag {
@@ -322,6 +545,18 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
 }
 .inv-drag:hover { opacity: 1; color: var(--ink); }
 .inv-drag:active { cursor: grabbing; }
+@media (hover: none) and (pointer: coarse) {
+  .inv-drag {
+    min-width: 36px;
+    min-height: 40px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+    opacity: 0.85;
+    font-size: 1.1em;
+  }
+}
 .inv-it.inv-dragging {
   opacity: 0.4;
   border: 2px dashed var(--gold) !important;
@@ -352,6 +587,54 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
 .dado-outros { font-family:'Share Tech Mono'; font-size:0.6em; color:var(--ink3); margin-top:10px; border-top:1px solid var(--border); padding-top:8px; }
 .dado-dis { font-family:'Share Tech Mono'; font-size:0.58em; color:var(--ink3); margin-top:14px; }
 .conj-result-badge { display: inline-block; margin: 8px auto; }
+.atk-result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 10px 0 6px;
+}
+.atk-result-block {
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  padding: 8px 10px;
+  text-align: left;
+}
+.atk-result-block-dmg { border-left: 3px solid var(--gold); }
+.atk-result-label {
+  font-family: 'Share Tech Mono';
+  font-size: 0.58em;
+  color: var(--ink3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.atk-result-main {
+  font-family: 'Special Elite', serif;
+  font-size: 1.9em;
+  line-height: 1;
+  color: var(--ink);
+  margin: 4px 0 6px;
+}
+.atk-result-dmg-main { color: var(--gold); }
+.atk-result-meta {
+  font-family: 'Share Tech Mono';
+  font-size: 0.58em;
+  color: var(--ink2);
+  line-height: 1.45;
+}
+.atk-result-crit-msg {
+  font-family: 'Share Tech Mono';
+  font-size: 0.6em;
+  color: var(--green);
+  border-top: 1px dashed var(--border);
+  padding-top: 7px;
+  margin-top: 2px;
+}
+.atk-result-muted {
+  font-family: 'Share Tech Mono';
+  font-size: 0.58em;
+  color: var(--ink3);
+  margin-top: 7px;
+}
 
 /* MODAL GENÉRICO */
 .modal-ov { position:fixed; inset:0; z-index:8888; background:rgba(0,0,0,0.9); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; }
@@ -645,9 +928,7 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
 .atr-choice-btn.selected { border-color: var(--gold); background: var(--gold-lt); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
 .atr-choice-btn .atr-val-now { font-size: 0.65em; color: var(--ink3); font-family: 'Share Tech Mono'; display: block; margin-top: 2px; }
 
-/* PODERES LAYOUT */
-.poderes-layout { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-@media(max-width:900px){.poderes-layout{grid-template-columns:1fr;}}
+/* PODERES + COMBATE: layout “Galaxy sheet” (ver bloco .gal-* abaixo) */
 
 /* ============================================================
    RESPONSIVIDADE DESKTOP INTERMEDIÁRIA (max-width: 768px)
@@ -772,26 +1053,29 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
   .panel.mb12 { margin-bottom: 8px; }
 
   /* ── IDENTIDADE GRID ── */
-  #tab-identidade > div:first-child {
+  #tab-identidade > div:first-child,
+  #tab-identidade > div.ident-top-grid {
     grid-template-columns: 1fr !important;
   }
-  /* Avatar fica menor e ao lado do nome em mobile */
-  #tab-identidade > div:first-child > div:last-child {
+  /* Avatar em destaque também no mobile */
+  #tab-identidade > div:first-child > div:last-child,
+  #tab-identidade > div.ident-top-grid > div:last-child {
     flex-direction: row !important;
     justify-content: flex-start !important;
-    gap: 10px;
-    padding: 8px 10px;
+    gap: 12px;
+    padding: 10px 12px;
     background: var(--paper);
     border: 1px solid var(--border);
     border-top: 3px solid var(--ink2);
     margin-bottom: 8px;
+    border-radius: 8px;
   }
   .av-frame {
-    width: 64px;
-    height: 64px;
+    width: 148px;
+    height: 148px;
     flex-shrink: 0;
   }
-  .av-ph { font-size: 1.5em; }
+  .av-ph { font-size: 2.4em; }
   .btn-av { margin-top: 4px; font-size: 0.5em; padding: 3px 8px; }
 
   /* Campos de identidade */
@@ -868,8 +1152,6 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
     height: 28px;
     font-size: 0.8em;
   }
-  .atr-dots { gap: 4px; margin-bottom: 4px; }
-  .atr-dot { width: 8px; height: 8px; }
   .atr-hint {
     font-size: 0.47em;
     min-height: 34px;
@@ -908,6 +1190,7 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
   }
   .stat-hint { font-size: 0.52em; line-height: 1.4; }
   .def-big { font-size: 2.4em; }
+  .def-subgrid { grid-template-columns: 1fr; }
 
   /* ── PERÍCIAS ── */
   .per-header-row {
@@ -954,9 +1237,6 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
   }
   .atk-bi { width: 56px !important; height: 36px !important; font-size: 1em !important; }
 
-  /* ── PODERES LAYOUT ── */
-  .poderes-layout { grid-template-columns: 1fr; gap: 8px; }
-
   /* ── RITUAIS ── */
   .rit-fields {
     grid-template-columns: 1fr 1fr;
@@ -972,7 +1252,6 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
   .rit-desc-area { font-size: 0.85em !important; min-height: 52px; }
 
   /* ── INVENTÁRIO ── */
-  .inv-drag { display: none; } /* Esconde drag handle no mobile */
   .inv-row { min-height: 40px; gap: 3px; }
   .inv-ni { font-size: 0.88em; }
   .inv-qtd {
@@ -981,9 +1260,15 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
     font-size: 0.78em !important;
   }
   .inv-cat {
-    width: 50px !important;
+    width: 44px !important;
     padding: 6px 2px !important;
-    font-size: 0.7em !important;
+    font-size: 0.65em !important;
+  }
+  .inv-tag {
+    max-width: none;
+    flex: 1 1 38%;
+    font-size: 0.58em !important;
+    padding: 6px 2px !important;
   }
   .inv-del {
     width: 28px;
@@ -995,7 +1280,6 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
     font-size: 1em;
   }
   .inv-dt { padding: 5px 10px !important; font-size: 0.82em; }
-  .inv-extra { padding: 4px 10px 8px; }
   .inv-peso-head { font-size: 0.58em; }
   .inv-peso-foot { font-size: 0.55em; }
 
@@ -1014,6 +1298,8 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
   .dado-hd { font-size: 0.58em; letter-spacing: 1px; margin-bottom: 8px; }
   .dado-tot { font-size: 2.8em; }
   .dado-dis { font-size: 0.54em; margin-top: 10px; }
+  .atk-result-grid { grid-template-columns: 1fr; }
+  .atk-result-main { font-size: 1.6em; }
 
   /* ── MODAL ── */
   .modal-box {
@@ -1159,562 +1445,140 @@ input[type=number].stat-inp { -moz-appearance: textfield; }
 }
 
 /* ============================================================
-   PATCH MOBILE — Poderes & Combate redesign
-   Adicione ao FINAL do style.css, DEPOIS do bloco
-   @media (max-width: 480px) { ... } existente
+   PODERES + COMBATE — layout “Galaxy sheet” (A51 / A71)
+   Largura lógica típica 360–412px: sub-abas + uma coluna.
+   Acima de 431px: mesma árvore DOM, grade desktop (sem JS extra).
    ============================================================ */
 
-/* ── SUB-ABAS INTERNAS (Poderes e Combate) ─────────────────── */
-@media (max-width: 480px) {
-
-  /* ── ABAS SECUNDÁRIAS (sub-seções da tab) ── */
-  .sub-tabs {
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-    margin: -10px -10px 14px;
-    padding: 0 10px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg2);
-    position: sticky;
-    top: 0;
-    z-index: 5;
-  }
-  .sub-tabs::-webkit-scrollbar { display: none; }
-  .sub-tab-btn {
-    flex-shrink: 0;
-    padding: 9px 14px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.6em;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--ink3);
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s;
-  }
-  .sub-tab-btn.active {
-    color: var(--ink);
-    border-bottom-color: var(--gold);
-    background: transparent;
-    font-size: 0.62em;
-  }
-  .sub-panel { display: none; }
-  .sub-panel.active { display: block; }
-
-  /* ── CARTÃO COMPACTO (substitui coll-item no mobile) ── */
-  .m-card {
-    background: var(--paper);
-    border: 0.5px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 8px;
-    overflow: hidden;
-  }
-  .m-card-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 11px 12px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    transition: background 0.1s;
-  }
-  .m-card-header:active { background: var(--bg2); }
-  .m-card-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    flex-shrink: 0;
-  }
-  .m-card-icon-gold  { background: var(--gold-lt);   color: var(--gold); }
-  .m-card-icon-purp  { background: var(--purple-lt); color: var(--purple); }
-  .m-card-icon-red   { background: var(--red-lt);    color: var(--red); }
-  .m-card-icon-cyan  { background: var(--cyan-lt);   color: var(--cyan); }
-
-  .m-card-info { flex: 1; min-width: 0; }
-  .m-card-name {
-    font-family: 'Special Elite', serif;
-    font-size: 0.95em;
-    color: var(--ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .m-card-meta {
-    font-family: 'Share Tech Mono';
-    font-size: 0.54em;
-    color: var(--ink3);
-    margin-top: 2px;
-    letter-spacing: 0.5px;
-  }
-  .m-card-badge {
-    font-family: 'Share Tech Mono';
-    font-size: 0.5em;
-    padding: 3px 8px;
-    border-radius: 999px;
-    flex-shrink: 0;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
-  .m-card-badge-gold   { background: var(--gold-lt);   color: var(--gold);   border: 1px solid var(--gold); }
-  .m-card-badge-purp   { background: var(--purple-lt); color: var(--purple); border: 1px solid var(--purple); }
-  .m-card-badge-red    { background: var(--red-lt);    color: var(--red);    border: 1px solid var(--red); }
-  .m-card-badge-cyan   { background: var(--cyan-lt);   color: var(--cyan);   border: 1px solid var(--cyan); }
-
-  .m-card-chevron {
-    font-size: 0.65em;
-    color: var(--ink3);
-    flex-shrink: 0;
-    transition: transform 0.2s;
-    font-family: 'Share Tech Mono';
-  }
-  .m-card.open .m-card-chevron { transform: rotate(90deg); }
-
-  .m-card-body {
-    display: none;
-    padding: 10px 12px 12px;
-    border-top: 1px solid var(--border);
-    background: var(--bg3);
-    font-size: 0.9em;
-    color: var(--ink2);
-    line-height: 1.55;
-  }
-  .m-card.open .m-card-body { display: block; }
-
-  /* ── QUICK-ACTION dentro do card (conjurar, rolar) ── */
-  .m-card-actions {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-  }
-  .m-card-action-btn {
-    flex: 1;
-    padding: 8px;
-    font-family: 'Share Tech Mono';
-    font-size: 0.58em;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--bg2);
-    color: var(--ink2);
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-  }
-  .m-card-action-btn.primary {
-    background: var(--purple-lt);
-    border-color: var(--purple);
-    color: var(--purple);
-  }
-  .m-card-action-btn.danger {
-    background: var(--red-lt);
-    border-color: var(--red);
-    color: var(--red);
-  }
-
-  /* ── STATS INLINE do ritual ── */
-  .m-rit-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 5px;
-    margin-bottom: 10px;
-  }
-  .m-rit-stat {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 5px 4px;
-    text-align: center;
-  }
-  .m-rit-stat-lbl {
-    display: block;
-    font-family: 'Share Tech Mono';
-    font-size: 0.5em;
-    color: var(--ink3);
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
-  }
-  .m-rit-stat-val {
-    display: block;
-    font-family: 'Special Elite', serif;
-    font-size: 0.82em;
-    color: var(--purple);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* ── ELEMENTO PILL do ritual ── */
-  .m-elem-pills { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
-  .m-elem-pill {
-    font-family: 'Share Tech Mono';
-    font-size: 0.5em;
-    padding: 3px 8px;
-    border-radius: 999px;
-    letter-spacing: 0.5px;
-    font-weight: 500;
-  }
-  .m-elem-conhecimento { background: var(--gold-lt);   color: var(--gold);   border: 1px solid var(--gold); }
-  .m-elem-energia      { background: var(--purple-lt); color: var(--purple); border: 1px solid var(--purple); }
-  .m-elem-morte        { background: var(--bg2);       color: var(--ink2);   border: 1px solid var(--border2); }
-  .m-elem-sangue       { background: var(--red-lt);    color: var(--red);    border: 1px solid var(--red); }
-  .m-elem-medo         { background: var(--bg2);       color: var(--ink3);   border: 1px solid var(--border); }
-
-  /* ── MINI TABS dentro do card de ritual ── */
-  .m-rit-tabs {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 10px;
-  }
-  .m-rit-tab {
-    font-family: 'Share Tech Mono';
-    font-size: 0.52em;
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--bg2);
-    color: var(--ink3);
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    transition: all 0.15s;
-  }
-  .m-rit-tab.active {
-    background: var(--purple-lt);
-    border-color: var(--purple);
-    color: var(--purple);
-    font-weight: 500;
-  }
-  .m-rit-version { display: none; }
-  .m-rit-version.active { display: block; }
-
-  /* ── ATAQUE CARD (tab Combate) ── */
-  .m-atk-card {
-    background: var(--paper);
-    border: 0.5px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 8px;
-    overflow: hidden;
-    border-left: 3px solid var(--gold);
-  }
-  .m-atk-card.luta { border-left-color: var(--red); }
-  .m-atk-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    background: var(--gold-lt);
-  }
-  .m-atk-card.luta .m-atk-header { background: var(--red-lt); }
-  .m-atk-name {
-    flex: 1;
-    font-family: 'Special Elite', serif;
-    font-size: 0.95em;
-    color: var(--gold);
-  }
-  .m-atk-card.luta .m-atk-name { color: var(--red); }
-  .m-atk-type {
-    font-family: 'Share Tech Mono';
-    font-size: 0.5em;
-    padding: 3px 8px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.5);
-    color: var(--ink2);
-    border: 1px solid var(--border);
-    letter-spacing: 0.5px;
-  }
-  .m-atk-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding: 10px 12px;
-  }
-  .m-atk-field label {
-    display: block;
-    font-family: 'Share Tech Mono';
-    font-size: 0.52em;
-    color: var(--ink3);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .m-atk-field input,
-  .m-atk-field select {
-    width: 100%;
-    background: var(--bg2) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: 6px !important;
-    padding: 7px 8px !important;
-    font-size: 0.9em !important;
-    color: var(--ink) !important;
-  }
-  .m-atk-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    padding: 0 12px 12px;
-  }
-  .m-atk-btn {
-    padding: 10px;
-    font-family: 'Share Tech Mono';
-    font-size: 0.58em;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border-radius: 6px;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-    border: 1px solid var(--border);
-    background: var(--bg2);
-    color: var(--ink2);
-  }
-  .m-atk-btn.primary-atk {
-    background: var(--gold-lt);
-    border-color: var(--gold);
-    color: var(--gold);
-  }
-  .m-atk-card.luta .m-atk-btn.primary-atk {
-    background: var(--red-lt);
-    border-color: var(--red);
-    color: var(--red);
-  }
-
-  /* ── INVENTÁRIO MOBILE ── */
-  .m-peso-bar {
-    background: var(--paper);
-    border: 0.5px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 12px;
-  }
-  .m-peso-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 8px;
-  }
-  .m-peso-lbl {
-    font-family: 'Share Tech Mono';
-    font-size: 0.56em;
-    color: var(--ink3);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  .m-peso-num {
-    font-family: 'Special Elite', serif;
-    font-size: 1.4em;
-    color: var(--ink);
-    line-height: 1;
-  }
-  .m-peso-num span {
-    font-size: 0.5em;
-    color: var(--ink3);
-    font-family: 'Share Tech Mono';
-  }
-  .m-peso-track {
-    height: 7px;
-    background: var(--bg2);
-    border-radius: 999px;
-    overflow: hidden;
-    margin-bottom: 5px;
-    border: 1px solid var(--border);
-  }
-  .m-peso-fill {
-    height: 100%;
-    border-radius: 999px;
-    background: var(--green);
-    transition: width 0.3s;
-  }
-  .m-peso-fill.danger { background: var(--red); }
-  .m-peso-sub {
-    display: flex;
-    justify-content: space-between;
-    font-family: 'Share Tech Mono';
-    font-size: 0.52em;
-    color: var(--ink3);
-  }
-
-  .m-inv-table {
-    background: var(--paper);
-    border: 0.5px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 8px;
-  }
-  .m-inv-thead {
-    display: grid;
-    grid-template-columns: 1fr 38px 44px 28px;
-    gap: 4px;
-    padding: 6px 12px;
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    font-family: 'Share Tech Mono';
-    font-size: 0.5em;
-    color: var(--ink3);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .m-inv-row {
-    display: grid;
-    grid-template-columns: 1fr 38px 44px 28px;
-    gap: 4px;
-    align-items: center;
-    padding: 9px 12px;
-    border-top: 1px solid var(--border);
-    transition: background 0.1s;
-  }
-  .m-inv-row:first-of-type { border-top: none; }
-  .m-inv-row:active { background: var(--bg2); }
-  .m-inv-name { font-size: 0.88em; color: var(--ink); }
-  .m-inv-qty  { font-size: 0.82em; color: var(--ink3); text-align: center; font-family: 'Share Tech Mono'; }
-  .m-inv-cat  {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    width: 28px;
-    height: 20px;
-    border-radius: 4px;
-    font-family: 'Share Tech Mono';
-    font-size: 0.52em;
-    font-weight: 500;
-    background: var(--bg2);
-    color: var(--ink2);
-    border: 1px solid var(--border);
-  }
-  .m-inv-del {
-    width: 24px;
-    height: 24px;
-    background: none;
-    border: none;
-    color: var(--ink3);
-    font-size: 0.9em;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: auto;
-    border-radius: 50%;
-    transition: all 0.15s;
-  }
-  .m-inv-del:active { background: var(--red-lt); color: var(--red); }
-
-  /* ── LOG DE ROLAGENS ── */
-  .m-log-list {
-    background: var(--paper);
-    border: 0.5px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .m-log-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-top: 1px solid var(--border);
-  }
-  .m-log-item:first-child { border-top: none; }
-  .m-log-result {
-    font-family: 'Special Elite', serif;
-    font-size: 1.4em;
-    min-width: 36px;
-    text-align: center;
-    color: var(--ink);
-    line-height: 1;
-  }
-  .m-log-result.cs { color: var(--green); }
-  .m-log-result.cf { color: var(--red); }
-  .m-log-info { flex: 1; }
-  .m-log-name { font-size: 0.88em; color: var(--ink2); }
-  .m-log-detail { font-family: 'Share Tech Mono'; font-size: 0.5em; color: var(--ink3); margin-top: 2px; letter-spacing: 0.5px; }
-  .m-log-time {
-    font-family: 'Share Tech Mono';
-    font-size: 0.5em;
-    color: var(--ink3);
-    letter-spacing: 0.5px;
-    flex-shrink: 0;
-  }
-
-  /* ── ADD BTN (override para mobile) ── */
-  .m-add-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    width: 100%;
-    padding: 10px 12px;
-    background: transparent;
-    border: 1.5px dashed var(--border2);
-    border-radius: 8px;
-    color: var(--ink3);
-    font-family: 'Share Tech Mono';
-    font-size: 0.58em;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin-bottom: 12px;
-    transition: all 0.15s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .m-add-btn:active { background: var(--bg2); color: var(--ink2); border-style: solid; }
-  .m-add-btn.rit  { border-color: var(--purple); color: var(--purple); }
-  .m-add-btn.para { border-color: var(--red);    color: var(--red); }
-
-  /* ── SEÇÃO TITLE ── */
-  .m-section-title {
-    font-family: 'Share Tech Mono';
-    font-size: 0.52em;
-    color: var(--ink3);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 0 2px;
-    margin: 0 0 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .m-section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* ── OVERRIDES: esconder elementos PC pesados no mobile ── */
-  #tab-poderes .coll-item,
-  #tab-combate .coll-item.atk-item {
-    display: none;
-  }
-  #tab-poderes .btn-add:not(.m-add-btn),
-  #tab-combate .btn-add:not(.m-add-btn) {
-    display: none;
-  }
-  /* Manter btn-del visível dentro de m-card */
-  .m-card .btn-del { display: flex; }
-
-  /* GARANTIA: o container original de habs/rits/atk
-     fica invisível em mobile; os m-cards são inseridos via JS */
-  #tab-poderes > .poderes-layout { display: none !important; }
-  #tab-poderes > .panel { display: none !important; }
-  #tab-combate .panel.panel-accent-gold { display: none !important; }
-  #tab-combate .panel.panel-accent-green { display: none !important; }
-
-  /* wrapper mobile injetado pelo JS */
-  #mobile-poderes-wrapper,
-  #mobile-combate-wrapper { display: block; }
+.gal-subnav {
+  display: none;
+  width: 100%;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  margin-bottom: 12px;
+}
+.gal-subnav-btn {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.56em;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink3);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.gal-subnav-btn.active {
+  color: var(--ink);
+  border-bottom-color: var(--gold);
+  background: var(--paper);
 }
 
-/* fora do @media: esconder wrappers mobile em desktop */
-#mobile-poderes-wrapper,
-#mobile-combate-wrapper { display: none; }
+.gal-poderes-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+#gal-p-hab { grid-column: 1; grid-row: 1; }
+#gal-p-org { grid-column: 2; grid-row: 1; }
+#gal-p-rit { grid-column: 1; grid-row: 2; }
+#gal-p-para { grid-column: 2; grid-row: 2; }
+
+.gal-combate-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 2px;
+  align-items: start;
+}
+#gal-c-atk { grid-column: 1; grid-row: 1; }
+#gal-c-log { grid-column: 1; grid-row: 2; }
+#gal-c-inv { grid-column: 2; grid-row: 1 / span 2; align-self: start; }
+
+.gal-log-scroll {
+  max-height: 300px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gal-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.gal-actions-row .btn-add { margin-bottom: 0; flex: 1; min-width: calc(50% - 4px); }
+.btn-add.gal-btn-book { border-color: var(--gold); color: var(--gold); }
+.btn-add.gal-btn-rit { border-color: var(--purple); color: var(--purple); }
+.btn-add.gal-btn-para { border-color: var(--red); color: var(--red); }
+
+@media (max-width: 431px) {
+  .gal-subnav {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 8;
+    margin: -4px 0 12px;
+  }
+
+  .gal-poderes-body,
+  .gal-combate-body {
+    display: block;
+  }
+
+  .gal-subsec--poderes:not(.active),
+  .gal-subsec--combate:not(.active) {
+    display: none !important;
+  }
+  .gal-subsec--poderes.active,
+  .gal-subsec--combate.active {
+    display: block !important;
+  }
+
+  #gal-c-atk,
+  #gal-c-log,
+  #gal-c-inv {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .gal-log-scroll {
+    max-height: min(48vh, 420px);
+    min-height: 140px;
+  }
+
+  /* Cartões colapsáveis: área de toque maior nesta faixa de largura */
+  #tab-poderes .coll-header,
+  #tab-combate .coll-header {
+    min-height: 48px;
+    padding: 12px 10px;
+  }
+  #tab-poderes .coll-item,
+  #tab-combate .coll-item {
+    margin-bottom: 8px;
+  }
+  #tab-poderes .rit-fields,
+  #tab-combate .atk-grid {
+    gap: 8px;
+  }
+  #tab-combate .inv-row {
+    min-height: 44px;
+  }
+
+  /* Sobrepor width:100% dos .btn-add do bloco mobile genérico */
+  .gal-actions-row .btn-add {
+    width: auto;
+    flex: 1 1 calc(50% - 4px);
+    min-width: 0;
+  }
+}
 
 /* ============================================================
    AJUSTE EXTRA PARA TELAS MUITO PEQUENAS (< 360px)

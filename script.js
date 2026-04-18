@@ -230,6 +230,43 @@ const PERI=[
   {id:'vontade',nome:'Vontade',atr:'Pre',grupo:'Presença'},
   {id:'fortitude',nome:'Fortitude',atr:'Vig',grupo:'Vigor'},
 ];
+function normTxt(v){
+  return String(v||'')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,' ')
+    .trim();
+}
+const ORIGENS_DADOS = [
+  { nome:'Acadêmico', pericias:['ciencias','investigacao'], poder:'Saber é Poder', desc:'Quando faz um teste usando Intelecto, você pode gastar 2 PE para receber +5 nesse teste.' },
+  { nome:'Agente de Saúde', pericias:['intuicao','medicina'], poder:'Técnica Medicinal', desc:'Sempre que cura um personagem, você adiciona seu Intelecto no total de PV curados.' },
+  { nome:'Amnésico', pericias:[], poder:'Vislumbres do Passado', desc:'Uma vez por sessão, você pode fazer um teste de Intelecto (DT 10) para reconhecer pessoas ou lugares familiares. Se passar, recebe 1d4 PE temporários e, a critério do mestre, uma informação útil.', periciasTexto:'Duas à escolha do mestre' },
+  { nome:'Artista', pericias:['artes','enganacao'], poder:'Magnum Opus', desc:'Uma vez por missão, pode determinar que um personagem de interação o reconheça, recebendo +5 em testes de Presença e perícias baseadas em Presença contra ele.' },
+  { nome:'Atleta', pericias:['acrobacia','atletismo'], poder:'110%', desc:'Quando faz um teste de perícia usando Força ou Agilidade (exceto Luta e Pontaria), pode gastar 2 PE para receber +5 nesse teste.' },
+  { nome:'Chef', pericias:['fortitude','profissao'], poder:'Ingrediente Secreto', desc:'Em cenas de interlúdio, ao cozinhar prato especial, você e aliados que se alimentarem recebem benefício de dois pratos (acumula se repetir).', detalheProfissao:'cozinheiro' },
+  { nome:'Criminoso', pericias:['crime','furtividade'], poder:'O Crime Compensa', desc:'No final de uma missão, escolha um item encontrado. Na próxima missão, pode incluir esse item no inventário sem contar no limite por patente.' },
+  { nome:'Cultista Arrependido', pericias:['ocultismo','religiao'], poder:'Traços do Outro Lado', desc:'Você possui um poder paranormal à sua escolha. Porém, começa o jogo com metade da Sanidade normal para sua classe.', auto:'tracosOutroLado' },
+  { nome:'Desgarrado', pericias:['fortitude','sobrevivencia'], poder:'Calejado', desc:'Você recebe +1 PV para cada 5% de NEX.', auto:'calejado' },
+  { nome:'Engenheiro', pericias:['profissao','tecnologia'], poder:'Ferramentas Favoritas', desc:'Um item à sua escolha (exceto armas) conta como uma categoria abaixo para você.' },
+  { nome:'Executivo', pericias:['diplomacia','profissao'], poder:'Processo Otimizado', desc:'Ao fazer teste de perícia em teste estendido ou revisar documentos, pode pagar 2 PE para receber +5 no teste.' },
+  { nome:'Investigador', pericias:['investigacao','percepcao'], poder:'Faro para Pistas', desc:'Uma vez por cena, ao procurar pistas, pode gastar 1 PE para receber +5 no teste.' },
+  { nome:'Lutador', pericias:['luta','reflexos'], poder:'Mão Pesada', desc:'Você recebe +2 em rolagens de dano com ataques corpo a corpo.' },
+  { nome:'Magnata', pericias:['diplomacia','pilotagem'], poder:'Patrocinador da Ordem', desc:'Seu limite de crédito é sempre considerado um acima do atual.' },
+  { nome:'Mercenário', pericias:['iniciativa','intimidacao'], poder:'Posição de Combate', desc:'No primeiro turno de cada cena de ação, pode gastar 2 PE para receber uma ação de movimento adicional.' },
+  { nome:'Militar', pericias:['pontaria','tatica'], poder:'Para Bellum', desc:'Você recebe +2 em rolagens de dano com armas de fogo.' },
+  { nome:'Operário', pericias:['fortitude','profissao'], poder:'Ferramentas de Trabalho', desc:'Escolha uma arma simples ou tática ligada à sua profissão. Você sabe usá-la e recebe +1 em ataque, dano e margem de ameaça com ela.' },
+  { nome:'Policial', pericias:['percepcao','pontaria'], poder:'Patrulha', desc:'Você recebe +2 em Defesa.', auto:'patrulha' },
+  { nome:'Religioso', pericias:['religiao','vontade'], poder:'Acalentar', desc:'Você recebe +5 em testes de Religião para acalmar e, ao acalmar alguém, ele recupera 1d6 + Presença de Sanidade.' },
+  { nome:'Servidor Público', pericias:['intuicao','vontade'], poder:'Espírito Cívico', desc:'Sempre que faz um teste para ajudar, pode gastar 1 PE para aumentar o bônus concedido em +2.' },
+  { nome:'Teórico da Conspiração', pericias:['investigacao','ocultismo'], poder:'Eu Já Sabia', desc:'Você recebe resistência a dano mental igual ao seu Intelecto.', auto:'euJaSabia' },
+  { nome:'T.I.', pericias:['investigacao','tecnologia'], poder:'Motor de Busca', desc:'Com acesso à internet, a critério do Mestre, pode gastar 2 PE para substituir um teste de perícia por Tecnologia.' },
+  { nome:'Trabalhador Rural', pericias:['adestramento','sobrevivencia'], poder:'Desbravador', desc:'Ao fazer teste de Adestramento ou Sobrevivência, pode gastar 2 PE para receber +5; além disso, ignora penalidade por terreno difícil.' },
+  { nome:'Trambiqueiro', pericias:['crime','enganacao'], poder:'Impostor', desc:'Uma vez por cena, pode gastar 2 PE para substituir um teste de perícia por Enganação.' },
+  { nome:'Universitário', pericias:['atualidades','investigacao'], poder:'Dedicação', desc:'Você recebe +1 PE, +1 PE adicional a cada NEX ímpar (15%, 25%...) e +1 no limite de PE por turno.', auto:'dedicacao' },
+  { nome:'Vítima', pericias:['reflexos','vontade'], poder:'Cicatrizes Psicológicas', desc:'Você recebe +1 de Sanidade para cada 5% de NEX.', auto:'cicatrizes' },
+];
+const ORIGEM_ALIAS = Object.fromEntries(ORIGENS_DADOS.map(o => [normTxt(o.nome), o]));
 const ATRS=['Agi','For','Int','Pre','Vig'];
 const GS=['','T','V','E'];
 const GB={'':0,'T':5,'V':10,'E':15};
@@ -274,17 +311,15 @@ function abrirNexModal(nex, classe) {
       const atrMap = [{id:'agilidade',nome:'AGI',cor:'#1a5a72'},{id:'forca',nome:'FOR',cor:'#8b2020'},{id:'intelecto',nome:'INT',cor:'#7a5c1e'},{id:'presenca',nome:'PRE',cor:'#4a2a72'},{id:'vigor',nome:'VIG',cor:'#1e5a32'}];
       html += `<div class="nex-gain-header">⬆ ${gain.label}</div>
         <div class="nex-gain-body">
-          <div style="font-family:'Share Tech Mono';font-size:0.65em;color:var(--ink3);margin-bottom:8px;">Escolha um atributo para aumentar em +1 (máximo 5):</div>
+          <div style="font-family:'Share Tech Mono';font-size:0.65em;color:var(--ink3);margin-bottom:8px;">Escolha um atributo para aumentar em +1:</div>
           <div class="atr-choice-grid">`;
       atrMap.forEach(a => {
         const cur = parseInt(document.getElementById(a.id)?.value)||0;
-        const disabled = cur >= 5;
         html += `<button class="atr-choice-btn" id="atrchk_${idx}_${a.id}"
-          style="--atr-c:${a.cor};border-color:${a.cor}20;opacity:${disabled?0.4:1};"
-          onclick="${disabled?'':`nexChooseAtr(${idx},'${a.id}')`}"
-          ${disabled?'disabled':''}>
+          style="--atr-c:${a.cor};border-color:${a.cor}20;"
+          onclick="nexChooseAtr(${idx},'${a.id}')">
           <span style="color:${a.cor};font-family:'Special Elite',serif;">${a.nome}</span>
-          <span class="atr-val-now">${cur}/5</span>
+          <span class="atr-val-now">${cur}</span>
         </button>`;
       });
       html += `</div></div>`;
@@ -408,8 +443,8 @@ function confirmarNexModal() {
     if (choice.type === 'atr') {
       const el = document.getElementById(choice.atrId);
       if (el) {
-        let v = parseInt(el.value)||0;
-        if (v < 5) { el.value = v + 1; atuDots(choice.atrId); calcDeriv(); }
+        el.value = (parseInt(el.value, 10) || 0) + 1;
+        calcDeriv();
       }
     } else if (choice.type === 'hab') {
       const cont = document.getElementById('habCont');
@@ -455,33 +490,43 @@ function switchTab(id,btn){
   document.getElementById('tab-'+id).classList.add('active');
   btn.classList.add('active');
 }
+
+/** Sub-abas Poderes / Combate: uma seção por vez em telas Galaxy A51·A71 (CSS ≤431px). Em telas largas o CSS ignora o estado. */
+function switchGalSubnav(ctx, secId, btn) {
+  const navId = ctx === 'poderes' ? 'galSubnavPoderes' : 'galSubnavCombate';
+  const tabId = ctx === 'poderes' ? 'tab-poderes' : 'tab-combate';
+  const nav = document.getElementById(navId);
+  const scope = document.getElementById(tabId);
+  if (!nav || !scope) return;
+  nav.querySelectorAll('.gal-subnav-btn').forEach(b => b.classList.toggle('active', b === btn));
+  const subSel = ctx === 'poderes' ? '.gal-subsec--poderes' : '.gal-subsec--combate';
+  scope.querySelectorAll(subSel).forEach(s => s.classList.toggle('active', s.id === secId));
+  if (ctx === 'poderes' && secId === 'gal-p-rit') syncRitualDtHostUI();
+}
 function classeLabel(classeId){
   return {combatente:'Combatente',especialista:'Especialista',ocultista:'Ocultista'}[classeId]||'Especialista';
 }
 
 // COLLAPSIBLE
-function collToggle(btn){btn.closest('.coll-item').classList.toggle('open');}
+function collToggle(btn){
+  const item = btn.closest('.coll-item');
+  const wasOpen = item.classList.contains('open');
+  item.classList.toggle('open');
+  if(item.classList.contains('rit-item')){
+    if(!wasOpen && item.classList.contains('open')) setRitDtTargetItem(item);
+    syncRitualDtHostUI();
+  }
+}
 
-// ATRIBUTOS
+// ATRIBUTOS (sem teto; mínimo 0)
 function ajustarAtr(id,delta){
   const el=document.getElementById(id);
-  let v=(parseInt(el.value)||0)+delta;v=Math.max(0,Math.min(5,v));
-  el.value=v;atuDots(id);calcDeriv();
+  let v=(parseInt(el.value,10)||0)+delta;
+  v=Math.max(0,v);
+  el.value=v;
+  calcDeriv();
 }
-function setAtr(id,v){
-  const el=document.getElementById(id);if(!el)return;
-  const cur=parseInt(el.value)||0;
-  el.value=cur===v?v-1:v;
-  el.value=Math.max(0,Math.min(5,parseInt(el.value)||0));
-  atuDots(id);calcDeriv();
-}
-function atuDots(id){
-  const v=parseInt(document.getElementById(id)?.value)||0;
-  const dotsId='dots-'+id;
-  const cont=document.getElementById(dotsId);if(!cont)return;
-  cont.querySelectorAll('.atr-dot').forEach((d,i)=>d.classList.toggle('filled',i<v));
-}
-function atuTodosDots(){['agilidade','forca','intelecto','presenca','vigor'].forEach(atuDots);}
+function atuTodosDots(){}
 
 // STAT ADJUST
 function adjStat(id, delta) {
@@ -556,6 +601,231 @@ function checkHabExists(nome) {
     .some(el => el.value.toLowerCase().includes(nome.toLowerCase()));
 }
 
+function getOrigemSelecionada(){
+  const inEl = document.getElementById('origem');
+  if(!inEl) return null;
+  const key = normTxt(inEl.value);
+  return ORIGEM_ALIAS[key] || null;
+}
+function preencherListaOrigens(){
+  const dl = document.getElementById('origensList');
+  if(!dl) return;
+  dl.innerHTML = ORIGENS_DADOS.map(o => `<option value="${o.nome}"></option>`).join('');
+}
+function marcarPericiaTreinada(id){
+  if(!id) return;
+  const atual = window._ps[id] || '';
+  if(!atual) window._ps[id] = 'T';
+}
+function aplicarPericiasOrigem(origem){
+  if(!origem) return;
+  (origem.pericias||[]).forEach(marcarPericiaTreinada);
+  if(origem.detalheProfissao){
+    const profNome = document.getElementById('pn_profissao');
+    if(profNome && !profNome.value.trim()) profNome.value = origem.detalheProfissao;
+  }
+}
+function removePoderOrigemAuto(){
+  document.querySelectorAll('#origemCont .coll-item').forEach(item => {
+    if(item.dataset.autoOrigem === '1') item.remove();
+  });
+}
+function mkOrigemPoder(n='',d=''){
+  const div=document.createElement('div');div.className='coll-item hab-item';
+  div.innerHTML=`
+  <div class="coll-header" onclick="collToggle(this)">
+    <span class="coll-arrow">▶</span>
+    <span class="coll-title">${n||'Novo Poder de Origem'}</span>
+    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar();onPoderesRealtimeChange()">🗑</button>
+  </div>
+  <div class="coll-body">
+    <div class="campo" style="margin-bottom:8px;"><label class="lbl">Nome</label>
+      <input type="text" class="origem-nome" value="${n}" placeholder="Nome do poder de origem" oninput="this.closest('.coll-item').querySelector('.coll-title').textContent=this.value||'Novo Poder de Origem'">
+    </div>
+    <div class="campo"><label class="lbl">Descrição</label>
+      <textarea class="origem-desc" style="min-height:58px;" placeholder="Descrição do poder...">${d}</textarea>
+    </div>
+  </div>`;
+  div.addEventListener('input',()=>{triggerSalvar();onPoderesRealtimeChange();});return div;
+}
+function addOrigemPoder(){const d=document.getElementById('origemCont').appendChild(mkOrigemPoder());d.classList.add('open');}
+function inserirPoderOrigemAuto(origem){
+  removePoderOrigemAuto();
+  if(!origem) return;
+  const texto = `${origem.nome} · ${origem.poder}\n${origem.desc}`;
+  const d=document.getElementById('origemCont').appendChild(mkOrigemPoder(origem.poder,texto));
+  d.dataset.autoOrigem='1';
+  d.classList.add('open');
+}
+let _origemFiltroBusca='';
+function abrirModalOrigemLivro(){
+  let html=`<div class="modal-ov" id="modalOrigem"><div class="modal-box">
+    <div class="modal-hd">
+      <span class="modal-title">Poderes de Origem</span>
+      <button class="modal-close" onclick="document.getElementById('modalOrigem').remove()">✕</button>
+    </div>
+    <div class="modal-filters-area">
+      <input type="text" class="modal-search" id="origemSearch" placeholder="Buscar origem ou poder..." oninput="filtrarModalOrigem()">
+    </div>
+    <div class="modal-scroll"><div class="modal-list" id="origem-item-list">`;
+  ORIGENS_DADOS.forEach((o,i)=>{
+    const perTxt = o.periciasTexto || (o.pericias||[]).map(pid=>PERI.find(p=>p.id===pid)?.nome||pid).join(' e ');
+    html += `<div class="modal-item hab" data-search="${normTxt(o.nome)} ${normTxt(o.poder)}" onclick="inserirOrigemLivro(${i})">
+      <div class="modal-item-name">${o.poder} <span style="opacity:.6;font-size:.8em;">[${o.nome}]</span></div>
+      <div class="modal-item-meta">Perícias: ${perTxt||'—'}</div>
+      <div class="modal-item-desc">${o.desc}</div>
+    </div>`;
+  });
+  html += `</div></div>
+    <div class="modal-footer"><button class="modal-footer-close" onclick="document.getElementById('modalOrigem').remove()">✕ Fechar</button></div>
+  </div></div>`;
+  document.getElementById('modalContainer').innerHTML = html;
+  _origemFiltroBusca='';
+}
+function filtrarModalOrigem(){
+  const q = normTxt(document.getElementById('origemSearch')?.value || '');
+  _origemFiltroBusca=q;
+  document.querySelectorAll('#origem-item-list .modal-item').forEach(el=>{
+    const ok = !_origemFiltroBusca || el.dataset.search.includes(_origemFiltroBusca);
+    el.style.display=ok?'':'none';
+  });
+}
+function inserirOrigemLivro(i){
+  const o = ORIGENS_DADOS[i];
+  if(!o) return;
+  const texto = `${o.nome} · ${o.poder}\n${o.desc}`;
+  const d=document.getElementById('origemCont').appendChild(mkOrigemPoder(o.poder,texto));
+  d.classList.add('open');
+  document.getElementById('modalOrigem')?.remove();
+  triggerSalvar();
+  onPoderesRealtimeChange();
+}
+function aplicarOrigemAutomatica(){
+  const origem = getOrigemSelecionada();
+  inserirPoderOrigemAuto(origem);
+  if(origem){
+    const origemInput = document.getElementById('origem');
+    if(origemInput) origemInput.value = origem.nome;
+    aplicarPericiasOrigem(origem);
+    buildPeri();
+  }
+}
+function origemTemAuto(autoId){
+  const origem = getOrigemSelecionada();
+  return !!(origem && origem.auto === autoId);
+}
+function getAllPowerNamesNormalized(){
+  const out = [];
+  const pushName = (v) => {
+    const n = normTxt(v || '');
+    if (n) out.push(n);
+  };
+  document.querySelectorAll('#habCont .hab-nome').forEach(el => pushName(el.value));
+  document.querySelectorAll('#paranormalCont .paranormal-nome').forEach(el => pushName(el.value));
+  document.querySelectorAll('#origemCont .origem-nome').forEach(el => pushName(el.value));
+  return out;
+}
+function hasPowerNamed(powerName){
+  const target = normTxt(powerName || '');
+  if (!target) return false;
+  return getAllPowerNamesNormalized().some(n => n.includes(target));
+}
+function getPericiaAutoBonus(periId){
+  let bonus = 0;
+  if (hasPowerNamed('Precognição') && ['reflexos','fortitude','vontade'].includes(periId)) bonus += 2;
+  if (hasPowerNamed('Sensitivo') && ['diplomacia','intimidacao','intuicao'].includes(periId)) bonus += 5;
+  if (hasPowerNamed('Visão do Oculto') && periId === 'percepcao') bonus += 5;
+  return bonus;
+}
+function getGolpeDeSorteMargemBonus(){
+  return hasPowerNamed('Golpe de Sorte') ? 1 : 0;
+}
+function onPoderesRealtimeChange(){
+  calcDeriv();
+}
+const RES_TIPOS_LIST = ['Corte','Impacto','Balístico','Perfuração','Conhecimento','Energia','Morte','Sangue','Medo','Mental','Elétrico','Químico','Fogo','Frio'];
+window._resCustom = window._resCustom || [];
+
+function computeAutoResistencias(){
+  const vals = {};
+  getAllPowerNamesNormalized().forEach(n=>{
+    if(n.includes(normTxt('Resistir a Conhecimento'))) vals.Conhecimento = Math.max(vals.Conhecimento||0,10);
+    if(n.includes(normTxt('Resistir a Energia'))) vals.Energia = Math.max(vals.Energia||0,10);
+    if(n.includes(normTxt('Resistir a Morte'))) vals.Morte = Math.max(vals.Morte||0,10);
+    if(n.includes(normTxt('Resistir a Sangue'))) vals.Sangue = Math.max(vals.Sangue||0,10);
+  });
+  if(origemTemAuto('euJaSabia')){
+    vals.Mental = parseInt(document.getElementById('intelecto')?.value)||0;
+  }
+  return vals;
+}
+
+function garantirPainelResistencias(){
+  if(document.getElementById('resPanel')) return;
+  const statusGrid = document.querySelector('#tab-identidade .grid4');
+  if(!statusGrid) return;
+  const panel = document.createElement('div');
+  panel.id = 'resPanel';
+  panel.className = 'stat-box panel-accent-ink';
+  panel.innerHTML = `
+    <span class="stat-lbl">Resistências</span>
+    <div id="resList" class="res-list"></div>
+    <div id="resAddPanel" class="res-add-panel">
+      <label class="lbl">Valor</label>
+      <input type="number" id="resAddVal" min="0" value="0" class="atk-bi" style="width:100%!important;">
+      <label class="lbl">Tipo</label>
+      <select id="resAddTipo" style="width:100%;background:var(--bg2);border:1px solid var(--border);padding:6px;">
+        ${RES_TIPOS_LIST.map(t=>`<option value="${t}">${t}</option>`).join('')}
+      </select>
+      <div class="res-add-actions">
+        <button type="button" class="btn-res-ok" onclick="confirmAddResistencia()">Incluir</button>
+        <button type="button" class="btn-res-cancel" onclick="toggleResAddPanel(false)">Cancelar</button>
+      </div>
+    </div>
+    <button type="button" class="btn-add" id="btnAddResistencia" onclick="toggleResAddPanel(true)">Adicionar resistência</button>`;
+  statusGrid.appendChild(panel);
+}
+
+function toggleResAddPanel(show){
+  const p=document.getElementById('resAddPanel');
+  if(!p)return;
+  p.classList.toggle('open',!!show);
+}
+
+function confirmAddResistencia(){
+  const tipo=document.getElementById('resAddTipo')?.value||'Corte';
+  const val=Math.max(0,parseInt(document.getElementById('resAddVal')?.value,10)||0);
+  window._resCustom.push({tipo,val});
+  toggleResAddPanel(false);
+  document.getElementById('resAddVal').value='0';
+  atualizarResistencias();
+  triggerSalvar();
+}
+
+function removeResCustom(idx){
+  window._resCustom.splice(idx,1);
+  atualizarResistencias();
+  triggerSalvar();
+}
+
+function atualizarResistencias(){
+  const host=document.getElementById('resList');
+  if(!host) return;
+  const auto = computeAutoResistencias();
+  let html='';
+  RES_TIPOS_LIST.forEach(tipo=>{
+    const a = auto[tipo]||0;
+    if(a>0){
+      html+=`<div class="res-row res-row-auto"><span>${tipo} <small style="opacity:.75">(poder/origem)</small></span><span class="res-row-val">${a}</span></div>`;
+    }
+  });
+  window._resCustom.forEach((r,i)=>{
+    html+=`<div class="res-row res-row-custom"><span>${r.tipo}</span><span class="res-row-val">${r.val}</span><button type="button" class="inv-del" onclick="removeResCustom(${i})" title="Remover">\u2715</button></div>`;
+  });
+  if(!html) html='<div style="font-family:\'Share Tech Mono\';font-size:0.62em;color:var(--ink3);padding:4px 0;">Nenhuma resistência registrada.</div>';
+  host.innerHTML=html;
+}
+
 function syncTrilhaOptions() {
   const trilhaEl = document.getElementById('trilha');
   const cls = document.getElementById('classe')?.value || 'especialista';
@@ -618,6 +888,7 @@ function buildPeri(){
       g.appendChild(addRow);
     } else {buildPeriRow(g,p);}
   });
+  refreshDefesaPainel();
 }
 function mkAtrSel(id,defAtr,overrideAtr){
   const cur=overrideAtr||defAtr;
@@ -657,7 +928,9 @@ function atuPeriAtr(id){
   const sel=document.getElementById('pa_'+id);if(!sel)return;
   const v=sel.value;const idx=id.startsWith('profissao_extra_')?parseInt(id.split('_').pop()):-1;
   if(idx>=0&&window._profExtras[idx]){window._profExtras[idx].atr=v;}else{window._psAtr[id]=v;}
-  if(id.startsWith('profissao'))atuPeriExtra(id,idx);else atuPeri(id);triggerSalvar();
+  if(id.startsWith('profissao'))atuPeriExtra(id,idx);else atuPeri(id);
+  refreshDefesaPainel();
+  triggerSalvar();
 }
 function atuProfNome(id,idx){const v=document.getElementById('pn_'+id)?.value||'';if(idx>=0&&window._profExtras[idx])window._profExtras[idx].nome=v;triggerSalvar();}
 function addProfExtra(){window._profExtras.push({grau:'',bon:0,nome:'',atr:'Int'});buildPeri();triggerSalvar();}
@@ -667,7 +940,9 @@ function ciclarProf(id,idx){
   const n=GS[(GS.indexOf(c)+1)%GS.length];
   if(idx<0)window._ps['profissao']=n;else if(window._profExtras[idx])window._profExtras[idx].grau=n;
   const e=document.getElementById('pg_'+id);if(e){e.textContent=n||'—';e.className='per-grau '+n;}
-  atuPeriExtra(id,idx);triggerSalvar();
+  atuPeriExtra(id,idx);
+  refreshDefesaPainel();
+  triggerSalvar();
 }
 function atuPeriExtra(id,idx){
   const p=PERI.find(x=>x.id==='profissao');if(!p)return;
@@ -691,22 +966,37 @@ function rolarPeriExtra(id,idx){
 function ciclar(id){
   const c=window._ps[id]||'';const n=GS[(GS.indexOf(c)+1)%GS.length];
   window._ps[id]=n;const e=document.getElementById('pg_'+id);e.textContent=n||'—';e.className='per-grau '+n;
-  atuPeri(id);triggerSalvar();
+  atuPeri(id);
+  refreshDefesaPainel();
+  triggerSalvar();
 }
 function getAtr(a){const m={Agi:'agilidade',For:'forca',Int:'intelecto',Pre:'presenca',Vig:'vigor'};return parseInt(document.getElementById(m[a])?.value)||0;}
+/** Total numérico da perícia (atributo + grau T/V/E + bônus campo). Igual ao exibido em +X na grade. */
+function getPeriScore(periId){
+  const p=PERI.find(x=>x.id===periId);if(!p)return 0;
+  const g=window._ps[periId]||'';
+  const bon=parseInt(window._psBon[periId])||0;
+  const sel=document.getElementById('pa_'+periId);
+  const atrKey=sel?sel.value:(window._psAtr[periId]||p.atr);
+  const autoBon=getPericiaAutoBonus(periId);
+  if(!g&&!bon&&!autoBon)return 0;
+  return getAtr(atrKey)+(g?GB[g]:0)+bon+autoBon;
+}
 function atuPeri(id){
   const p=PERI.find(x=>x.id===id);if(!p)return;
   const g=window._ps[id]||'';const bon=parseInt(window._psBon[id])||0;
   const selAtr=document.getElementById('pa_'+id);
   const atrKey=selAtr?selAtr.value:window._psAtr[id]||p.atr;
-  const b=getAtr(atrKey)+(g?GB[g]:0)+bon;
-  const e=document.getElementById('pv_'+id);if(e)e.textContent=g||bon?'+'+b:'—';
+  const autoBon=getPericiaAutoBonus(id);
+  const b=getAtr(atrKey)+(g?GB[g]:0)+bon+autoBon;
+  const e=document.getElementById('pv_'+id);if(e)e.textContent=g||bon||autoBon?'+'+b:'—';
 }
 function atuPeriBonus(id,idx){
   const val=parseInt(document.getElementById('pb_'+id)?.value)||0;
   if(idx!==undefined&&idx>=0){if(window._profExtras[idx])window._profExtras[idx].bon=val;atuPeriExtra(id,idx);}
   else if(id==='profissao'){window._psBon[id]=val;atuPeriExtra(id,-1);}
   else{window._psBon[id]=val;atuPeri(id);}
+  refreshDefesaPainel();
   triggerSalvar();
 }
 function atuTodas(){
@@ -714,6 +1004,7 @@ function atuTodas(){
     if(p.id!=='profissao')atuPeri(p.id);
     else{atuPeriExtra('profissao',-1);window._profExtras.forEach((_,i)=>atuPeriExtra('profissao_extra_'+i,i));}
   });
+  refreshDefesaPainel();
 }
 
 function atuBarras(){
@@ -736,19 +1027,61 @@ function atuBarras(){
 // ============================================================
 let _lastCalcStats = { pvMax: null, peMax: null, sanMax: null };
 
+function sumInvProt(){
+  return Array.from(document.querySelectorAll('#invCont .inv-it')).reduce((s,it)=>{
+    if(normInvTag(it.querySelector('.inv-tag')?.value||'')!=='protecao')return s;
+    const v=parseInt(it.querySelector('.inv-prot-val')?.value,10);
+    const n=Number.isFinite(v)?v:0;
+    return s+Math.max(0,n);
+  },0);
+}
+function sumInvReforcada(){
+  return Array.from(document.querySelectorAll('#invCont .inv-it')).reduce((s,it)=>{
+    if(normInvTag(it.querySelector('.inv-tag')?.value||'')!=='protecao')return s;
+    const ids=readMelhoriaIds(it);
+    return s+(ids.includes('reforcada')?2:0);
+  },0);
+}
+function refreshDefesaPainel(){
+  const agi=parseInt(document.getElementById('agilidade')?.value)||0;
+  const defBonus=parseInt(document.getElementById('defBonus')?.value)||0;
+  const bonusOrigemPatrulha = origemTemAuto('patrulha') ? 2 : 0;
+  const protSum=sumInvProt();
+  const refSum=sumInvReforcada();
+  const defBase=10+agi+defBonus+bonusOrigemPatrulha;
+  const defTotalVal=defBase+protSum+refSum;
+  const defEl=document.getElementById('defTotal');
+  if(defEl)defEl.textContent=String(defTotalVal);
+  const protDisp=document.getElementById('defProtSum');
+  if(protDisp)protDisp.textContent=String(protSum+refSum);
+  const fort=getPeriScore('fortitude');
+  const refl=getPeriScore('reflexos');
+  const bloqB=parseInt(document.getElementById('bloqBonus')?.value)||0;
+  const esqB=parseInt(document.getElementById('esquivaBonus')?.value)||0;
+  const bloqEl=document.getElementById('bloqTotal');
+  const esqEl=document.getElementById('esquivaTotal');
+  if(bloqEl)bloqEl.textContent=String(fort+bloqB);
+  if(esqEl)esqEl.textContent=String(defTotalVal+refl+esqB);
+}
 function calcDeriv(){
-  const agi=parseInt(document.getElementById('agilidade').value)||0;
-  document.getElementById('defTotal').textContent=10+agi+(parseInt(document.getElementById('defBonus').value)||0);
+  garantirPainelResistencias();
+  refreshDefesaPainel();
   const cls=document.getElementById('classe').value||'especialista';
   const nex=parseInt(document.getElementById('nexN').value)||5;
   const s=CLASSES_STATS[cls];const niveis=Math.floor(nex/5);
   const vig=parseInt(document.getElementById('vigor').value)||0;
   const pre=parseInt(document.getElementById('presenca').value)||0;
+  const bonusPvCalejado = origemTemAuto('calejado') ? niveis : 0;
+  const bonusSanCicatrizes = origemTemAuto('cicatrizes') ? niveis : 0;
+  const bonusPeDedicacao = origemTemAuto('dedicacao') ? (1 + Math.max(0,Math.floor((nex-5)/10))) : 0;
+  const bonusPePotencialAprimorado = hasPowerNamed('Potencial Aprimorado') ? niveis : 0;
+  const bonusPvSangueDeFerro = hasPowerNamed('Sangue de Ferro') ? (niveis*2) : 0;
 
   // Calcular valores "teóricos" baseados nos atributos e NEX
-  const pvTeor = s.pvBase + vig + (niveis-1)*(s.pvNex + vig);
-  const peTeor = s.peBase + pre + (niveis-1)*(s.peNex + pre);
-  const sanTeor = s.sanBase + (niveis-1)*s.sanNex;
+  const pvTeor = s.pvBase + vig + (niveis-1)*(s.pvNex + vig) + bonusPvCalejado + bonusPvSangueDeFerro;
+  const peTeor = s.peBase + pre + (niveis-1)*(s.peNex + pre) + bonusPeDedicacao + bonusPePotencialAprimorado;
+  let sanTeor = s.sanBase + (niveis-1)*s.sanNex + bonusSanCicatrizes;
+  if(origemTemAuto('tracosOutroLado')) sanTeor = Math.floor(sanTeor/2);
 
   const pvEl = document.getElementById('pvMax');
   const peEl = document.getElementById('peMax');
@@ -782,14 +1115,18 @@ function calcDeriv(){
   }
   sanEl.dataset.prevTeor = sanTeor;
 
-  document.getElementById('pvFormula').textContent=`${s.pvBase}+Vig=${s.pvBase+vig} base, +${s.pvNex}+Vig=${s.pvNex+vig}/NEX`;
-  document.getElementById('peFormula').textContent=`${s.peBase}+Pre=${s.peBase+pre} base, +${s.peNex}+Pre=${s.peNex+pre}/NEX`;
-  document.getElementById('sanFormula').textContent=`${s.sanBase} base (${cls}), +${s.sanNex}/NEX`;
+  document.getElementById('pvFormula').textContent=`${s.pvBase}+Vig=${s.pvBase+vig} base, +${s.pvNex}+Vig=${s.pvNex+vig}/NEX${bonusPvCalejado?` + Calejado ${bonusPvCalejado}`:''}${bonusPvSangueDeFerro?` + Sangue de Ferro ${bonusPvSangueDeFerro}`:''}`;
+  document.getElementById('peFormula').textContent=`${s.peBase}+Pre=${s.peBase+pre} base, +${s.peNex}+Pre=${s.peNex+pre}/NEX${bonusPeDedicacao?` + Dedicação ${bonusPeDedicacao}`:''}${bonusPePotencialAprimorado?` + Potencial Aprimorado ${bonusPePotencialAprimorado}`:''}`;
+  document.getElementById('sanFormula').textContent=`${s.sanBase} base (${cls}), +${s.sanNex}/NEX${bonusSanCicatrizes?` + Cicatrizes ${bonusSanCicatrizes}`:''}${origemTemAuto('tracosOutroLado')?' · Traços: metade':''}`;
 
-  const lim=Math.ceil(nex/5);
+  const lim=Math.ceil(nex/5)+(origemTemAuto('dedicacao')?1:0);
   document.getElementById('peLimite').textContent=lim;
 
+  atualizarResistencias();
+  syncGolpeDeSorteAtaques();
   atuTodas();atuBarras();atuInventarioPeso();triggerSalvar();
+  document.querySelectorAll('#ritCont .rit-item').forEach(el=>atuRitDtBadge(el));
+  syncRitualDtHostUI();
 }
 
 let _prevNex = 5;
@@ -805,7 +1142,7 @@ function atuNEX(fromButton){
   document.getElementById('nexN').value=n;
   document.getElementById('nexFill').style.width=n+'%';
   document.getElementById('nexLbl').textContent='NEX '+n+'%';
-  const lim=Math.ceil(n/5);
+  const lim=Math.ceil(n/5)+(origemTemAuto('dedicacao')?1:0);
   document.getElementById('peLimite').textContent=lim;
   document.getElementById('nexDesc').textContent='Limite de PE/turno: '+lim+' · Habilidades de NEX '+n+'% desbloqueadas';
 
@@ -826,17 +1163,20 @@ function atuPatente(){
 }
 
 function d20s(n){const q=Math.max(n,1);const r=[];for(let i=0;i<q;i++)r.push(Math.floor(Math.random()*20)+1);r.sort((a,b)=>b-a);return{best:r[0],all:r,rolou:q};}
-function showDado(descr,dado,bon,tot,qtd,todos){
+function showDado(descr,dado,bon,tot,qtd,todos,opts={}){
+  const critMin=opts.critMin!=null?opts.critMin:20;
+  const skipCrit=!!opts.skipCrit;
   const ov=document.createElement('div');ov.className='dado-ov';
-  const cs=dado===20,cf=dado===1;
+  const cs=!skipCrit&&dado>=critMin&&dado<=20;
+  const cf=!skipCrit&&dado===1;
   const outrosHtml=todos&&todos.length>1?`<div class="dado-outros">Outros: ${todos.slice(1).join(' · ')}</div>`:'';
   ov.innerHTML=`<div class="dado-card ${cs?'cs':cf?'cf':''}">
-    <div class="dado-hd">${descr} · ${qtd||1}d20 · bônus=${bon>=0?'+'+bon:bon}</div>
+    <div class="dado-hd">${descr} · ${qtd||1}d20 · bônus=${bon>=0?'+'+bon:bon}${!skipCrit&&critMin<20?` · crítico natural ≥${critMin}`:''}</div>
     <div class="dado-tot">${tot}</div>
     ${cs?'<div class="dado-crit">Sucesso Crítico!</div>':cf?'<div class="dado-crit">Falha Crítica!</div>':''}
     ${outrosHtml}<div class="dado-dis">clique para fechar</div></div>`;
   document.body.appendChild(ov);ov.addEventListener('click',()=>ov.remove());setTimeout(()=>ov.remove(),8000);
-  addLog(descr,dado,bon,tot);
+  addLog(descr,dado,bon,tot,opts.critMin);
 }
 function rolarAtrib(nome,id){const v=parseInt(document.getElementById(id).value)||0;const r=d20s(v);showDado('Teste de '+nome,r.best,0,r.best,r.rolou,r.all);}
 function rolarPeri(nome,id){
@@ -844,56 +1184,164 @@ function rolarPeri(nome,id){
   const selAtr=document.getElementById('pa_'+id);
   const atrKey=selAtr?selAtr.value:window._psAtr[id]||p.atr;
   const av=getAtr(atrKey);const g=window._ps[id]||'';const bon=g?GB[g]:0;const bonExtra=parseInt(window._psBon[id]||0);
-  const res=d20s(av);const tot=res.best+bon+bonExtra;
-  showDado(nome+(g?' ('+{T:'Treinado',V:'Veterano',E:'Expert'}[g]+')':''),res.best,bon+bonExtra,tot,res.rolou,res.all);
+  const autoBon=getPericiaAutoBonus(id);
+  const res=d20s(av);const tot=res.best+bon+bonExtra+autoBon;
+  showDado(nome+(g?' ('+{T:'Treinado',V:'Veterano',E:'Expert'}[g]+')':''),res.best,bon+bonExtra+autoBon,tot,res.rolou,res.all);
 }
-function addLog(tipo,dado,bon,tot){
-  const ld=document.getElementById('logDiv');const it=document.createElement('div');
-  it.className='log-it'+(dado===20?' cs':dado===1?' cf':'');
+function addLog(tipo,dado,bon,tot,critMin){
+  const ld=document.getElementById('logDiv');if(!ld)return;
+  const it=document.createElement('div');
+  if(arguments.length===1){
+    it.className='log-it';
+    const h=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    it.innerHTML=`<span class="log-res">•</span><span>${tipo}</span><br><span style="color:var(--ink3);font-size:0.85em;">${h}</span>`;
+    ld.insertBefore(it,ld.firstChild);while(ld.children.length>20)ld.removeChild(ld.lastChild);
+    return;
+  }
+  const cm=critMin!=null?critMin:20;
+  const cs=dado!=null&&dado>=cm&&dado<=20;
+  it.className='log-it'+(cs?' cs':dado===1?' cf':'');
   const h=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   it.innerHTML=`<span class="log-res">${tot}</span><span>${tipo}</span><br><span style="color:var(--ink3);font-size:0.85em;">d20=${dado} bônus=${bon} · ${h}</span>`;
   ld.insertBefore(it,ld.firstChild);while(ld.children.length>20)ld.removeChild(ld.lastChild);
 }
 
 // ATAQUES
-function mkAtk(n='',habil='luta',ba=0,d='1d6',bd=0){
+function parseDiceString(spec){
+  const m=String(spec||'').trim().match(/^(\d+)\s*d\s*(\d+)$/i);
+  if(m) return {n:Math.max(1,parseInt(m[1],10)),f:Math.max(2,parseInt(m[2],10))};
+  return {n:1,f:6};
+}
+function normalizeAtkPayload(a){
+  if(a&&typeof a==='object'&&!Array.isArray(a)){
+    let dn=a.dn, df=a.df;
+    if((dn==null||df==null)&&a.d){const p=parseDiceString(a.d);dn=p.n;df=p.f;}
+    return {
+      n:a.n??'', habil:a.habil||'luta', ba:a.ba??0, bd:a.bd??0,
+      dn:dn??1, df:df??6,
+      danoAtr:a.danoAtr||'forca',
+      critMin:a.critMin??(20-getGolpeDeSorteMargemBonus()), critMult:a.critMult??2,
+      invW:a.invW??'', invM:a.invM??''
+    };
+  }
+  return {n:'',habil:'luta',ba:0,bd:0,dn:1,df:6,danoAtr:'forca',critMin:20-getGolpeDeSorteMargemBonus(),critMult:2,invW:'',invM:''};
+}
+function getInvItemsList(){
+  return [...document.querySelectorAll('#invCont .inv-it')];
+}
+function readMelhoriaIds(itEl){
+  try{ return JSON.parse(itEl.querySelector('.inv-melh-data')?.value||'[]')||[];}catch(e){ return []; }
+}
+function sumMelhoriaEffects(ids){
+  const M={
+    certeira:{atk:2}, cruel:{dmg:2}, perigosa:{margem:2},
+    alongada:{atk:2}, calibre:{calibre:1}, miraLaser:{margem:2},
+    dumdum:{critMult:1}, explosiva:{explosiva:1}
+  };
+  let atk=0,dmg=0,margem=0,calibre=0,critMult=0,explosiva=false;
+  (ids||[]).forEach(id=>{const e=M[id]; if(!e)return; atk+=e.atk||0; dmg+=e.dmg||0; margem+=e.margem||0; calibre+=e.calibre||0; critMult+=e.critMult||0; if(e.explosiva)explosiva=true;});
+  return {atk,dmg,margem,calibre,critMult,explosiva};
+}
+function getLinkedAtkMods(box){
+  const items=getInvItemsList();
+  const iw=box.querySelector('.atk-inv-w')?.value;
+  const im=box.querySelector('.atk-inv-m')?.value;
+  const o={atk:0,dmg:0,margem:0,calibre:0,critMult:0,explosiva:false};
+  const add=i=>{if(i==null||i==='')return; const el=items[+i]; if(!el)return; const s=sumMelhoriaEffects(readMelhoriaIds(el)); o.atk+=s.atk; o.dmg+=s.dmg; o.margem+=s.margem; o.calibre+=s.calibre; o.critMult+=s.critMult; if(s.explosiva)o.explosiva=true;};
+  add(iw); add(im);
+  return o;
+}
+function fillAtkInvSelects(box){
+  const items=getInvItemsList();
+  const curW=box.querySelector('.atk-inv-w')?.value??'';
+  const curM=box.querySelector('.atk-inv-m')?.value??'';
+  const opt=(tags)=>items.map((it,idx)=>{
+    const tag=normInvTag(it.querySelector('.inv-tag')?.value||'');
+    if(!tags.includes(tag))return '';
+    const nm=(it.querySelector('.inv-ni')?.value||'Item').replace(/</g,'');
+    return '<option value="'+idx+'">'+nm+'</option>';
+  }).join('');
+  const sw=box.querySelector('.atk-inv-w'); const sm=box.querySelector('.atk-inv-m');
+  if(sw){ sw.innerHTML='<option value="">— Arma —</option>'+opt(['arma']); sw.value=[...sw.options].some(o=>o.value===curW)?curW:''; }
+  if(sm){ sm.innerHTML='<option value="">— Munição —</option>'+opt(['municao']); sm.value=[...sm.options].some(o=>o.value===curM)?curM:''; }
+}
+function refreshAllAtkInvSelects(){
+  document.querySelectorAll('#atkCont .atk-item').forEach(fillAtkInvSelects);
+}
+function syncGolpeDeSorteAtaques(){
+  if(!hasPowerNamed('Golpe de Sorte')) return;
+  document.querySelectorAll('#atkCont .atk-item').forEach(box=>{
+    const inp=box.querySelector('.atk-crit-min');
+    if(!inp || inp.dataset.gsApplied==='1') return;
+    const cur=parseInt(inp.value,10)||20;
+    inp.value=String(Math.max(1,Math.min(20,cur-1)));
+    inp.dataset.gsApplied='1';
+  });
+}
+
+function mkAtk(data){
+  const a=normalizeAtkPayload(data);
   const div=document.createElement('div');div.className='coll-item atk-item';
   div.innerHTML=`
   <div class="coll-header" onclick="collToggle(this)">
     <span class="coll-arrow">▶</span>
-    <span class="coll-title">${n||'Novo Ataque'}</span>
-    <span class="coll-meta" style="color:var(--gold);">${habil==='luta'?'LUTA':'PONTARIA'}</span>
-    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar()">🗑</button>
+    <span class="coll-title">${a.n||'Novo Ataque'}</span>
+    <span class="coll-meta" style="color:var(--gold);">${a.habil==='luta'?'LUTA':'PONTARIA'}</span>
+    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar()">✕</button>
   </div>
   <div class="coll-body">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-      <div class="campo" style="margin-bottom:0;"><label class="lbl">Nome</label><input type="text" class="atk-nome" value="${n}" placeholder="Ex: Pistola .38" oninput="this.closest('.coll-item').querySelector('.coll-title').textContent=this.value||'Novo Ataque'"></div>
+      <div class="campo" style="margin-bottom:0;"><label class="lbl">Nome</label><input type="text" class="atk-nome" value="${a.n}" placeholder="Ex: Pistola .38" oninput="this.closest('.coll-item').querySelector('.coll-title').textContent=this.value||'Novo Ataque'"></div>
       <div class="campo" style="margin-bottom:0;"><label class="lbl">Perícia</label>
         <select class="atk-habil" onchange="atuAtkMeta(this)">
-          <option value="luta"${habil==='luta'?' selected':''}>Luta</option>
-          <option value="pontaria"${habil==='pontaria'?' selected':''}>Pontaria</option>
+          <option value="luta"${a.habil==='luta'?' selected':''}>Luta</option>
+          <option value="pontaria"${a.habil==='pontaria'?' selected':''}>Pontaria</option>
         </select>
       </div>
+    </div>
+    <div class="atk-inv-row">
+      <div class="campo" style="margin-bottom:0;"><label class="lbl">Item (arma)</label><select class="atk-inv-w" onchange="triggerSalvar()"></select></div>
+      <div class="campo" style="margin-bottom:0;"><label class="lbl">Munição</label><select class="atk-inv-m" onchange="triggerSalvar()"></select></div>
     </div>
     <div class="atk-grid">
       <div>
         <div class="atk-section-lbl">ATAQUE — bônus extra</div>
         <div class="atk-ctrls">
-          <input type="number" class="atk-bi ba" value="${ba}" title="Bônus extra de ataque" placeholder="±0">
-          <button class="btn-ra" onclick="rolarA(this)">🎲 Atacar</button>
+          <input type="number" class="atk-bi ba" value="${a.ba}" title="Bônus extra de ataque" placeholder="±0">
         </div>
       </div>
       <div>
-        <div class="atk-section-lbl">DANO</div>
+        <div class="atk-section-lbl">DANO (quantidade · dado)</div>
         <div class="atk-ctrls">
-          <select class="atk-ds">${['1d4','1d6','1d8','1d10','1d12','2d6','2d8','3d6'].map(x=>`<option${x===d?' selected':''}>${x}</option>`).join('')}</select>
-          <input type="number" class="atk-bi bd" value="${bd}" title="Bônus de dano" placeholder="±0">
-          <button class="btn-rd" onclick="rolarD(this)">🎲 Dano</button>
+          <span class="atk-dice-pair">|<input type="number" class="atk-dn" min="1" value="${a.dn}" title="Quantidade de dados">||d<input type="number" class="atk-df" min="2" value="${a.df}" title="Faces">|</span>
+          <input type="number" class="atk-bi bd" value="${a.bd}" title="Bônus fixo de dano (não multiplica em crítico)" placeholder="±0">
+          <select class="atk-dano-atr" title="Atributo somado ao dano">
+            <option value="forca"${a.danoAtr==='forca'?' selected':''}>+Força</option>
+            <option value="agilidade"${a.danoAtr==='agilidade'?' selected':''}>+Agilidade</option>
+            <option value="intelecto"${a.danoAtr==='intelecto'?' selected':''}>+Intelecto</option>
+            <option value="presenca"${a.danoAtr==='presenca'?' selected':''}>+Presença</option>
+            <option value="vigor"${a.danoAtr==='vigor'?' selected':''}>+Vigor</option>
+            <option value="nenhum"${a.danoAtr==='nenhum'?' selected':''}>Sem atributo</option>
+          </select>
         </div>
       </div>
+      <div class="atk-rolagem-row">
+        <button type="button" class="btn-ra" onclick="rolarAtk(this)">Atacar</button>
+        <span style="font-family:'Share Tech Mono';font-size:0.58em;color:var(--ink3);">Um clique: ataque + dano (dados × multiplicador em crítico)</span>
+      </div>
+    </div>
+    <div class="atk-crit-row">
+      <div class="campo" style="margin-bottom:0;"><label class="lbl">Margem (natural mín. p/ crítico)</label>
+        <input type="number" class="atk-crit-min" min="1" max="20" value="${a.critMin}" title="Padrão 20. Melhorias Perigosa/Mira laser reduzem na rolagem."></div>
+      <div class="campo" style="margin-bottom:0;"><label class="lbl">Multiplicador de crítico (dados)</label>
+        <select class="atk-crit-mult">
+          ${[2,3,4].map(m=>'<option value="'+m+'"'+(a.critMult===m?' selected':'')+'>×'+m+'</option>').join('')}
+        </select></div>
     </div>
   </div>`;
-  div.addEventListener('input',()=>triggerSalvar());return div;
+  div.addEventListener('input',()=>triggerSalvar());
+  fillAtkInvSelects(div);
+  return div;
 }
 function atuAtkMeta(sel){
   const item=sel.closest('.coll-item');
@@ -901,24 +1349,83 @@ function atuAtkMeta(sel){
   if(meta)meta.textContent=sel.value==='luta'?'LUTA':'PONTARIA';
   triggerSalvar();
 }
-function addAtk(){const d=document.getElementById('atkCont').appendChild(mkAtk());d.classList.add('open');}
-function rolarA(btn){
-  const box=btn.closest('.coll-item');const ba=parseInt(box.querySelector('.ba').value)||0;
+function addAtk(){const d=document.getElementById('atkCont').appendChild(mkAtk({}));d.classList.add('open');}
+
+function showAtaqueDanoCard(o){
+  const outrosHtml=o.hitTodos&&o.hitTodos.length>1?`<div class="atk-result-muted">Outros d20: ${o.hitTodos.slice(1).join(' · ')}</div>`:'';
+  const dmgDiceLbl=o.isCrit?`${o.ndBase}×${o.mult}d${o.df}`:`${o.ndBase}d${o.df}`;
+  const critHtml=o.isCrit?'<div class="atk-result-crit-msg">Acerto crítico: apenas os dados foram multiplicados.</div>':'';
+  const ov=document.createElement('div');ov.className='dado-ov';
+  const cardCls=o.isCrit?'dado-card cs':'dado-card';
+  ov.innerHTML=`<div class="${cardCls}">
+    <div class="dado-hd">${o.nome}</div>
+    <div class="atk-result-grid">
+      <div class="atk-result-block">
+        <div class="atk-result-label">Ataque</div>
+        <div class="atk-result-main">${o.hitTot}</div>
+        <div class="atk-result-meta">${o.hitQtd||1}d20 · d20=${o.hitD20} · bônus ${o.hitBonus>=0?'+'+o.hitBonus:o.hitBonus}</div>
+        <div class="atk-result-meta">Crítico em ${o.critMin}+</div>
+      </div>
+      <div class="atk-result-block atk-result-block-dmg">
+        <div class="atk-result-label">Dano</div>
+        <div class="atk-result-main atk-result-dmg-main">${o.totalDmg}</div>
+        <div class="atk-result-meta">${dmgDiceLbl}${o.expStr?` ${o.expStr}`:''}${o.flat?` + ${o.flat}`:''}</div>
+        <div class="atk-result-meta">${o.danoAtrKey&&o.danoAtrKey!=='nenhum'?`Atributo no dano: +${o.atrDano}`:'Atributo no dano: sem bônus'}</div>
+        <div class="atk-result-meta">Dados: ${o.rr.join('+')} = ${o.diceSum}</div>
+      </div>
+    </div>
+    ${critHtml}
+    ${outrosHtml}
+    <div class="dado-dis">clique para fechar</div>
+  </div>`;
+  document.body.appendChild(ov);ov.addEventListener('click',()=>ov.remove());setTimeout(()=>ov.remove(),12000);
+  addLog(`⚔ ${o.nome}: ataque ${o.hitTot}${o.isCrit?' (CRÍTICO)':''} · dano ${o.totalDmg}`);
+}
+
+function rolarAtk(btn){
+  const box=btn.closest('.coll-item');
+  const ba=parseInt(box.querySelector('.ba').value)||0;
   const nome=box.querySelector('.atk-nome').value||'Ataque';
   const habil=box.querySelector('.atk-habil').value;
   const gr=window._ps[habil]||'';const ps=gr?GB[gr]:0;
   const atrKey=habil==='luta'?'forca':'agilidade';
   const av=parseInt(document.getElementById(atrKey).value)||0;
   const res=d20s(av);
-  showDado('Ataque: '+nome,res.best,ps+ba,res.best+ps+ba,res.rolou,res.all);
+  const lm=getLinkedAtkMods(box);
+  const baseMin=parseInt(box.querySelector('.atk-crit-min')?.value,10)||20;
+  const critMin=Math.max(1,Math.min(20,baseMin-lm.margem-getGolpeDeSorteMargemBonus()));
+  const hitBonus=ps+ba+lm.atk;
+  const hitTot=res.best+hitBonus;
+  const hitD20=res.best;
+  const isCrit=hitD20>=critMin&&hitD20<=20;
+
+  let ndBase=Math.max(1,parseInt(box.querySelector('.atk-dn')?.value,10)||1);
+  const df=Math.max(2,parseInt(box.querySelector('.atk-df')?.value,10)||6);
+  const bd=parseInt(box.querySelector('.bd').value)||0;
+  const danoAtrKey=box.querySelector('.atk-dano-atr')?.value||'forca';
+  const atrDano=(danoAtrKey&&danoAtrKey!=='nenhum')?(parseInt(document.getElementById(danoAtrKey)?.value,10)||0):0;
+  ndBase+=lm.calibre||0;
+  const baseM=Math.max(2,parseInt(box.querySelector('.atk-crit-mult')?.value,10)||2);
+  const mult=Math.max(2,baseM+lm.critMult);
+  const diceCount=isCrit?ndBase*mult:ndBase;
+  const rr=[];
+  let diceSum=0;
+  for(let i=0;i<diceCount;i++){const r=Math.floor(Math.random()*df)+1;rr.push(r);diceSum+=r;}
+  let expSum=0,expStr='';
+  if(lm.explosiva){
+    const e2=[];
+    for(let k=0;k<2;k++){const r=Math.floor(Math.random()*6)+1;e2.push(r);expSum+=r;}
+    expStr=' +2d6('+e2.join('+')+')';
+  }
+  const flat=bd+lm.dmg+atrDano;
+  const totalDmg=diceSum+expSum+flat;
+  showAtaqueDanoCard({
+    nome,hitD20,hitBonus,hitTot,critMin,isCrit,
+    ndBase,df,mult,diceCount,rr,diceSum,expStr,flat,totalDmg,danoAtrKey,atrDano,
+    hitQtd:res.rolou,hitTodos:res.all
+  });
 }
-function rolarD(btn){
-  const box=btn.closest('.coll-item');const sel=box.querySelector('.atk-ds').value;
-  const bd=parseInt(box.querySelector('.bd').value)||0;const nome=box.querySelector('.atk-nome').value||'Ataque';
-  const[nd,df]=sel.split('d').map(Number);let tot=0,rr=[];
-  for(let i=0;i<nd;i++){const r=Math.floor(Math.random()*df)+1;rr.push(r);tot+=r;}
-  showDado('Dano: '+nome+' ('+rr.join('+')+')'+( bd?'+'+bd:''),rr[0],bd,tot+bd);
-}
+
 
 // HABILIDADES
 function mkHab(n='',d=''){
@@ -927,7 +1434,7 @@ function mkHab(n='',d=''){
   <div class="coll-header" onclick="collToggle(this)">
     <span class="coll-arrow">▶</span>
     <span class="coll-title">${n||'Nova Habilidade'}</span>
-    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar();buildProficiencias()">🗑</button>
+    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar();buildProficiencias();onPoderesRealtimeChange()">🗑</button>
   </div>
   <div class="coll-body">
     <div class="campo" style="margin-bottom:8px;"><label class="lbl">Nome</label>
@@ -937,7 +1444,7 @@ function mkHab(n='',d=''){
       <textarea class="hab-desc" style="min-height:50px;" placeholder="Ex: 2 PE — Recebe +5 no teste de ataque...">${d}</textarea>
     </div>
   </div>`;
-  div.addEventListener('input',()=>triggerSalvar());return div;
+  div.addEventListener('input',()=>{triggerSalvar();onPoderesRealtimeChange();});return div;
 }
 function addHab(){const d=document.getElementById('habCont').appendChild(mkHab());d.classList.add('open');}
 
@@ -1038,7 +1545,7 @@ function inserirHab(i){
   const h=all[i];
   if(!h)return;
   const d=document.getElementById('habCont').appendChild(mkHab(h.nome,'Custo: '+h.custo+' · '+h.desc));
-  d.classList.add('open');document.getElementById('modalHab')?.remove();triggerSalvar();buildProficiencias();
+  d.classList.add('open');document.getElementById('modalHab')?.remove();triggerSalvar();buildProficiencias();onPoderesRealtimeChange();
 }
 
 // ELEM CLASS MAP
@@ -1047,21 +1554,116 @@ const ELEM_CARD_CLS={'Conhecimento':'rit-card-conhecimento','Energia':'rit-card-
 const EXEC_OPTS=['livre','padrão','movimento','completo','rodada'];
 const ALC_OPTS=['pessoal','toque','curto','médio','longo','extremo','ilimitado'];
 const DUR_OPTS=['instantânea','cena','sustentada','permanente'];
+const RIT_DT_ATR_OPTS=[
+  {v:'presenca',lab:'Presença'},{v:'agilidade',lab:'Agilidade'},{v:'forca',lab:'Força'},
+  {v:'intelecto',lab:'Intelecto'},{v:'vigor',lab:'Vigor'}
+];
+function calcRitDtNumber(atrKey,out){
+  const nex=parseInt(document.getElementById('nexN')?.value)||5;
+  const lim=Math.ceil(nex/5)+(origemTemAuto('dedicacao')?1:0);
+  const atrVal=parseInt(document.getElementById(atrKey)?.value)||0;
+  const o=parseInt(out,10)||0;
+  return 10+lim+atrVal+o;
+}
+
+function atuRitDtBadge(item){
+  if(!item||!item.classList.contains('rit-item'))return;
+  const atrH=item.querySelector('input.rit-dt-atr');
+  const outH=item.querySelector('input.rit-dt-out');
+  const valEl=item.querySelector('.rit-dt-hd');
+  if(!atrH||!outH||!valEl)return;
+  valEl.textContent=String(calcRitDtNumber(atrH.value,outH.value));
+}
+
+function getRitDtTargetItem(){
+  const cont=document.getElementById('ritCont');
+  if(!cont)return null;
+  let t=cont.querySelector('.rit-item.rit-dt-active');
+  if(t&&cont.contains(t))return t;
+  return cont.querySelector('.rit-item');
+}
+function setRitDtTargetItem(el){
+  if(!el||!el.classList.contains('rit-item'))return;
+  document.querySelectorAll('#ritCont .rit-item.rit-dt-active').forEach(x=>x.classList.remove('rit-dt-active'));
+  el.classList.add('rit-dt-active');
+  syncRitualDtHostUI();
+}
+
+function initRitDtHostSelect(){
+  const sel=document.getElementById('ritDtAtrHost');
+  if(!sel)return;
+  if(sel.dataset.inited==='1')return;
+  sel.innerHTML=RIT_DT_ATR_OPTS.map(o=>`<option value="${o.v}">${o.lab}</option>`).join('');
+  sel.dataset.inited='1';
+}
+
+function syncRitualDtHostUI(){
+  initRitDtHostSelect();
+  const host=document.getElementById('ritDtHost');
+  if(!host)return;
+  const items=document.querySelectorAll('#ritCont .rit-item');
+  if(items.length===0){
+    host.classList.add('rit-dt-host--empty');
+    return;
+  }
+  host.classList.remove('rit-dt-host--empty');
+  const tgt=getRitDtTargetItem();
+  const nomeEl=document.getElementById('ritDtNomeAlvo');
+  if(nomeEl&&tgt){
+    const nm=tgt.querySelector('.rit-nome')?.value?.trim()||tgt.querySelector('.coll-title')?.textContent?.trim()||'Ritual';
+    nomeEl.textContent=nm;
+  }
+  if(!tgt)return;
+  const atrH=tgt.querySelector('input.rit-dt-atr');
+  const outH=tgt.querySelector('input.rit-dt-out');
+  const atrSel=document.getElementById('ritDtAtrHost');
+  const outInp=document.getElementById('ritDtOutHost');
+  if(atrSel&&atrH) atrSel.value=atrH.value||'presenca';
+  if(outInp&&outH) outInp.value=outH.value||'0';
+  atuRitDtHostDisplay();
+}
+
+function atuRitDtHostDisplay(){
+  const tgt=getRitDtTargetItem();
+  const valEl=document.getElementById('ritDtValHost');
+  if(!tgt||!valEl)return;
+  const atrSel=document.getElementById('ritDtAtrHost');
+  const outInp=document.getElementById('ritDtOutHost');
+  const atrKey=atrSel?.value||'presenca';
+  const out=outInp?.value??'0';
+  valEl.textContent=String(calcRitDtNumber(atrKey,out));
+}
+
+function onRitDtHostChange(){
+  const tgt=getRitDtTargetItem();
+  if(!tgt)return;
+  const atrSel=document.getElementById('ritDtAtrHost');
+  const outInp=document.getElementById('ritDtOutHost');
+  const atrH=tgt.querySelector('input.rit-dt-atr');
+  const outH=tgt.querySelector('input.rit-dt-out');
+  if(atrH&&atrSel) atrH.value=atrSel.value;
+  if(outH&&outInp) outH.value=outInp.value;
+  atuRitDtBadge(tgt);
+  atuRitDtHostDisplay();
+  triggerSalvar();
+}
 
 // RITUAIS
 function mkRit(data={}){
-  const{nome='',elem='Conhecimento',circ='1',resistencia='Anula',atrResistencia='For',n_exec='padrão',n_alc='toque',n_dur='cena',n_pe=1,n_desc='',d_exec='padrão',d_alc='toque',d_dur='cena',d_pe='',d_desc='',v_exec='padrão',v_alc='toque',v_dur='cena',v_pe='',v_desc='',activeTab='normal'}=data;
+  const{nome='',elem='Conhecimento',circ='1',resistencia='Anula',atrResistencia='For',dtAtr='presenca',dtOut=0,n_exec='padrão',n_alc='toque',n_dur='cena',n_pe=1,n_desc='',d_exec='padrão',d_alc='toque',d_dur='cena',d_pe='',d_desc='',v_exec='padrão',v_alc='toque',v_dur='cena',v_pe='',v_desc='',activeTab='normal'}=data;
   const div=document.createElement('div');
   div.className='coll-item rit-item '+(ELEM_CLS[elem]||'rit-elem-conhecimento');
   const uid=Math.random().toString(36).slice(2,7);
   const sel=(id,val,opts,extra)=>`<select id="${id}" style="background:var(--bg2);border:1px solid var(--border);color:var(--rit-color,var(--cyan));font-family:'Share Tech Mono';font-size:0.65em;padding:3px 4px;width:100%;${extra||''}">${opts.map(o=>`<option${o===val?' selected':''}>${o}</option>`).join('')}</select>`;
   const circTxt=circ+'° Círculo';
   div.innerHTML=`
+  <input type="hidden" class="rit-dt-atr" value="${dtAtr}">
+  <input type="hidden" class="rit-dt-out" value="${dtOut}">
   <div class="coll-header" onclick="collToggle(this)">
     <span class="coll-arrow">▶</span>
     <span class="coll-title">${nome||'Novo Ritual'}</span>
-    <span class="coll-meta" style="color:var(--rit-color,var(--cyan));">${elem} · ${circTxt}</span>
-    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar()">🗑</button>
+    <span class="coll-meta" style="color:var(--rit-color,var(--cyan));">${elem} · ${circTxt} · DT <span class="rit-dt-hd">—</span></span>
+    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();syncRitualDtHostUI();triggerSalvar()">🗑</button>
   </div>
   <div class="coll-body">
     <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:10px;align-items:end;">
@@ -1130,7 +1732,11 @@ function mkRit(data={}){
       <textarea class="rit-desc-area" placeholder="Efeito verdadeiro...">${v_desc}</textarea>
     </div>
   </div>`;
-  div.addEventListener('input',()=>triggerSalvar());return div;
+  div.addEventListener('input',e=>{triggerSalvar();});
+  const dta=div.querySelector('input.rit-dt-atr');
+  if(dta&&!RIT_DT_ATR_OPTS.some(o=>o.v===dta.value))dta.value='presenca';
+  atuRitDtBadge(div);
+  return div;
 }
 function atuRitElem(sel){
   const item=sel.closest('.coll-item');const elem=sel.value;
@@ -1156,14 +1762,37 @@ function switchRitTab(btn,tab){
   btn.classList.add('active');
   item.querySelector('.rit-version[data-tab="'+tab+'"]').classList.add('active');
 }
-function addRit(){const d=document.getElementById('ritCont').appendChild(mkRit());d.classList.add('open');}
+function addRit(){const d=document.getElementById('ritCont').appendChild(mkRit());d.classList.add('open');setRitDtTargetItem(d);}
+function inferParanormalElemento(nome, desc){
+  const nomeN = normTxt(nome || '');
+  const descN = normTxt(desc || '');
+  const byName = (typeof PODERES_PARANORMAIS_LIVRO !== 'undefined' ? PODERES_PARANORMAIS_LIVRO : []).find(p => normTxt(p.nome) === nomeN);
+  if (byName?.elemento) return byName.elemento;
+  if (descN.includes('elemento: sangue')) return 'Sangue';
+  if (descN.includes('elemento: energia')) return 'Energia';
+  if (descN.includes('elemento: morte')) return 'Morte';
+  if (descN.includes('elemento: conhecimento')) return 'Conhecimento';
+  return '';
+}
+function updateParanormalItemVisual(item){
+  if(!item) return;
+  const nome=item.querySelector('.paranormal-nome')?.value||'';
+  const desc=item.querySelector('.paranormal-desc')?.value||'';
+  const elem=inferParanormalElemento(nome, desc);
+  item.classList.remove('para-elem-sangue','para-elem-energia','para-elem-morte','para-elem-conhecimento');
+  const map = {Sangue:'para-elem-sangue',Energia:'para-elem-energia',Morte:'para-elem-morte',Conhecimento:'para-elem-conhecimento'};
+  if(map[elem]) item.classList.add(map[elem]);
+  const meta=item.querySelector('.paranormal-meta');
+  if(meta) meta.textContent=elem||'';
+}
 function mkParanormal(n='',d=''){
-  const div=document.createElement('div');div.className='coll-item hab-item';
+  const div=document.createElement('div');div.className='coll-item hab-item paranormal-item';
   div.innerHTML=`
   <div class="coll-header" onclick="collToggle(this)">
     <span class="coll-arrow">▶</span>
     <span class="coll-title">${n||'Novo Poder Paranormal'}</span>
-    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar()">🗑</button>
+    <span class="coll-meta paranormal-meta"></span>
+    <button class="btn-del" onclick="event.stopPropagation();this.closest('.coll-item').remove();triggerSalvar();onPoderesRealtimeChange()">🗑</button>
   </div>
   <div class="coll-body">
     <div class="campo" style="margin-bottom:8px;"><label class="lbl">Nome</label>
@@ -1173,7 +1802,9 @@ function mkParanormal(n='',d=''){
       <textarea class="paranormal-desc" style="min-height:50px;" placeholder="Descrição do poder...">${d}</textarea>
     </div>
   </div>`;
-  div.addEventListener('input',()=>triggerSalvar());return div;
+  div.addEventListener('input',()=>{updateParanormalItemVisual(div);triggerSalvar();onPoderesRealtimeChange();});
+  updateParanormalItemVisual(div);
+  return div;
 }
 function addParanormal(){const d=document.getElementById('paranormalCont').appendChild(mkParanormal());d.classList.add('open');}
 let _paranormalFiltroElem='Todos';
@@ -1227,6 +1858,7 @@ function inserirParanormalLivro(i){
   d.classList.add('open');
   document.getElementById('modalParanormal')?.remove();
   triggerSalvar();
+  onPoderesRealtimeChange();
 }
 
 // MODAL RITUAIS
@@ -1301,48 +1933,220 @@ function inserirRitual(i){
   if(r.desc.includes('Disc(')||r.desc.includes('Verd('))
     n_desc=r.desc.replace(/Disc\([^)]+\):[^.]+\./g,'').replace(/Verd\([^)]+\):[^.]+\./g,'').trim();
   const d=document.getElementById('ritCont').appendChild(mkRit({nome:r.nome,elem:r.elem,circ:r.circ,n_exec:r.exec,n_alc:r.alc,n_dur:r.dur,n_pe:r.pe,n_desc,d_exec:r.exec,d_alc:r.alc,d_dur:r.dur,d_pe,d_desc,v_exec:r.exec,v_alc:r.alc,v_dur:r.dur,v_pe,v_desc}));
-  d.classList.add('open');document.getElementById('modalRit')?.remove();triggerSalvar();
+  d.classList.add('open');setRitDtTargetItem(d);document.getElementById('modalRit')?.remove();triggerSalvar();
 }
 
 // ============================================================
 // INVENTÁRIO — COM DRAG & DROP
+// Carga usada = soma das quantidades (podem ser negativas). Categoria e tag são só registro.
 // ============================================================
-const INV_CAT_PESO = { I: 1, II: 2, III: 3, VI: 6 };
+const INV_CATS = ['0','I','II','III','IV'];
+const INV_TAGS = ['item','amald','paranormal','arma','municao','protecao'];
 
-function mkItem(n='',d='',exp=false,qtd=1,cat='I',pesoAj=0){
+const MELH_MODS_ARMA_CC = [
+  {id:'certeira', nome:'Certeira', desc:'+2 em testes de ataque.'},
+  {id:'cruel', nome:'Cruel', desc:'+2 em rolagens de dano.'},
+  {id:'discreta_cc', nome:'Discreta', desc:'+10 em testes de ocultar e permite teste destreinado.'},
+  {id:'perigosa', nome:'Perigosa', desc:'+2 em margem de ameaça.'},
+  {id:'tatica_cc', nome:'Tática', desc:'Pode sacar como ação livre.'}
+];
+const MELH_MODS_ARMA_FOGO = [
+  {id:'alongada', nome:'Alongada', desc:'+2 em testes de ataque.'},
+  {id:'calibre', nome:'Calibre grosso', desc:'Aumenta o dano em mais um dado do mesmo tipo.'},
+  {id:'compensador', nome:'Compensador', desc:'Anula penalidade por rajadas.'},
+  {id:'discreta_fogo', nome:'Discreta', desc:'+5 em testes de ocultar e reduz o espaço em –1.'},
+  {id:'ferrolho', nome:'Ferrolho automático', desc:'A arma se torna automática.'},
+  {id:'miraLaser', nome:'Mira laser', desc:'+2 em margem de ameaça.'},
+  {id:'miraTel', nome:'Mira telescópica', desc:'Aumenta alcance da arma e da habilidade Ataque Furtivo.'},
+  {id:'silenciador', nome:'Silenciador', desc:'Reduz em –10 a penalidade em Furtividade para se esconder após atacar.'},
+  {id:'tatica_fogo', nome:'Tática', desc:'Pode sacar como ação livre.'},
+  {id:'visaoCalor', nome:'Visão de calor', desc:'Ignora camuflagem.'}
+];
+const MELH_MODS_MUN = [
+  {id:'dumdum', nome:'Dum dum', desc:'+1 em multiplicador de crítico.'},
+  {id:'explosiva', nome:'Explosiva', desc:'Aumenta o dano em +2d6.'}
+];
+const MELH_MODS_PROT = [
+  {id:'antibombas', nome:'Antibombas', desc:'+5 em testes de resistência contra efeitos de área.'},
+  {id:'blindada', nome:'Blindada', desc:'Aumenta RD para 5 e o espaço em +1.'},
+  {id:'discreta_prot', nome:'Discreta', desc:'+5 em testes de ocultar e reduz o espaço em –1.'},
+  {id:'reforcada', nome:'Reforçada', desc:'Aumenta a Defesa em +2 e o espaço em +1.'}
+];
+const MELH_MODS_ITEM = [
+  {id:'aprimorado', nome:'Aprimorado', desc:'Aumenta um dos bônus em perícia para +5.'},
+  {id:'discreto_item', nome:'Discreto', desc:'+5 em testes de ocultar e reduz o espaço em –1.'},
+  {id:'funcao_adic', nome:'Função adicional', desc:'Concede +2 a uma perícia adicional.'},
+  {id:'instrumental', nome:'Instrumental', desc:'O acessório funciona como um kit de perícia.'}
+];
+
+function updInvMelhChips(it){
+  const chips=it.querySelector('.inv-melh-chips');
+  const hid=it.querySelector('.inv-melh-data');
+  if(!chips||!hid)return;
+  let ids=[]; try{ids=JSON.parse(hid.value||'[]');}catch(e){}
+  const all=[...MELH_MODS_ARMA_CC,...MELH_MODS_ARMA_FOGO,...MELH_MODS_MUN,...MELH_MODS_PROT,...MELH_MODS_ITEM];
+  const lab=id=>all.find(m=>m.id===id)?.nome||id;
+  chips.textContent=ids.length?ids.map(lab).join(' · '):'';
+}
+function abrirMelhoriasItem(btn){
+  const it=btn.closest('.inv-it');
+  const tag=normInvTag(it.querySelector('.inv-tag')?.value||'');
+  let grupos=[];
+  if(tag==='arma') grupos=[['Corpo a corpo e disparo',MELH_MODS_ARMA_CC],['Armas de fogo',MELH_MODS_ARMA_FOGO]];
+  else if(tag==='municao') grupos=[['Munições',MELH_MODS_MUN]];
+  else if(tag==='protecao') grupos=[['Proteções',MELH_MODS_PROT]];
+  else if(tag==='item') grupos=[['Itens',MELH_MODS_ITEM]];
+  else return;
+  let ids=[]; try{ids=JSON.parse(it.querySelector('.inv-melh-data')?.value||'[]');}catch(e){}
+  let html='<div class="modal-ov" id="modalMelh"><div class="modal-box" style="max-width:520px;">'+
+    '<div class="modal-hd"><span class="modal-title">Melhorias</span><button type="button" class="modal-close" onclick="document.getElementById(\'modalMelh\').remove()">Fechar</button></div>'+
+    '<div class="modal-scroll" style="max-height:60vh;">';
+  grupos.forEach(([title,mods],gi)=>{
+    if(gi) html+='<hr style="margin:12px 0;border-color:var(--border);">';
+    html+='<div style="font-family:\'Special Elite\',serif;font-size:0.75em;color:var(--ink2);margin-bottom:8px;">'+title+'</div>';
+    mods.forEach(m=>{
+      const ck=ids.includes(m.id)?' checked':'';
+      html+='<label style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;cursor:pointer;font-size:0.88em;">'+
+        '<input type="checkbox" class="melh-cb" value="'+m.id+'"'+ck+' style="margin-top:3px;">'+
+        '<span><strong>'+m.nome+'</strong><br><span style="font-size:0.85em;color:var(--ink3);">'+m.desc+'</span></span></label>';
+    });
+  });
+  html+='</div><div class="modal-footer">'+
+    '<button type="button" class="modal-footer-close" onclick="document.getElementById(\'modalMelh\').remove()">Cancelar</button>'+
+    '<button type="button" class="btn-hd primary" onclick="confirmMelhoriasItem(this)">Aplicar</button>'+
+    '</div></div></div>';
+  document.getElementById('modalContainer').innerHTML=html;
+  window._melhTargetRow=it;
+}
+function confirmMelhoriasItem(btn){
+  const modal=btn.closest('.modal-ov');
+  const it=window._melhTargetRow;
+  if(!it){modal?.remove();return;}
+  const ids=[...modal.querySelectorAll('.melh-cb:checked')].map(c=>c.value);
+  const hid=it.querySelector('.inv-melh-data');
+  if(hid) hid.value=JSON.stringify(ids);
+  updInvMelhChips(it);
+  modal.remove();
+  refreshAllAtkInvSelects();
+  triggerSalvar();
+}
+
+function atuInvProtRow(sel){
+  const it=sel.closest('.inv-it');
+  if(!it)return;
+  const row=it.querySelector('.inv-prot-row');
+  const tag=normInvTag(sel.value);
+  const show=tag==='protecao';
+  if(row)row.style.display=show?'flex':'none';
+  const showMelh=['arma','municao','protecao','item'].includes(tag);
+  const mb=it.querySelector('.btn-inv-melh');
+  const chips=it.querySelector('.inv-melh-chips');
+  if(mb) mb.style.display=showMelh?'inline-block':'none';
+  if(chips) chips.style.display=showMelh?'inline':'none';
+  updInvMelhChips(it);
+}
+
+let _invTouchDrag=null;
+function invTouchMove(ev){
+  if(!_invTouchDrag||ev.touches.length!==1)return;
+  ev.preventDefault();
+  const y=ev.touches[0].clientY;
+  const cont=document.getElementById('invCont');
+  const src=_invTouchDrag.row;
+  if(!cont||!src)return;
+  const items=[...cont.querySelectorAll('.inv-it')].filter(x=>x!==src);
+  const afterEl=items.find(el=>{
+    const r=el.getBoundingClientRect();
+    return y<r.top+r.height/2;
+  });
+  if(afterEl)cont.insertBefore(src,afterEl);
+  else cont.appendChild(src);
+}
+function invTouchEnd(){
+  if(_invTouchDrag){
+    _invTouchDrag.row.classList.remove('inv-dragging');
+    _invTouchDrag=null;
+    refreshAllAtkInvSelects();
+    triggerSalvar();
+  }
+  document.removeEventListener('touchmove',invTouchMove);
+  document.removeEventListener('touchend',invTouchEnd);
+  document.removeEventListener('touchcancel',invTouchEnd);
+}
+function invTouchStart(ev){
+  if(_invTouchDrag)return;
+  const h=ev.currentTarget;
+  const row=h.closest('.inv-it');
+  if(!row||ev.touches.length!==1)return;
+  _invTouchDrag={row};
+  row.classList.add('inv-dragging');
+  document.addEventListener('touchmove',invTouchMove,{passive:false});
+  document.addEventListener('touchend',invTouchEnd,{passive:true});
+  document.addEventListener('touchcancel',invTouchEnd,{passive:true});
+}
+
+function normInvCat(cat){
+  if(cat==='VI')return'IV';
+  return INV_CATS.includes(cat)?cat:'I';
+}
+function normInvTag(tag){
+  return INV_TAGS.includes(tag)?tag:'item';
+}
+
+function mkItem(n='',d='',exp=false,qtd=1,cat='I',tag='item',prot=0,melhorias){
   const div=document.createElement('div');div.className='inv-it';div.draggable=true;
   div.innerHTML=`<div class="inv-row">
-    <span class="inv-drag" title="Arrastar para reordenar">⠿</span>
+    <span class="inv-drag" title="Arrastar (desktop) ou arrastar aqui no celular">⠿</span>
     <button class="inv-exp" onclick="toggleInv(this)">▸</button>
     <input type="text" class="inv-ni" placeholder="Item...">
-    <input type="number" class="inv-qtd" min="1" value="1" title="Quantidade" aria-label="Quantidade">
-    <select class="inv-cat" title="Categoria">
+    <input type="number" class="inv-qtd" step="1" value="1" title="Quantidade (afeta carga; pode ser negativa)" aria-label="Quantidade">
+    <select class="inv-cat" title="Categoria (só registro)">
+      <option value="0">0</option>
       <option value="I">I</option>
       <option value="II">II</option>
       <option value="III">III</option>
-      <option value="VI">VI</option>
+      <option value="IV">IV</option>
     </select>
-    <button class="inv-del" onclick="this.closest('.inv-it').remove();atuInventarioPeso();triggerSalvar()">✕</button>
+    <select class="inv-tag" title="Tipo de item" onchange="atuInvProtRow(this);atuInventarioPeso();calcDeriv();refreshAllAtkInvSelects();triggerSalvar()">
+      <option value="item">Item</option>
+      <option value="amald">Item amaldiçoado</option>
+      <option value="paranormal">Item paranormal</option>
+      <option value="arma">Arma</option>
+      <option value="municao">Munição</option>
+      <option value="protecao">Proteção</option>
+    </select>
+    <button type="button" class="btn-inv-melh" onclick="abrirMelhoriasItem(this)" style="display:none;">Melhorias</button>
+    <span class="inv-melh-chips" style="display:none;max-width:140px;overflow:hidden;text-overflow:ellipsis;"></span>
+    <input type="hidden" class="inv-melh-data" value="[]">
+    <button class="inv-del" onclick="this.closest('.inv-it').remove();atuInventarioPeso();calcDeriv();refreshAllAtkInvSelects();triggerSalvar()">✕</button>
   </div>
-  <textarea class="inv-dt" placeholder="Detalhes, propriedades..."${exp?' style="display:block;"':''}></textarea>
-  <div class="inv-extra"${exp?' style="display:block;"':''}>
-    <label>Ajuste de Peso <span>(pode ser negativo)</span></label>
-    <input type="number" class="inv-peso-aj" value="0" placeholder="0">
-  </div>`;
+  <div class="inv-prot-row" style="display:none;">
+    <label class="lbl inv-prot-lbl">Valor da proteção</label>
+    <input type="number" class="inv-prot-val" min="0" value="0" title="Somado na Defesa">
+  </div>
+  <textarea class="inv-dt" placeholder="Detalhes, propriedades..."${exp?' style="display:block;"':''}></textarea>`;
   div.querySelector('.inv-ni').value=n;div.querySelector('.inv-dt').value=d;
-  div.querySelector('.inv-qtd').value = Math.max(1, parseInt(qtd)||1);
-  div.querySelector('.inv-cat').value = INV_CAT_PESO[cat] ? cat : 'I';
-  div.querySelector('.inv-peso-aj').value = parseInt(pesoAj)||0;
+  const qRaw=parseInt(qtd,10);
+  div.querySelector('.inv-qtd').value=Number.isFinite(qRaw)?String(qRaw):'1';
+  div.querySelector('.inv-cat').value=normInvCat(cat);
+  div.querySelector('.inv-tag').value=normInvTag(tag);
+  const pRaw=parseInt(prot,10);
+  div.querySelector('.inv-prot-val').value=String(Number.isFinite(pRaw)?Math.max(0,pRaw):0);
+  const mh=Array.isArray(melhorias)?melhorias:[];
+  try{div.querySelector('.inv-melh-data').value=JSON.stringify(mh);}catch(e){div.querySelector('.inv-melh-data').value='[]';}
+  atuInvProtRow(div.querySelector('.inv-tag'));
   if(exp)div.querySelector('.inv-exp').textContent='▾';
   div.addEventListener('input',()=>{
     atuInventarioPeso();
+    calcDeriv();
     triggerSalvar();
   });
-  // Drag and drop events
   div.addEventListener('dragstart', invDragStart);
   div.addEventListener('dragover', invDragOver);
   div.addEventListener('drop', invDrop);
   div.addEventListener('dragend', invDragEnd);
+  const drag=div.querySelector('.inv-drag');
+  if(drag)drag.addEventListener('touchstart',invTouchStart,{passive:true});
   return div;
 }
 
@@ -1368,6 +2172,7 @@ function invDrop(e) { e.preventDefault(); triggerSalvar(); }
 function invDragEnd(e) {
   if (_dragSrc) _dragSrc.classList.remove('inv-dragging');
   _dragSrc = null;
+  refreshAllAtkInvSelects();
 }
 
 function addItem(){
@@ -1377,21 +2182,25 @@ function addItem(){
 function toggleInv(btn){
   const item=btn.closest('.inv-it');
   const d=item.querySelector('.inv-dt');
-  const extra=item.querySelector('.inv-extra');
   const v=d.style.display==='block';
   d.style.display=v?'none':'block';
-  if (extra) extra.style.display=v?'none':'block';
   btn.textContent=v?'▸':'▾';
 }
 function extI(){
-  return Array.from(document.getElementById('invCont').children).map(d=>({
-    n:d.querySelector('.inv-ni')?.value||'',
-    d:d.querySelector('.inv-dt')?.value||'',
-    exp:d.querySelector('.inv-dt')?.style.display==='block',
-    qtd:parseInt(d.querySelector('.inv-qtd')?.value)||1,
-    cat:d.querySelector('.inv-cat')?.value||'I',
-    pesoAj:parseInt(d.querySelector('.inv-peso-aj')?.value)||0
-  }));
+  return Array.from(document.getElementById('invCont').children).map(d=>{
+    const qStr=d.querySelector('.inv-qtd')?.value;
+    const qtd=qStr===''||qStr===undefined?0:parseInt(qStr,10);
+    return{
+      n:d.querySelector('.inv-ni')?.value||'',
+      d:d.querySelector('.inv-dt')?.value||'',
+      exp:d.querySelector('.inv-dt')?.style.display==='block',
+      qtd:Number.isFinite(qtd)?qtd:0,
+      cat:normInvCat(d.querySelector('.inv-cat')?.value||'I'),
+      tag:normInvTag(d.querySelector('.inv-tag')?.value||'item'),
+      prot:Math.max(0,parseInt(d.querySelector('.inv-prot-val')?.value,10)||0),
+      melhorias:(()=>{ try{return JSON.parse(d.querySelector('.inv-melh-data')?.value||'[]')||[];}catch(e){return[];} })()
+    };
+  });
 }
 
 function calcCapacidadeInventario() {
@@ -1404,11 +2213,9 @@ function calcCapacidadeInventario() {
 
 function calcPesoInventario() {
   return Array.from(document.querySelectorAll('#invCont .inv-it')).reduce((sum, item) => {
-    const qtd = Math.max(1, parseInt(item.querySelector('.inv-qtd')?.value)||1);
-    const cat = item.querySelector('.inv-cat')?.value || 'I';
-    const pesoBase = INV_CAT_PESO[cat] || 0;
-    const ajuste = parseInt(item.querySelector('.inv-peso-aj')?.value)||0;
-    return sum + (qtd * pesoBase) + ajuste;
+    const raw = item.querySelector('.inv-qtd')?.value;
+    const q = raw === '' || raw === undefined ? 0 : parseInt(raw, 10);
+    return sum + (Number.isFinite(q) ? q : 0);
   }, 0);
 }
 
@@ -1427,6 +2234,7 @@ function atuInventarioPeso(){
   if (livreEl) livreEl.textContent = livre;
   if (barEl) barEl.style.width = pct + '%';
   if (wrap) wrap.classList.toggle('estourado', usado > cap);
+  refreshAllAtkInvSelects();
 }
 
 function editarAvatar(){
@@ -1439,13 +2247,23 @@ function setAv(u){const i=document.getElementById('avatarImg'),p=document.getEle
 // EXTRAÇÃO + SALVAR
 // ============================================================
 function extA(){
-  return Array.from(document.getElementById('atkCont')?.children||[]).map(d=>({
-    n:d.querySelector('.atk-nome')?.value||'',
-    habil:d.querySelector('.atk-habil')?.value||'luta',
-    ba:+(d.querySelector('.ba')?.value)||0,
-    d:d.querySelector('.atk-ds')?.value||'1d6',
-    bd:+(d.querySelector('.bd')?.value)||0
-  }));
+  return Array.from(document.getElementById('atkCont')?.children||[]).map(d=>{
+    const dn=Math.max(1,parseInt(d.querySelector('.atk-dn')?.value,10)||1);
+    const df=Math.max(2,parseInt(d.querySelector('.atk-df')?.value,10)||6);
+    return{
+      n:d.querySelector('.atk-nome')?.value||'',
+      habil:d.querySelector('.atk-habil')?.value||'luta',
+      ba:+(d.querySelector('.ba')?.value)||0,
+      bd:+(d.querySelector('.bd')?.value)||0,
+      dn, df,
+      danoAtr:d.querySelector('.atk-dano-atr')?.value||'forca',
+      d:`${dn}d${df}`,
+      critMin:Math.max(1,Math.min(20,parseInt(d.querySelector('.atk-crit-min')?.value,10)||20)),
+      critMult:Math.max(2,parseInt(d.querySelector('.atk-crit-mult')?.value,10)||2),
+      invW:d.querySelector('.atk-inv-w')?.value||'',
+      invM:d.querySelector('.atk-inv-m')?.value||''
+    };
+  });
 }
 function extH(){
   return Array.from(document.getElementById('habCont')?.children||[]).map(d=>({
@@ -1462,6 +2280,8 @@ function extR(){
       elem:div.querySelector('.rit-elem')?.value||'Conhecimento',
       resistencia:div.querySelector('.rit-resist')?.value||'Anula',
       atrResistencia:div.querySelector('.rit-atr-resist')?.value||'For',
+      dtAtr:div.querySelector('.rit-dt-atr')?.value||'presenca',
+      dtOut:parseInt(div.querySelector('.rit-dt-out')?.value,10)||0,
       activeTab,
       n_exec:div.querySelector('.rit-version[data-tab="normal"] select:nth-child(1)')?.value||'padrão',
       n_alc:div.querySelector('.rit-version[data-tab="normal"] select:nth-child(2)')?.value||'toque',
@@ -1485,6 +2305,13 @@ function extP(){
   return Array.from(document.getElementById('paranormalCont')?.children||[]).map(d=>({
     n:d.querySelector('.paranormal-nome')?.value||'',
     d:d.querySelector('.paranormal-desc')?.value||''
+  }));
+}
+function extO(){
+  return Array.from(document.getElementById('origemCont')?.children||[]).map(d=>({
+    n:d.querySelector('.origem-nome')?.value||'',
+    d:d.querySelector('.origem-desc')?.value||'',
+    auto:d.dataset.autoOrigem==='1'
   }));
 }
 function extProfs() {
@@ -1522,14 +2349,17 @@ function coletarFicha(){
     sanMaxManual:document.getElementById('sanMax')?.dataset.manual||'',
     sanMaxTeor:document.getElementById('sanMax')?.dataset.prevTeor||'',
     defBonus:parseInt(gv('defBonus'))||0,
+    bloqBonus:parseInt(gv('bloqBonus'))||0,
+    esquivaBonus:parseInt(gv('esquivaBonus'))||0,
     pericias:JSON.stringify(window._ps||{}),
     perBonus:JSON.stringify(window._psBon||{}),
     perAtr:JSON.stringify(psAtrSave),
     profNome:profNomeEl?.value||'',
     profExtras:JSON.stringify(window._profExtras||[]),
     proficiencias:extProfs(),
-    ataques:extA(),habilidades:extH(),rituais:extR(),
-    poderesParanormais:extP(),inventario:extI()
+    ataques:extA(),habilidades:extH(),origensPoderes:extO(),rituais:extR(),
+    poderesParanormais:extP(),    inventario:extI(),
+    resistenciasCustom:window._resCustom||[]
   };
 }
 
@@ -1554,6 +2384,8 @@ function preencher(f){
   if(f.sanMaxTeor) sanMaxEl.dataset.prevTeor=f.sanMaxTeor;
 
   sv('defBonus',f.defBonus||0);
+  sv('bloqBonus',f.bloqBonus||0);
+  sv('esquivaBonus',f.esquivaBonus||0);
   sv('patente',f.patente||'recruta');sv('creditos',f.creditos||'baixo');
   const pt=PATENTES[f.patente||'recruta'];if(pt)document.getElementById('patenteDisplay').textContent=pt.label.toUpperCase();
   document.getElementById('avatarUrl').value=f.avatarUrl||'';setAv(f.avatarUrl||'');
@@ -1564,15 +2396,25 @@ function preencher(f){
   buildPeri();
   if(f.profNome){const el=document.getElementById('pn_profissao');if(el)el.value=f.profNome;}
   document.getElementById('atkCont').innerHTML='';
-  (f.ataques||[]).forEach(a=>document.getElementById('atkCont').appendChild(mkAtk(a.n,a.habil||'luta',a.ba,a.d,a.bd)));
+  (f.ataques||[]).forEach(a=>document.getElementById('atkCont').appendChild(mkAtk(a)));
   document.getElementById('habCont').innerHTML='';
   (f.habilidades||[]).forEach(h=>document.getElementById('habCont').appendChild(mkHab(h.n,h.d)));
+  document.getElementById('origemCont').innerHTML='';
+  (f.origensPoderes||[]).forEach(o=>{
+    const item = document.getElementById('origemCont').appendChild(mkOrigemPoder(o.n,o.d));
+    if(o.auto) item.dataset.autoOrigem='1';
+  });
   document.getElementById('ritCont').innerHTML='';
   (f.rituais||[]).forEach(r=>document.getElementById('ritCont').appendChild(mkRit(r)));
+  const rit0=document.querySelector('#ritCont .rit-item');
+  if(rit0&&!document.querySelector('#ritCont .rit-item.rit-dt-active')) rit0.classList.add('rit-dt-active');
+  syncRitualDtHostUI();
   document.getElementById('paranormalCont').innerHTML='';
   (f.poderesParanormais||[]).forEach(p=>document.getElementById('paranormalCont').appendChild(mkParanormal(p.n,p.d)));
   document.getElementById('invCont').innerHTML='';
-  (f.inventario||[]).forEach(i=>document.getElementById('invCont').appendChild(mkItem(i.n,i.d,i.exp,i.qtd,i.cat,i.pesoAj)));
+  (f.inventario||[]).forEach(i=>document.getElementById('invCont').appendChild(mkItem(i.n,i.d,i.exp,i.qtd,i.cat,i.tag||'item',i.prot||0,i.melhorias||[])));
+  window._resCustom=Array.isArray(f.resistenciasCustom)?f.resistenciasCustom.map(r=>({tipo:r.tipo||'Corte',val:Math.max(0,parseInt(r.val,10)||0)})):[];
+  atualizarResistencias();
   // Restaurar proficiências
   window._profSel = f.proficiencias || {};
   buildProficiencias();
@@ -1587,6 +2429,7 @@ function preencher(f){
     });
   }
   _prevNex = parseInt(f.nex)||5;
+  aplicarOrigemAutomatica();
   atuTodosDots();calcDeriv();atuNEX(false);atuBarras();atuInventarioPeso();
 }
 
@@ -1601,14 +2444,15 @@ function limpar(){
   sv('pvAtual',0);sv('pvMax',0);delete pvMaxEl.dataset.manual; delete pvMaxEl.dataset.prevTeor;
   sv('peAtual',0);sv('peMax',0);delete peMaxEl.dataset.manual; delete peMaxEl.dataset.prevTeor;
   sv('sanAtual',0);sv('sanMax',0);delete sanMaxEl.dataset.manual; delete sanMaxEl.dataset.prevTeor;
-  sv('defBonus',0);sv('patente','recruta');sv('creditos','baixo');
+  sv('defBonus',0);sv('bloqBonus',0);sv('esquivaBonus',0);sv('patente','recruta');sv('creditos','baixo');
   document.getElementById('patenteDisplay').textContent='RECRUTA';
   setAv('');document.getElementById('avatarUrl').value='';
   window._ps={};window._psBon={};window._psAtr={};window._profExtras=[];
-  ['atkCont','habCont','ritCont','paranormalCont','invCont'].forEach(id=>{
+  ['atkCont','habCont','origemCont','ritCont','paranormalCont','invCont'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.innerHTML='';
   });
   window._profSel = {};
+  window._resCustom=[];
   _prevNex=5;buildPeri();atuTodosDots();calcDeriv();atuNEX(false);atuBarras();buildProficiencias();atuInventarioPeso();
 }
 
@@ -1724,6 +2568,8 @@ function conjurarRitual(btn){
 window.addEventListener('load',()=>{
   applyTheme();
   window._ps={};window._psBon={};window._psAtr={};window._profExtras=[];
+  preencherListaOrigens();
+  garantirPainelResistencias();
   buildPeri();
 
   // listener para marcar edição manual nos max
@@ -1742,6 +2588,12 @@ window.addEventListener('load',()=>{
     syncTrilhaOptions();
     buildProficiencias();
     aplicarBeneficiosTrilhaAteNex();
+    calcDeriv();
+    triggerSalvar();
+  });
+  const origemEl = document.getElementById('origem');
+  if(origemEl) origemEl.addEventListener('change', () => {
+    aplicarOrigemAutomatica();
     calcDeriv();
     triggerSalvar();
   });
